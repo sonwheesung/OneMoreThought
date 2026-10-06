@@ -70,6 +70,8 @@
 
 - 처리방침(접근성 공개 문구와 같은 말 · `ANDROID_PLATFORM.md` §8.1) · 데이터 보안 양식 근거
 - 🔴 **Play 접근성 선언 + 시연 영상**(공개 문구 → 동의 → 서비스 켜기 → 거절 흐름 → 핵심 기능)
+- 광고(결정 #12): AdMob 앱 등록 · 테스트 기기 등록 · 지면(미결정 Q) · 금지 자리 가드(확인 화면 · 알림 · 공개 화면에 광고 코드가 닿지 않는다) · 킬스위치 · `app-ads.txt` · `docs/MONETIZATION_SYSTEM.md`
+- 배포 국가 145개국 · `docs/DISTRIBUTION_POLICY.md`(결정 #14)
 - OTA(`common/OTA_RULES.md`) · 오픈소스 고지(`PRE_LAUNCH_CHECK.md` §2.1) · 스토어 등록정보(`STORE_LISTING.md`) · 배포 국가 이유(미결정 H)
 
 ## Phase 7 — Play 업로드 · 비공개 테스트

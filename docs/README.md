@@ -14,7 +14,7 @@
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
-| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · 서버 없음(네이티브 ⇄ JS 경계) · 결정 **11건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **15건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
+| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · 서버 없음(네이티브 ⇄ JS 경계) · 결정 **13건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **15건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
 | [`PLAN.md`](./PLAN.md) | 착수 순서(리뷰 → Phase 0 스파이크 ~ 8) · 완료 기준 · 막는 미결정 | ✅ 2026-10-06 |
 | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 2026-10-06 · 설계 초안(미결정 다수) |
 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) | 감지(접근성 · 사용 기록) · 오버레이 · 알람 · 앱 목록 · Expo 네이티브 · 권한 온보딩 · 🔴 Play 접근성 정책 · Phase 0 스파이크 | 🔨 2026-10-06 · 정책 원문 직접 대조(§8) · 사례 조사 반영 |
@@ -36,7 +36,8 @@
 | `EDGE_CASES.md` | 첫 버그 · Phase 4 | ❌ |
 | `POLISH_BACKLOG.md` | 첫 "알면서 남겨 둔 것" | ❌ |
 | `OTA_SYSTEM.md` · `BUILD.md` · `OPEN_SOURCE_NOTICE.md` · `STORE_LISTING.md` · `legal/` | Phase 6 ~ 7 | ❌ |
-| `MONETIZATION_SYSTEM.md` | Pro 를 붙일 때 | ⏸ 출시 초기 무료 · 광고 없음(결정 #2) |
+| `MONETIZATION_SYSTEM.md` | Phase 6(광고를 붙일 때 · 결정 #12) | ❌ ~~⏸ 출시 초기 무료 · 광고 없음(결정 #2)~~ → #12 가 뒤집었다 |
+| `DISTRIBUTION_POLICY.md` | Phase 6(145개국 · 32개국을 닫은 이유 · 결정 #14 · `PRE_LAUNCH_CHECK.md` §1) | ❌ |
 
 ---
 
