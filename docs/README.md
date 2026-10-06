@@ -10,7 +10,7 @@
 
 ## 1. 문서 목록
 
-`docs/` 바로 아래 **6개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **2개**(세는 법: `ls docs/review/*.md | wc -l`)
+`docs/` 바로 아래 **6개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **3개**(세는 법: `ls docs/review/*.md | wc -l`)
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
@@ -22,6 +22,7 @@
 | [`ORIGINAL_BRIEF.md`](./ORIGINAL_BRIEF.md) | 🔴 **원본 기획서 원문. 정본이 아니다** | ✅ 2026-10-06 |
 | [`README.md`](./README.md) | 이 색인 | ✅ 2026-10-06 |
 | [`review/2026-10-06-decisions.md`](./review/2026-10-06-decisions.md) | 사용자 결정 원문 기록(#10 · 읽은 범위). 정본은 CLAUDE §14 | ✅ 2026-10-06 |
+| [`review/2026-10-06-bm-proposal.md`](./review/2026-10-06-bm-proposal.md) | BM 제안(무료 1+1 · 보상형 칸 · 평생 Pro). 경쟁 앱 7종 · 자릿수 추정. 🔴 사용자 결정 전 · 정본 아님 | 🔨 2026-10-06 |
 | [`review/2026-10-06-play-policy.md`](./review/2026-10-06-play-policy.md) | Play 정책 실제 반려 · 통과 사례(반려 3 · 통과 등록정보 8) · 판정 · 설계로 옮길 것. 정본 아님 | ✅ 2026-10-06 |
 | [`../.claude/skills/README.md`](../.claude/skills/README.md) | 스킬 색인. 이식 4종 · 나중에 가져올 것 · 안 가져오는 것 | ✅ 2026-10-06 |
 
