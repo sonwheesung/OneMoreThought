@@ -1,0 +1,50 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native (CNG output - do not commit, regenerate with expo prebuild)
+android/
+ios/
+.kotlin/
+*.orig.*
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# OS
+.DS_Store
+
+# typescript
+*.tsbuildinfo
+
+# 빌드 산출물
+*.aab
+*.apk
+
+# 서명 자격증명 · 시크릿 — 절대 커밋 금지 (LinkMemo 2026-08-18 keystore.pass 노출 사고 승계)
+credentials/
+secrets/
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
+*service-account*.json
+.env
+.env.*
+!.env.example
+
+# Claude Code 로컬 설정(개인 훅·권한) — 스킬(.claude/skills/)은 커밋한다
+.claude/settings.local.json
