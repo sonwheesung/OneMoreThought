@@ -14,7 +14,7 @@
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
-| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · 서버 없음(네이티브 ⇄ JS 경계) · 결정 **14건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **15건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
+| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · 서버 없음(네이티브 ⇄ JS 경계) · 결정 **14건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **14건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
 | [`PLAN.md`](./PLAN.md) | 착수 순서(리뷰 → Phase 0 스파이크 ~ 8) · 완료 기준 · 막는 미결정 | ✅ 2026-10-06 |
 | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 2026-10-06 · 설계 초안(미결정 다수) |
 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) | 감지(접근성 · 사용 기록) · 오버레이 · 알람 · 앱 목록 · Expo 네이티브 · 권한 온보딩 · 🔴 Play 접근성 정책 · Phase 0 스파이크 | 🔨 2026-10-06 · 정책 원문 직접 대조(§8) · 사례 조사 반영 |
@@ -22,7 +22,7 @@
 | [`ORIGINAL_BRIEF.md`](./ORIGINAL_BRIEF.md) | 🔴 **원본 기획서 원문. 정본이 아니다** | ✅ 2026-10-06 |
 | [`README.md`](./README.md) | 이 색인 | ✅ 2026-10-06 |
 | [`review/2026-10-06-decisions.md`](./review/2026-10-06-decisions.md) | 사용자 결정 원문 기록(#10 · 읽은 범위). 정본은 CLAUDE §14 | ✅ 2026-10-06 |
-| [`review/2026-10-06-bm-proposal.md`](./review/2026-10-06-bm-proposal.md) | BM 제안(무료 1+1 · 보상형 칸 · 평생 Pro). 경쟁 앱 7종 · 자릿수 추정. 정본 아님 · 🔄 2026-10-07 사용자가 구독 안으로 바꿔 채택(CLAUDE #15 · #16) | ✅ 2026-10-06 · 이력 |
+| [`review/2026-10-06-bm-proposal.md`](./review/2026-10-06-bm-proposal.md) | BM 제안(무료 1+1 · 보상형 칸 · 평생 Pro). 경쟁 앱 7종 · 자릿수 추정. 정본 아님 · 🔄 2026-10-07 사용자가 구독(#15)을 거쳐 **유료 앱(#18)** 으로 정했다 | ✅ 2026-10-06 · 이력 |
 | [`review/2026-10-06-play-policy.md`](./review/2026-10-06-play-policy.md) | Play 정책 실제 반려 · 통과 사례(반려 3 · 통과 등록정보 8) · 판정 · 설계로 옮길 것. 정본 아님 | ✅ 2026-10-06 |
 | [`../.claude/skills/README.md`](../.claude/skills/README.md) | 스킬 색인. 이식 4종 · 나중에 가져올 것 · 안 가져오는 것 | ✅ 2026-10-06 |
 
@@ -37,7 +37,7 @@
 | `EDGE_CASES.md` | 첫 버그 · Phase 4 | ❌ |
 | `POLISH_BACKLOG.md` | 첫 "알면서 남겨 둔 것" | ❌ |
 | `OTA_SYSTEM.md` · `BUILD.md` · `OPEN_SOURCE_NOTICE.md` · `STORE_LISTING.md` · `legal/` | Phase 6 ~ 7 | ❌ |
-| `MONETIZATION_SYSTEM.md` | Phase 6(구독 · 결정 #15: 상품 · 체험 · 전환 동의 · 약관 · 결제 라이브러리) | ❌ ~~광고(#12)~~ → 구독(#15 · #16) |
+| ~~`MONETIZATION_SYSTEM.md`~~ | 🚫 결정 #18(유료 앱 · 앱 안 결제 없음)로 따로 둘 내용이 없다. 가격 · 판매 규칙은 CLAUDE §7 이 정본 | ~~광고(#12)~~ → ~~구독(#15)~~ → 유료 앱(#18) |
 | `DISTRIBUTION_POLICY.md` | Phase 6(145개국 · 32개국을 닫은 이유 · 결정 #14 · `PRE_LAUNCH_CHECK.md` §1) | ❌ |
 
 ---
