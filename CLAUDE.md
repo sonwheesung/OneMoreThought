@@ -10,6 +10,7 @@
 > 하루를 닫고 다시 여는 규칙은 `C:\project\common\WORKLIST_HANDOVER.md`.
 > **세션 협업 규칙**: `C:\project\common\SESSION_PROTOCOL.md` (형제 앱과 공유하는 정본)
 > **한국어 문장 규칙**: `C:\project\common\KOREAN_WRITING.md` (새로 쓰는 글에 적용한다)
+> **비밀값 다루기**: `C:\project\common\SECRET_HANDLING.md` (🔴 이 레포는 **공개 저장소**다. push 전에 스테이징을 본다 · 결정 #11)
 
 작성일: 2026-10-06 · 원본 기획서("행동 개입 앱 기획서")를 프로젝트 문서 체계로 옮긴 것.
 기획서 원문은 [`docs/ORIGINAL_BRIEF.md`](./docs/ORIGINAL_BRIEF.md) 에 보존돼 있고 **정본이 아니다**. 인용은 `기획서 §N` 으로 한다.
@@ -252,6 +253,7 @@ OneMoreThought/
 - ⑤ 커밋 형식의 정본은 `C:\project\common\COMMIT_CONVENTION.md` 다. 여기에 베껴 적지 않는다.
 - ~~사용자가 요청하지 않았으면 **push 하지 않는다**(`COMMIT_CONVENTION.md` §5).~~ → **커밋 · push 는 판단해서 한다**(2026-10-06 사용자 위임 · 원문 *"커밋, 푸쉬는 자유롭게 너의 판단하에 하는걸로"*). 작업 단위가 끝나고 검증이 통과하면 커밋하고 `origin` 에 push 한다.
   🔴 위임 밖: force push · 이력 재작성 · 브랜치 · 태그 삭제는 먼저 묻는다(`common/SESSION_PROTOCOL.md` §2 "되돌릴 수 있나").
+  🔴 **원격은 공개 저장소다**(결정 #11). push 전마다 스테이징에 비밀값 · 키스토어 · `BUSINESS_INFO` 내용 · 개인정보(주소 · 전화 · 계좌 · 주민번호)가 없는지 본다. 값을 출력하지 않는 명령으로 본다(`SECRET_HANDLING.md` §1).
 - 하루를 닫을 때 `worklist-YYMMDD.md`(다음 작업일)를 쓴다(`WORKLIST_HANDOVER.md`).
 - 화면을 바꾸거나 새로 만들기 전에 전역 `ui-design-reference` 스킬로 레퍼런스를 먼저 본다.
 - 🔴 Play 정책 · Android API 사실은 공식 출처로 확인하고 `docs/ANDROID_PLATFORM.md` 에 URL 과 날짜를 붙인다(`DOC_DISCIPLINE.md` §8).
@@ -290,6 +292,10 @@ OneMoreThought/
 - 근거: 같은 용도의 앱이 접근성으로 여럿 게시돼 있고 찾은 반려는 전부 공개 문구 절차였다(`docs/review/2026-10-06-play-policy.md`). 사용 기록 폴링은 지연이 약 800ms 로 늘어 대상 앱 화면이 먼저 보인다.
 - 대가: Play 접근성 선언 · 영상 · 공개 화면이 출시 차단 항목이 된다. Android 17 고급 보호 모드 기기에서는 실행 전 확인이 동작하지 않는다(대체 경로는 미결정 P). 정책이 더 조여지면 방식을 다시 연다.
 - 🔴 Phase 0 스파이크(`docs/ANDROID_PLATFORM.md` §9 S1 ~ S4)가 실기기에서 막히면 이 결정을 다시 연다.
+
+**#11 커밋 · push 는 세션 판단 · 원격은 공개 저장소다 (2026-10-06)** 사용자 원문: *"커밋, 푸쉬는 자유롭게 너의 판단하에 하는걸로 메모리에 저장해놔"* · *"공개로 되어있어"*(원격 `github.com/sonwheesung/OneMoreThought`).
+형제 `tts_sentence` 결정 #13 과 같은 조건이다. 그래서 push 전 스테이징 점검을 §13 에 박았다. 위임 밖: force push · 이력 재작성 · 브랜치 · 태그 삭제.
+대가: 기획서 원문(`docs/ORIGINAL_BRIEF.md`) · 설계 · 결정 로그가 누구에게나 보인다(형제 mission · Re:Read 도 기획서 원문을 공개 레포에 두고 있다). 커밋 메타데이터의 작성자 이메일도 공개다(형제 전부 같다).
 
 ### ⚠ 미결정
 
