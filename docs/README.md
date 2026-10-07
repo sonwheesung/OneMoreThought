@@ -47,16 +47,17 @@
 
 ## 2. 구현 현황
 
-**2026-10-06 기준. 문서 체계만 있다. 코드 0줄.** Phase 정의는 [`PLAN.md`](./PLAN.md).
+**2026-10-08 기준. Phase 0 스파이크(S24 실측) · Phase 1 판정 순수 모듈까지.** Phase 정의는 [`PLAN.md`](./PLAN.md).
 
 ### 앱
 
 | 영역 | 상태 | 비고 |
 |---|---|---|
-| Expo 부트(SDK 54 · expo-router · TS strict · Metro **8095**) | ✅ 2026-10-08 | Phase 0 · `verify` 5단계 |
+| Expo 부트(SDK 54 · expo-router · TS strict · Metro **8095**) | ✅ 2026-10-08 | Phase 0 · `verify` 8단계(§3) |
 | 네이티브 모듈 골격 · 개발 빌드 | 🔨 2026-10-08 | Phase 0 · `modules/intervention`(접근성 서비스 · 오버레이 · 사용 기록 · 앱 목록 · 고급 보호 모드) · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §6 |
-| 감지 · 오버레이 스파이크 S1 ~ S7 | 🔨 2026-10-08 · 실측 전 | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
-| 규칙 판정 · 로컬 DB | ❌ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) |
+| 감지 · 오버레이 스파이크 S1 ~ S7 | 🔨 2026-10-08 · S24 한 대 실측(삼성 외 기기 · 절전은 남음) | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
+| 하루 경계 `lib/day.ts` · 판정 순수 모듈 `lib/rules.ts` | ✅ 2026-10-08(TS) | Phase 1 · `check:day` · `check:rules` · 시험표 `tests/rules-cases.json` |
+| 판정 Kotlin(같은 시험표) · 기기 규칙 캐시 · 기록 대기열 | ❌ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) · ~~로컬 DB~~ → 결정 #30 |
 | 실행 전 확인(홈 · 만들기 · 확인 화면 · 권한 온보딩) | ❌ | Phase 2 |
 | 실행 확인(알람 · 알림 · 오늘 ✓) | ❌ | Phase 3 |
 
@@ -64,8 +65,8 @@
 
 | 영역 | 상태 | 비고 |
 |---|---|---|
-| 앱 서버 | 🚫 | 결정 #5 · 기획서 §20 |
-| common_server | ⏸ | 미결정 I |
+| 앱 서버 | ~~🚫 결정 #5~~ → ❌ Phase 1 | 결정 #30 · 조각 Supabase 이 앱 스키마 · mission 승계(스키마 생성은 그날 사용자 확인) |
+| common_server | ⏳ | 결정 #20 · 진단 · 문의 첨부는 공용 서버 세션 합의 대기 |
 
 ### 외부
 
@@ -83,7 +84,7 @@
 > `test` 스킬이 이 절을 **읽어서** 그대로 돈다. 명령을 스킬에 복사하지 않는다(`common/DOC_SYSTEM.md` §2).
 > 새 가드를 만들면 여기에 명령을 추가하는 것까지가 완료다.
 
-한 방: **`npm run verify`**. 아래 **6개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
+한 방: **`npm run verify`**. 아래 **8개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
 
 | # | 명령 | 무엇 | 정본 |
 |---|---|---|---|
@@ -92,9 +93,11 @@
 | 3 | `npm run check:chars` | 제어문자 스윕(바이트로 읽는다 · 줄 중간 CR · 0x08 등) · SELF-TEST 8케이스 | mission · Re:Read 승계 |
 | 4 | `npm run check:manifest` | 금지 권한 5종이 막혀 있다 · 모듈이 요청하지 않는다 · 접근성 서비스가 창 내용을 못 읽는다 · 접근성 도구로 신고하지 않는다 · Kotlin 이 창 내용 · 접근성 동작 API 를 안 부른다 · 변이 8종 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §2 · §8.6 |
 | 5 | `npm run check:strike` | 취소선 `~~` 가 문단 안에서 짝이 맞는다(여러 줄 취소선 허용 · 표 줄 · 코드 블록 · 인라인 코드 제외) · 변이 8종 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §5 · 2026-10-08 세 번 안 닫았다 |
-| 6 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
+| 6 | `npm run check:day` | 하루 경계(자정 · 결정 #26) · 요일(월=0) · 월말 · 윤년 · 서머타임 전환일 날짜 이동 · 없는 날짜 거부 · 시간대 6개(서울 · 뉴욕 · 로드하우 · 키리티마티 · 파고파고 · UTC) · 변이 4종(변이마다 어느 한 시간대에서는 잡힌다) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §2 · mission 승계 |
+| 7 | `npm run check:rules` | 판정 시험표 `tests/rules-cases.json`(시간대 안 · 자정 넘김은 시작한 날 요일 · 통과 유예 · 겹치면 id 정렬 뒤 seed 로 하나 · 실행 확인 알림 · 놓침) · 시간대 4개 · 변이 3종. 🔴 Kotlin 도 같은 표를 통과해야 한다(⏸ Phase 1) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §3 · §4 · CLAUDE §5-8 |
+| 8 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
 
-예정 가드: `check:day`(Phase 1 · `lib/day.ts`) · `check:rules`(TS ⇄ Kotlin 같은 시험표) · `check:i18n`.
+예정 가드: `check:rules` 의 Kotlin 쪽(같은 시험표 · Phase 1) · `check:i18n`.
 
 **개발 빌드(가드 밖 · 이 앱은 처음부터 이것으로만 확인한다)** 감지가 네이티브라 Expo Go 로는 돌지 않는다.
 1. `npx expo prebuild --platform android --no-install`(`android/` 는 커밋하지 않는다 · CNG). ⚠ prebuild 가 `package.json` 에 `android` · `ios` 실행 스크립트를 넣는다. 지운다(`expo run:android` 는 실기기로 갈 수 있다 · mission 함정).

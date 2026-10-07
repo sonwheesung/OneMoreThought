@@ -1,0 +1,75 @@
+{
+  "_doc": "규칙 판정 시험표 · TS(lib/rules.ts · scripts/check-rules.mjs)와 Kotlin(접근성 서비스 · Phase 1 단위 시험)이 같은 답을 내야 한다(CLAUDE §5-8). 시각은 시간대 없는 로컬 벽시계다. 2026-10-09 는 금요일 · 10-10 토 · 10-12 월. days 비트: 월1 화2 수4 목8 금16 토32 일64 · 월~금 31 · 매일 127.",
+  "weekdays": [
+    { "at": "2026-10-09T12:00", "weekday": 4 },
+    { "at": "2026-10-10T12:00", "weekday": 5 },
+    { "at": "2026-10-11T12:00", "weekday": 6 },
+    { "at": "2026-10-12T12:00", "weekday": 0 }
+  ],
+  "inWindow": [
+    { "name": "업무시간 화 14:20", "rule": { "days": 31, "startMin": 540, "endMin": 1080 }, "at": "2026-10-06T14:20", "want": true },
+    { "name": "업무시간 끝 18:00 은 밖", "rule": { "days": 31, "startMin": 540, "endMin": 1080 }, "at": "2026-10-06T18:00", "want": false },
+    { "name": "업무시간 시작 09:00 은 안", "rule": { "days": 31, "startMin": 540, "endMin": 1080 }, "at": "2026-10-06T09:00", "want": true },
+    { "name": "업무시간 토요일은 밖", "rule": { "days": 31, "startMin": 540, "endMin": 1080 }, "at": "2026-10-10T14:20", "want": false },
+    { "name": "야식 매일 23:30", "rule": { "days": 127, "startMin": 1200, "endMin": 120 }, "at": "2026-10-09T23:30", "want": true },
+    { "name": "야식 매일 01:59", "rule": { "days": 127, "startMin": 1200, "endMin": 120 }, "at": "2026-10-10T01:59", "want": true },
+    { "name": "야식 매일 02:00 은 밖", "rule": { "days": 127, "startMin": 1200, "endMin": 120 }, "at": "2026-10-10T02:00", "want": false },
+    { "name": "야식 매일 12:00 은 밖", "rule": { "days": 127, "startMin": 1200, "endMin": 120 }, "at": "2026-10-10T12:00", "want": false },
+    { "name": "금요일만 20~02 · 토 01:00 은 안(시작한 날 · #26 C)", "rule": { "days": 16, "startMin": 1200, "endMin": 120 }, "at": "2026-10-10T01:00", "want": true },
+    { "name": "금요일만 20~02 · 금 01:00 은 밖(목요일 밤의 연장)", "rule": { "days": 16, "startMin": 1200, "endMin": 120 }, "at": "2026-10-09T01:00", "want": false },
+    { "name": "월~금 22~02 · 토 01:00 은 안(금요일 밤)", "rule": { "days": 31, "startMin": 1320, "endMin": 120 }, "at": "2026-10-10T01:00", "want": true },
+    { "name": "월~금 22~02 · 월 01:00 은 밖(일요일 밤)", "rule": { "days": 31, "startMin": 1320, "endMin": 120 }, "at": "2026-10-12T01:00", "want": false },
+    { "name": "시작 == 끝 은 언제나 밖", "rule": { "days": 127, "startMin": 600, "endMin": 600 }, "at": "2026-10-09T10:00", "want": false }
+  ],
+  "isPassed": [
+    { "name": "통과 없음", "entry": null, "nowMs": 1000000, "graceMin": 1, "want": false },
+    { "name": "앞에 있는 중", "entry": { "leftAtMs": null }, "nowMs": 1000000, "graceMin": 1, "want": true },
+    { "name": "벗어나고 59초", "entry": { "leftAtMs": 1000000 }, "nowMs": 1059000, "graceMin": 1, "want": true },
+    { "name": "벗어나고 61초 · 유예 1분", "entry": { "leftAtMs": 1000000 }, "nowMs": 1061000, "graceMin": 1, "want": false },
+    { "name": "벗어나고 4분 · 유예 5분", "entry": { "leftAtMs": 1000000 }, "nowMs": 1240000, "graceMin": 5, "want": true }
+  ],
+  "pickIntercept": [
+    {
+      "name": "겹치면 seed 0 → id 순 첫째",
+      "rules": [
+        { "id": "b", "kind": "intercept", "name": "야식", "enabled": true, "days": 127, "startMin": 1200, "endMin": 120, "targets": ["com.youtube"], "message": "B", "updatedAt": 2 },
+        { "id": "a", "kind": "intercept", "name": "업무", "enabled": true, "days": 127, "startMin": 0, "endMin": 1439, "targets": ["com.youtube"], "message": "A", "updatedAt": 1 }
+      ],
+      "pkg": "com.youtube", "at": "2026-10-09T21:00", "seed": 0, "want": "a"
+    },
+    {
+      "name": "겹치면 seed 0.99 → id 순 둘째(무작위 하나 · #26 F)",
+      "rules": [
+        { "id": "b", "kind": "intercept", "name": "야식", "enabled": true, "days": 127, "startMin": 1200, "endMin": 120, "targets": ["com.youtube"], "message": "B", "updatedAt": 2 },
+        { "id": "a", "kind": "intercept", "name": "업무", "enabled": true, "days": 127, "startMin": 0, "endMin": 1439, "targets": ["com.youtube"], "message": "A", "updatedAt": 1 }
+      ],
+      "pkg": "com.youtube", "at": "2026-10-09T21:00", "seed": 0.99, "want": "b"
+    },
+    {
+      "name": "꺼진 규칙 · 다른 앱 · 시간 밖은 null",
+      "rules": [
+        { "id": "a", "kind": "intercept", "name": "업무", "enabled": false, "days": 127, "startMin": 0, "endMin": 1439, "targets": ["com.youtube"], "message": "A", "updatedAt": 1 },
+        { "id": "c", "kind": "intercept", "name": "업무", "enabled": true, "days": 127, "startMin": 540, "endMin": 1080, "targets": ["com.instagram"], "message": "C", "updatedAt": 1 },
+        { "id": "d", "kind": "intercept", "name": "업무", "enabled": true, "days": 127, "startMin": 540, "endMin": 1080, "targets": ["com.youtube"], "message": "D", "updatedAt": 1 }
+      ],
+      "pkg": "com.youtube", "at": "2026-10-09T21:00", "seed": 0.5, "want": null
+    },
+    {
+      "name": "실행 확인 규칙은 실행 전 확인에 안 걸린다",
+      "rules": [
+        { "id": "k", "kind": "check", "name": "일기", "enabled": true, "days": 127, "startMin": 1380, "targets": ["com.youtube"], "message": "K", "updatedAt": 1 }
+      ],
+      "pkg": "com.youtube", "at": "2026-10-09T23:30", "seed": 0, "want": null
+    }
+  ],
+  "checkVerdict": [
+    { "name": "23:00 · 오늘 안 열었다 → 알림", "rule": { "kind": "check", "enabled": true, "days": 127, "startMin": 1380 }, "at": "2026-10-09T23:00", "firstOpened": null, "notified": false, "want": "notify" },
+    { "name": "23:09 · 창 안 → 알림", "rule": { "kind": "check", "enabled": true, "days": 127, "startMin": 1380 }, "at": "2026-10-09T23:09", "firstOpened": null, "notified": false, "want": "notify" },
+    { "name": "23:10 · 창 끝 → 놓침(버림 · #28 J)", "rule": { "kind": "check", "enabled": true, "days": 127, "startMin": 1380 }, "at": "2026-10-09T23:10", "firstOpened": null, "notified": false, "want": "missed" },
+    { "name": "18:32 에 열었다 → 아무것도 안 함", "rule": { "kind": "check", "enabled": true, "days": 127, "startMin": 1380 }, "at": "2026-10-09T23:00", "firstOpened": "2026-10-09T18:32", "notified": false, "want": "already" },
+    { "name": "이미 알렸다 → 하루 1회(#4)", "rule": { "kind": "check", "enabled": true, "days": 127, "startMin": 1380 }, "at": "2026-10-09T23:05", "firstOpened": null, "notified": true, "want": "notified" },
+    { "name": "22:59 → 아직", "rule": { "kind": "check", "enabled": true, "days": 127, "startMin": 1380 }, "at": "2026-10-09T22:59", "firstOpened": null, "notified": false, "want": "before" },
+    { "name": "평일만 · 토요일 → 오늘 아님", "rule": { "kind": "check", "enabled": true, "days": 31, "startMin": 1380 }, "at": "2026-10-10T23:00", "firstOpened": null, "notified": false, "want": "not_today" },
+    { "name": "꺼진 규칙", "rule": { "kind": "check", "enabled": false, "days": 127, "startMin": 1380 }, "at": "2026-10-09T23:00", "firstOpened": null, "notified": false, "want": "off" }
+  ]
+}
