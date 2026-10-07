@@ -513,4 +513,4 @@ OneMoreThought/
 - ✅ 2026-10-08 Phase 1: `lib/day.ts` · `lib/rules.ts` + `check:day` · `check:rules`(같은 시험표를 Kotlin 도 읽는다) · `docs/DATABASE.md` · `server/` 골격 · 조각 DB `intervene` 스키마 적용 · 로컬 e2e 통과 · 공용 서버 `app_code` 등록(그쪽).
 - ✅ 2026-10-08 Kotlin 판정 `RuleJudge.kt` 가 같은 시험표를 시간대 4개에서 통과(`check:rules:kt` · 양성 대조 FAIL 확인). 공용 서버 디스코드 진단 알림 채널 연결 · 배포 끝(그쪽 · 결정 #32 그대로).
 - ✅ 2026-10-08 기기 `rules.json`(`RuleStore`) · `queue.jsonl`(`EventQueue`) · 접근성 서비스가 캐시 + `RuleJudge` 로 판정 · 확인 결과를 대기열에 · 앱이 기기 토큰으로 서버와 동기화 · Vercel 배포.
-- 🔴 다음(이전 계획): 기기 `rules.json` · `queue.jsonl`(스파이크 `SpikeStore` 대체) · Vercel `vg-intervene-sync` 배포 · 앱 ⇄ 서버 실기기 연결(기기 토큰 실측).
+- 🔴 다음: 실기기 확인(`docs/PLAN.md` Phase 1 "실기기 순서") → Phase 1 닫기 → Phase 2 화면(`ui-design-reference` 먼저).
