@@ -12,9 +12,10 @@
 | 설계(이 문서) | ✅ 2026-10-08 | §6 이름은 결정 #31 |
 | 기기 규칙 캐시(`rules.json`) | ❌ | Phase 1 · 스파이크 `SpikeStore` 를 대체 |
 | 기록 대기열(`queue.jsonl`) | ❌ | Phase 1 |
-| `server/` 골격 · API | ❌ | Phase 1 · mission `server/` 복사 |
-| 조각 DB `intervene` 스키마 · 전용 역할 | ❌ | 🔴 그날 사용자 확인 + 조각 세션 통지(결정 #23) |
-| Vercel 배포 | ❌ | 이름을 정하면 URL 이 굳는다 |
+| `server/` 골격 · API 7개 | ✅ 2026-10-08 | mission 승계 · 로컬 e2e 통과(AUTH_STUB · 실제 조각 DB) |
+| 조각 DB `intervene` 스키마 · 전용 역할 | ✅ 2026-10-08 | 결정 #31 그날 확인 · 0001 · 조각 `public` 앞뒤 같음 · `db:check` 29항목. 🔴 조각 세션이 떠 있지 않아 통지는 이 행 · CLAUDE §15 · 사용자 보고로 남겼다 |
+| Vercel 배포 | ❌ | `vg-intervene-sync`(결정 #31) |
+| 공용 서버 `app_code` | ✅ 2026-10-08 | 그쪽 등록. 기기 토큰 → `/auth/me` 실측은 앱이 붙을 때 △ |
 
 ## 1. 구조
 
@@ -107,7 +108,7 @@
 | `PUT /api/device` | 기기 정보 |
 | `DELETE /api/me` | 이 기기(subject)의 행 전부 지우기 |
 
-- 신원: `Authorization: Bearer <기기 토큰>` → 공용 서버 `GET /api/v1/auth/me`(`x-app-code: intervene`)로 `subject.id` 를 받는다. 60초 기억. 🔴 공용 서버가 응답하지 않으면 503 이지 401 이 아니다(mission §1.1 승계). △ 기기 토큰으로 `/auth/me` 가 같은 모양을 주는지는 실측 전이다.
+- 신원: `Authorization: Bearer <기기 토큰>` → 공용 서버 `GET /api/v1/auth/me` 로 `subject.id` 를 받는다. ~~`x-app-code` 헤더~~ 는 공용 서버가 보지 않는다. 앱 코드는 토큰 클레임에서 읽고 주체의 app_code 와 둘 다 맞아야 한다(2026-10-08 공용 서버 세션 답). 60초 기억. 🔴 공용 서버가 응답하지 않으면 503 이지 401 이 아니다(mission §1.1 승계). △ 기기 토큰으로 `/auth/me` 가 같은 모양을 주는지는 실측 전이다.
 - 운영에서 인증 우회 플래그는 무시한다(mission 승계).
 
 ## 5. 보안(mission §1.2 승계 · 두 겹)
