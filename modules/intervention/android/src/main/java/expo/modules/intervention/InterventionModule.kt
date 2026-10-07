@@ -31,9 +31,38 @@ class InterventionModule : Module() {
       enabled.split(':').any { it.equals(me, ignoreCase = true) }
     }
 
-    /** 🔴 공개 화면(§7.1)에서 동의를 받은 뒤에만 부른다 */
+    /**
+     * 🔴 공개 화면(§7.1)에서 동의를 받은 뒤에만 부른다.
+     * 접근성 목록을 열면서 우리 항목을 강조한다(ANDROID_PLATFORM §7.2).
+     * 상세 화면 직행(ACCESSIBILITY_DETAILS_SETTINGS)은 Android 13+ 에서 시스템 권한 앱만 쓸 수 있어 쓰지 않는다.
+     * 강조 인자(:settings:fragment_args_key)는 비공식이다. 제조사가 무시하면 목록 첫 화면이 열릴 뿐이다.
+     */
     Function("openAccessibilitySettings") {
-      context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+      val key = ComponentName(context, InterventionService::class.java).flattenToString()
+      // ① 우리 서비스 상세로 직행 시도. 삼성 One UI 는 서비스가 "설치된 앱" 한 단계 아래에 있어
+      //    목록 강조(②)가 먹을 줄이 첫 화면에 없다(📱 갤럭시 S24 · Android 16 · 2026-10-08).
+      //    일반 앱에 막혀 있으면(시스템 권한) 예외 · 또는 설정이 스스로 목록으로 돌린다 → ② 로.
+      val details = Intent("android.settings.ACCESSIBILITY_DETAILS_SETTINGS")
+        .putExtra(Intent.EXTRA_COMPONENT_NAME, key)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      val opened = try {
+        if (details.resolveActivity(context.packageManager) != null) {
+          context.startActivity(details)
+          true
+        } else false
+      } catch (e: Exception) {
+        SpikeStore.appendLog(context, org.json.JSONObject().put("kind", "a11yDetailsFailed").put("error", e.toString()))
+        false
+      }
+      // ② 목록 + 강조(비공식 인자)
+      if (!opened) openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), key)
+      // ③ 설정 위에 경로 안내. 삼성은 강조가 안 먹는다(📱 갤럭시 S24 · 2026-10-08). 토스트는 권한이 필요 없다
+      if (!opened) {
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+          android.widget.Toast.makeText(context, R.string.intervention_settings_path, android.widget.Toast.LENGTH_LONG).show()
+        }, 600)
+      }
+      SpikeStore.appendLog(context, org.json.JSONObject().put("kind", "a11ySettings").put("route", if (opened) "details" else "list"))
     }
 
     Function("setSpikeRule") { targets: List<String>, message: String ->
@@ -46,8 +75,14 @@ class InterventionModule : Module() {
     // ── 사용 기록(기능 B · S5) ──
     Function("hasUsageAccess") { hasUsageAccess() }
 
+    /** 우리 앱 항목을 지정해 연다(package: 데이터 + 강조 인자). 받는 화면이 없으면 목록 첫 화면 */
     Function("openUsageAccessSettings") {
-      context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+      val direct = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, android.net.Uri.parse("package:${context.packageName}"))
+      if (direct.resolveActivity(context.packageManager) != null) {
+        openSettings(direct, context.packageName)
+      } else {
+        openSettings(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS), context.packageName)
+      }
     }
 
     /** 오늘(기기 시간 자정 · 미결정 B 추천안) 이후 그 앱이 처음 앞에 나온 시각(ms). 없으면 null */
@@ -93,6 +128,19 @@ class InterventionModule : Module() {
     }
 
     Function("sdkInt") { Build.VERSION.SDK_INT }
+  }
+
+  /** 설정 화면을 열면서 목록에서 우리 항목을 강조하라고 알린다(비공식 · 무시돼도 안전) */
+  private fun openSettings(intent: Intent, highlightKey: String) {
+    val args = android.os.Bundle().apply { putString(":settings:fragment_args_key", highlightKey) }
+    intent.putExtra(":settings:fragment_args_key", highlightKey)
+      .putExtra(":settings:show_fragment_args", args)
+      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    try {
+      context.startActivity(intent)
+    } catch (e: Exception) {
+      context.startActivity(Intent(intent.action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
   }
 
   private fun hasUsageAccess(): Boolean {

@@ -26,6 +26,7 @@
     "notSees": "What it does not check: screen content, anything you type, or apps you did not choose.",
     "why": "Why: to ask you once when you open an app you chose, at the time you set.",
     "where": "Where it stays: on this device only. Nothing is sent anywhere.",
+    "path": "Where to turn it on: Accessibility → Installed apps (or Downloaded apps) → App check-in",
     "later": "Not now",
     "agree": "Agree and open settings"
   }

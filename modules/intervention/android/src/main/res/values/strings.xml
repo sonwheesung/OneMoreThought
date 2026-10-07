@@ -5,4 +5,5 @@
   <string name="intervention_service_description">Detects only the name of the app that comes to the front, so it can ask you once before opening an app you chose. It does not read screen content or anything you type. Nothing leaves this device.</string>
   <string name="intervention_cancel">Cancel</string>
   <string name="intervention_open">Open</string>
+  <string name="intervention_settings_path">Tap Installed apps (or Downloaded apps) → App check-in → turn it on</string>
 </resources>

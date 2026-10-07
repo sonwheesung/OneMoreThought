@@ -193,6 +193,7 @@ export default function Spike() {
           <Text style={styles.body}>{t('disclosure.notSees')}</Text>
           <Text style={styles.body}>{t('disclosure.why')}</Text>
           <Text style={styles.body}>{t('disclosure.where')}</Text>
+          <Text style={styles.small}>{t('disclosure.path')}</Text>
           <View style={styles.row}>
             <Pressable style={[styles.btn, styles.flex]} onPress={() => setDisclosure(false)}>
               <Text style={styles.btnText}>{t('disclosure.later')}</Text>
