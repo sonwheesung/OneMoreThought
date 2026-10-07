@@ -11,6 +11,7 @@
 > **세션 협업 규칙**: `C:\project\common\SESSION_PROTOCOL.md` (형제 앱과 공유하는 정본)
 > **한국어 문장 규칙**: `C:\project\common\KOREAN_WRITING.md` (새로 쓰는 글에 적용한다)
 > **비밀값 다루기**: `C:\project\common\SECRET_HANDLING.md` (🔴 이 레포는 **공개 저장소**다. push 전에 스테이징을 본다 · 결정 #11)
+> **사용자 결정 묻기**: `C:\project\common\USER_DECISIONS.md` (🔴 남은 결정은 글로 나열하지 말고 하나하나 선택지로 묻는다 · 2026-10-08 사용자 지시)
 
 작성일: 2026-10-06 · 원본 기획서("행동 개입 앱 기획서")를 프로젝트 문서 체계로 옮긴 것.
 기획서 원문은 [`docs/ORIGINAL_BRIEF.md`](./docs/ORIGINAL_BRIEF.md) 에 보존돼 있고 **정본이 아니다**. 인용은 `기획서 §N` 으로 한다.
