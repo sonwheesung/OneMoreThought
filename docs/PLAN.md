@@ -62,9 +62,12 @@
 - 다일차 실기기 검증(`wireless-debug` 이식): 자정 넘김 · 시간대 변경 · 앱 삭제 · 권한 철회
 - `devils-advocate` 한 번 더(출시 결정 전)
 
-## Phase 5 — (선택) common_server 연동
+## Phase 5 — common_server 연동 · 진단(결정 #20 · ~~선택~~ → 필수)
 
-- ⚠ 미결정 I 가 "붙인다"일 때만. `app_code` 등록 · SDK 복사 · 공지 · 문의 · 버전 게이트 · `common/PRE_LAUNCH_CHECK.md` §6 행
+- ~~⚠ 미결정 I 가 "붙인다"일 때만.~~ → 결정 #20 으로 붙인다. `app_code` 등록 · SDK 복사(기기 토큰 `ensureDeviceSession`) · 문의 · (공지 · 버전 게이트) · `common/PRE_LAUNCH_CHECK.md` §6 행
+- 진단(결정 #20): 기기 안 진단 기록(링 버퍼 · 실패 신호 10종 · JS 전역 크래시 핸들러 · Kotlin 미처리 예외 · `ApplicationExitInfo`) · 하루 1회 요약 · 문의 첨부 + 미리보기 · 설정에서 끄기
+- 🔴 공용 서버 쪽 변경(진단 수집 경로 · 문의 첨부 필드 · 디스코드 기준 알림)은 **공용 서버 세션 합의가 먼저**다(2026-10-08 요청)
+- 가드: 자동 요약 페이로드에 패키지 이름 · 메시지가 섞이지 않는다(`check:diagnostics` 예정)
 
 ## Phase 6 — 출시 준비
 
