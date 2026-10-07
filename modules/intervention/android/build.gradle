@@ -13,3 +13,10 @@ android {
     versionName '0.1.0'
   }
 }
+
+// 규칙 판정 단위 시험(RuleJudgeTest · tests/rules-cases.json 을 TS 와 같이 읽는다 · CLAUDE §5-8)
+// org.json 은 Android 판이 JVM 시험에서 빈 껍데기라 진짜 구현을 시험에만 넣는다
+dependencies {
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.json:json:20240303'
+}

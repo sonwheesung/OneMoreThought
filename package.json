@@ -14,6 +14,7 @@
     "check:day": "node --disable-warning=ExperimentalWarning scripts/check-day.mjs",
     "check:docs": "node scripts/check-docs.mjs",
     "check:manifest": "node scripts/check-manifest.mjs",
+    "check:rules:kt": "node scripts/check-rules-kt.mjs",
     "check:server": "npm --prefix server run typecheck && npm --prefix server run check:migrations",
     "check:rules": "node --disable-warning=ExperimentalWarning scripts/check-rules.mjs",
     "check:strike": "node scripts/check-strike.mjs",

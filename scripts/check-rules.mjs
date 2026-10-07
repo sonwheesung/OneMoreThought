@@ -2,7 +2,7 @@
 /**
  * check:rules — 규칙 판정 시험표(`tests/rules-cases.json`) · `docs/RULE_SYSTEM.md` · CLAUDE §5-8 · 결정 #26 · #28.
  *
- * 🔴 같은 표를 Kotlin(접근성 서비스)도 통과해야 한다(Phase 1 Kotlin 단위 시험 · 아직 ⏸).
+ * 🔴 같은 표를 Kotlin(접근성 서비스)도 통과해야 한다(`RuleJudge.kt` · `npm run check:rules:kt` · 2026-10-08 ✅).
  * 🔴 시간대를 바꿔 자식 프로세스로 돈다(서머타임이 있는 뉴욕 · 로드하우 포함 · mission check-day 승계).
  *    표의 시각은 로컬 벽시계라 어느 시간대에서도 같은 답이어야 한다.
  * 🔴 양성 대조: 틀린 변이 구현을 같은 표에 넣어 FAIL 이 나는지 먼저 본다(못 잡는 표는 아무것도 안 보는 표다).

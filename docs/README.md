@@ -58,7 +58,8 @@
 | 네이티브 모듈 골격 · 개발 빌드 | 🔨 2026-10-08 | Phase 0 · `modules/intervention`(접근성 서비스 · 오버레이 · 사용 기록 · 앱 목록 · 고급 보호 모드) · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §6 |
 | 감지 · 오버레이 스파이크 S1 ~ S7 | 🔨 2026-10-08 · S24 한 대 실측(삼성 외 기기 · 절전은 남음) | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
 | 하루 경계 `lib/day.ts` · 판정 순수 모듈 `lib/rules.ts` | ✅ 2026-10-08(TS) | Phase 1 · `check:day` · `check:rules` · 시험표 `tests/rules-cases.json` |
-| 판정 Kotlin(같은 시험표) · 기기 규칙 캐시 · 기록 대기열 | ❌ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) · ~~로컬 DB~~ → 결정 #30 |
+| 판정 Kotlin(같은 시험표) | ✅ 2026-10-08 | `RuleJudge.kt` · `check:rules:kt` |
+| 기기 규칙 캐시 · 기록 대기열 | ❌ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) · ~~로컬 DB~~ → 결정 #30 |
 | 실행 전 확인(홈 · 만들기 · 확인 화면 · 권한 온보딩) | ❌ | Phase 2 |
 | 실행 확인(알람 · 알림 · 오늘 ✓) | ❌ | Phase 3 |
 
@@ -95,11 +96,15 @@
 | 4 | `npm run check:manifest` | 금지 권한 5종이 막혀 있다 · 모듈이 요청하지 않는다 · 접근성 서비스가 창 내용을 못 읽는다 · 접근성 도구로 신고하지 않는다 · Kotlin 이 창 내용 · 접근성 동작 API 를 안 부른다 · 변이 8종 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §2 · §8.6 |
 | 5 | `npm run check:strike` | 취소선 `~~` 가 문단 안에서 짝이 맞는다(여러 줄 취소선 허용 · 표 줄 · 코드 블록 · 인라인 코드 제외) · 변이 8종 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §5 · 2026-10-08 세 번 안 닫았다 |
 | 6 | `npm run check:day` | 하루 경계(자정 · 결정 #26) · 요일(월=0) · 월말 · 윤년 · 서머타임 전환일 날짜 이동 · 없는 날짜 거부 · 시간대 6개(서울 · 뉴욕 · 로드하우 · 키리티마티 · 파고파고 · UTC) · 변이 4종(변이마다 어느 한 시간대에서는 잡힌다) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §2 · mission 승계 |
-| 7 | `npm run check:rules` | 판정 시험표 `tests/rules-cases.json`(시간대 안 · 자정 넘김은 시작한 날 요일 · 통과 유예 · 겹치면 id 정렬 뒤 seed 로 하나 · 실행 확인 알림 · 놓침) · 시간대 4개 · 변이 3종. 🔴 Kotlin 도 같은 표를 통과해야 한다(⏸ Phase 1) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §3 · §4 · CLAUDE §5-8 |
+| 7 | `npm run check:rules` | 판정 시험표 `tests/rules-cases.json`(시간대 안 · 자정 넘김은 시작한 날 요일 · 통과 유예 · 겹치면 id 정렬 뒤 seed 로 하나 · 실행 확인 알림 · 놓침) · 시간대 4개 · 변이 3종. 🔴 Kotlin 도 같은 표를 통과한다(`check:rules:kt` · 아래) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §3 · §4 · CLAUDE §5-8 |
 | 8 | `npm run check:server` | 앱 서버 타입 검사 · 마이그레이션 SQL 의 모든 문장이 `intervene` 스키마 안(변이 9종 거부 · 조각 운영 DB 보호) | [`DATABASE.md`](./DATABASE.md) §5 · mission 승계 |
 | 9 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
 
-예정 가드: `check:rules` 의 Kotlin 쪽(같은 시험표 · Phase 1) · `check:i18n`.
+체인 밖 가드(느려서 `verify` 에 넣지 않는다 · 해당 파일을 고치면 반드시 같이 돌린다):
+- `npm run check:rules:kt`: Kotlin `RuleJudge.kt` 가 같은 시험표를 시간대 4개에서 통과하나(gradle 단위 시험 · 결과 XML 의 시험 수 · 실패 수를 읽는다 · `android/` 필요). `lib/rules.ts` · `lib/day.ts` · `RuleJudge.kt` · `tests/rules-cases.json` 을 고치면 돌린다. 양성 대조: 자정 넘김 변이 → FAIL(2026-10-08).
+- `npm --prefix server run e2e`: 로컬 서버(`AUTH_STUB=1` · 3900) ⇄ 실제 조각 DB 계약 시험. 서버 · 마이그레이션을 고치면 돌린다.
+
+예정 가드: `check:i18n` · `check:queue`.
 
 **개발 빌드(가드 밖 · 이 앱은 처음부터 이것으로만 확인한다)** 감지가 네이티브라 Expo Go 로는 돌지 않는다.
 1. `npx expo prebuild --platform android --no-install`(`android/` 는 커밋하지 않는다 · CNG). ⚠ prebuild 가 `package.json` 에 `android` · `ios` 실행 스크립트를 넣는다. 지운다(`expo run:android` 는 실기기로 갈 수 있다 · mission 함정).
