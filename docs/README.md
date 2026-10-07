@@ -10,7 +10,7 @@
 
 ## 1. 문서 목록
 
-`docs/` 바로 아래 **6개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **4개**(세는 법: `ls docs/review/*.md | wc -l`)
+`docs/` 바로 아래 **6개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **5개**(세는 법: `ls docs/review/*.md | wc -l`)
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
@@ -22,6 +22,7 @@
 | [`ORIGINAL_BRIEF.md`](./ORIGINAL_BRIEF.md) | 🔴 **원본 기획서 원문. 정본이 아니다** | ✅ 2026-10-06 |
 | [`README.md`](./README.md) | 이 색인 | ✅ 2026-10-06 |
 | [`review/2026-10-06-decisions.md`](./review/2026-10-06-decisions.md) | 사용자 결정 원문 기록(#10 · 읽은 범위). 정본은 CLAUDE §14 | ✅ 2026-10-06 |
+| [`review/2026-10-08-diagnostics-plan.md`](./review/2026-10-08-diagnostics-plan.md) | 진단 · 오류 보고 플랜(3층 · 실패 신호 10종 · 배구명가 선례 · 공용 서버 영향). 🔴 사용자 결정 전 · 정본 아님 | 🔨 2026-10-08 |
 | [`review/2026-10-08-gap-hunt-intervention.md`](./review/2026-10-08-gap-hunt-intervention.md) | 엣지 케이스 매트릭스(확인 화면 12 · 통과 10 · 기기 10 · 실행 확인 8) · 오늘 결함 2건의 공통 뿌리 · 평결 대기 8건. 정본 아님 | 🔨 2026-10-08 |
 | [`review/2026-10-06-bm-proposal.md`](./review/2026-10-06-bm-proposal.md) | BM 제안(무료 1+1 · 보상형 칸 · 평생 Pro). 경쟁 앱 7종 · 자릿수 추정. 정본 아님 · 🔄 2026-10-07 사용자가 구독(#15)을 거쳐 **유료 앱(#18)** 으로 정했다 | ✅ 2026-10-06 · 이력 |
 | [`review/2026-10-06-play-policy.md`](./review/2026-10-06-play-policy.md) | Play 정책 실제 반려 · 통과 사례(반려 3 · 통과 등록정보 8) · 판정 · 설계로 옮길 것. 정본 아님 | ✅ 2026-10-06 |
