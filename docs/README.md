@@ -14,7 +14,7 @@
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
-| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · 기기 정본 + 서버 사본(결정 #22) · 결정 **22건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **8건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
+| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · 기기 정본 + 서버 사본(결정 #22) · 결정 **23건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **5건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
 | [`PLAN.md`](./PLAN.md) | 착수 순서(리뷰 → Phase 0 스파이크 ~ 8) · 완료 기준 · 막는 미결정 | ✅ 2026-10-06 |
 | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 2026-10-06 · 설계 초안(미결정 다수) |
 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) | 감지(접근성 · 사용 기록) · 오버레이 · 알람 · 앱 목록 · Expo 네이티브 · 권한 온보딩 · 🔴 Play 접근성 정책 · Phase 0 스파이크 | 🔨 2026-10-06 · 정책 원문 직접 대조(§8) · 사례 조사 반영 |
@@ -83,7 +83,7 @@
 > `test` 스킬이 이 절을 **읽어서** 그대로 돈다. 명령을 스킬에 복사하지 않는다(`common/DOC_SYSTEM.md` §2).
 > 새 가드를 만들면 여기에 명령을 추가하는 것까지가 완료다.
 
-한 방: **`npm run verify`**. 아래 **5개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
+한 방: **`npm run verify`**. 아래 **6개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
 
 | # | 명령 | 무엇 | 정본 |
 |---|---|---|---|
@@ -91,7 +91,8 @@
 | 2 | `npm run lint` | `expo lint` | — |
 | 3 | `npm run check:chars` | 제어문자 스윕(바이트로 읽는다 · 줄 중간 CR · 0x08 등) · SELF-TEST 8케이스 | mission · Re:Read 승계 |
 | 4 | `npm run check:manifest` | 금지 권한 5종이 막혀 있다 · 모듈이 요청하지 않는다 · 접근성 서비스가 창 내용을 못 읽는다 · 접근성 도구로 신고하지 않는다 · Kotlin 이 창 내용 · 접근성 동작 API 를 안 부른다 · 변이 8종 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §2 · §8.6 |
-| 5 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
+| 5 | `npm run check:strike` | 취소선 `~~` 가 문단 안에서 짝이 맞는다(여러 줄 취소선 허용 · 표 줄 · 코드 블록 · 인라인 코드 제외) · 변이 8종 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §5 · 2026-10-08 세 번 안 닫았다 |
+| 6 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
 
 예정 가드: `check:day`(Phase 1 · `lib/day.ts`) · `check:rules`(TS ⇄ Kotlin 같은 시험표) · `check:i18n`.
 
