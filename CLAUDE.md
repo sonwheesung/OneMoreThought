@@ -424,6 +424,11 @@ OneMoreThought/
 - 근거: 사용자 판단(메모리 부담) · mission 과 같은 길. 참고로 알린 것: SQLite 자체는 수백 KB 수준이고, 오늘 Metro 가 죽은 원인은 PC 쪽 빌드 폴더 감시였다(`metro.config.js` 로 고침). 그래도 서버 정본 + 최소 캐시가 더 단순하다는 데 반대하지 않았다.
 - 대가: 규칙을 만들고 고치는 일이 서버에 닿아야 끝난다(오프라인이면 캐시 · 대기열에 넣고 나중에 올린다). 서버(Vercel) · 조각 DB 스키마 생성(🔴 그날 사용자 확인 + 조각 세션 통지) · 공용 서버 `app_code` 등록이 Phase 1 쪽으로 당겨진다.
 
+**#31 서버 이름: 스키마 `intervene` · Vercel `vg-intervene-sync` · 오늘 스키마 생성 확인 · `app_code` 지금 요청 (2026-10-08)** 선택 "intervene (Recommended)" · "vg-<스키마>-sync (Recommended)" · "오늘 바로 만들어도 된다"(추천안 아님) · "지금 요청 (Recommended)".
+- 근거: 서비스명(미결정 N)이 무엇이 되어도 어색하지 않은 기능 이름이다. 네이티브 모듈 `intervention` 과 맞는다. Vercel 이름은 mission(`vg-mission-sync`)의 꼴을 따른다. DB 역할은 `intervene_app`, 공용 서버 `app_code` 도 `intervene` 으로 요청한다.
+- 🔴 생성 확인은 **2026-10-08 하루치**다. 그날 못 하면 다시 묻는다. 조각 `public` 표 수 · 행 수를 적용 앞뒤로 비교하고, 조각 세션에 통지한다(결정 #23). `drizzle-kit push` 금지는 그대로다.
+- 대가: Vercel URL 이 첫 빌드에 들어가면 바꾸기 비싸다. 서비스명이 정해져도 서버 이름은 `intervene` 으로 남는다(사용자에게는 안 보인다).
+
 ### ⚠ 미결정
 
 세는 법: `grep -c "^| [A-Z] |" CLAUDE.md` (닫히면 `~~X~~` 로 취소선 처리해 자동으로 빠진다)

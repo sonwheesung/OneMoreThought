@@ -3,17 +3,17 @@
 > 정본 규칙: [`../CLAUDE.md`](../CLAUDE.md) §6(서버 경계) · 결정 #22 · #23 · #24 · #30. 판정 규칙은 [`RULE_SYSTEM.md`](./RULE_SYSTEM.md).
 > 작성 2026-10-08(Phase 1). 승계: mission `docs/SYNC_SYSTEM.md`(조각 DB 스키마 · 전용 역할 · 손 SQL · postgres.js). 다른 점은 **서버가 정본**이라는 것이다(mission 은 기기가 정본).
 >
-> 🔴 스키마 이름 · Vercel 프로젝트 이름 · 공용 서버 `app_code` 는 아직 정하지 않았다(§6). 이 문서에서는 `<schema>` 로 쓴다. 서비스명(미결정 N)을 박지 않는다.
+> 이름(결정 #31): 스키마 **`intervene`** · DB 역할 **`intervene_app`** · Vercel **`vg-intervene-sync`** · 공용 서버 `app_code` **`intervene`**(요청 중). 서비스명(미결정 N)을 박지 않는다.
 
 ## 0. 구현 현황
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| 설계(이 문서) | 🔨 2026-10-08 초안 | §6 질문 3개가 닫히면 확정 |
+| 설계(이 문서) | ✅ 2026-10-08 | §6 이름은 결정 #31 |
 | 기기 규칙 캐시(`rules.json`) | ❌ | Phase 1 · 스파이크 `SpikeStore` 를 대체 |
 | 기록 대기열(`queue.jsonl`) | ❌ | Phase 1 |
 | `server/` 골격 · API | ❌ | Phase 1 · mission `server/` 복사 |
-| 조각 DB `<schema>` 스키마 · 전용 역할 | ❌ | 🔴 그날 사용자 확인 + 조각 세션 통지(결정 #23) |
+| 조각 DB `intervene` 스키마 · 전용 역할 | ❌ | 🔴 그날 사용자 확인 + 조각 세션 통지(결정 #23) |
 | Vercel 배포 | ❌ | 이름을 정하면 URL 이 굳는다 |
 
 ## 1. 구조
@@ -28,9 +28,9 @@
       ▼
   앱 서버(server/ · Next.js · Vercel icn1)
       │ ① 공용 서버 /api/v1/auth/me → subject.id
-      │ ② <schema>_app 역할로 <schema>.* 만 읽고 쓴다
+      │ ② intervene_app 역할로 intervene.* 만 읽고 쓴다
       ▼
-  조각 운영 Supabase · 스키마 <schema>
+  조각 운영 Supabase · 스키마 intervene
 ```
 
 - **규칙의 정본은 서버다**(결정 #30). 기기의 `rules.json` 은 접근성 서비스가 인터넷 없이 바로 판정하기 위한 캐시다.
@@ -77,18 +77,18 @@
 - 크기 상한: ⚠ 1MB(placeholder · 2026-10-08). 넘으면 오래된 `prompt` · `check` 부터 버리고 진단에 `queue_trim` 을 남긴다. 규칙 편집(`rule_*`)은 버리지 않는다.
 - 🔴 메시지 원문은 `rule_put` 에만 있다. 사건마다 메시지를 다시 싣지 않는다(서버가 `ruleId` 로 잇는다 · 당시 문구는 §3 `rule_versions`).
 
-## 3. 서버 표(`<schema>`)
+## 3. 서버 표(`intervene`)
 
 모든 사용자 표에 `subject_id`(공용 서버 subject · 기기 토큰의 가명 번호)와 `received_at`(서버가 받은 시각)을 둔다. PK 는 `(subject_id, 기기 UUID)` 다.
 
 | 표 | PK | 내용 |
 |---|---|---|
-| `<schema>.rules` | `(subject_id, id)` | 현재 규칙. `kind` · `name` · `enabled` · `days` · `start_min` · `end_min` · `targets text[]` · `message` · `grace_min` · `updated_at` · `deleted_at`(tombstone · 기록의 `rule_id` 가 살아 있게 · CLAUDE §5-11) |
-| `<schema>.rule_versions` | `(subject_id, rule_id, updated_at)` | 규칙을 바꿀 때마다 한 줄. 어떤 문장이 취소를 끌어냈나를 당시 문구로 잇기 위해서다(결정 #24) |
-| `<schema>.prompt_events` | `(subject_id, id)` | 확인 화면 한 번 = 한 줄. `rule_id` · `pkg` · `shown_at` · `result` · `decide_ms` · `tz` · `day_key` |
-| `<schema>.check_days` | `(subject_id, rule_id, day_key)` | 실행 확인의 하루. `verdict` · `first_opened_at` · `notified_at` · `action` · `tz` |
-| `<schema>.devices` | `subject_id` | 처음 · 마지막 본 시각 · 기종 · SDK · 앱 버전 · 언어 · 시간대 · 고급 보호 모드 |
-| `<schema>._migrations` | `name` | 러너 기록 |
+| `intervene.rules` | `(subject_id, id)` | 현재 규칙. `kind` · `name` · `enabled` · `days` · `start_min` · `end_min` · `targets text[]` · `message` · `grace_min` · `updated_at` · `deleted_at`(tombstone · 기록의 `rule_id` 가 살아 있게 · CLAUDE §5-11) |
+| `intervene.rule_versions` | `(subject_id, rule_id, updated_at)` | 규칙을 바꿀 때마다 한 줄. 어떤 문장이 취소를 끌어냈나를 당시 문구로 잇기 위해서다(결정 #24) |
+| `intervene.prompt_events` | `(subject_id, id)` | 확인 화면 한 번 = 한 줄. `rule_id` · `pkg` · `shown_at` · `result` · `decide_ms` · `tz` · `day_key` |
+| `intervene.check_days` | `(subject_id, rule_id, day_key)` | 실행 확인의 하루. `verdict` · `first_opened_at` · `notified_at` · `action` · `tz` |
+| `intervene.devices` | `subject_id` | 처음 · 마지막 본 시각 · 기종 · SDK · 앱 버전 · 언어 · 시간대 · 고급 보호 모드 |
+| `intervene._migrations` | `name` | 러너 기록 |
 
 - 충돌: 규칙은 `updated_at` 이 큰 쪽이 이긴다. 기기는 하나뿐이라(계정 없음 · 기기 토큰) 실제로 겹칠 일은 오프라인 편집 뒤 늦게 올리는 경우뿐이다.
 - `check_days` 는 하루 한 줄이다. 같은 날 사건이 여럿 오면 칸을 채워 나간다(`notified_at` 은 처음 값을 지킨다 · 하루 1회 · 결정 #4).
@@ -107,18 +107,18 @@
 | `PUT /api/device` | 기기 정보 |
 | `DELETE /api/me` | 이 기기(subject)의 행 전부 지우기 |
 
-- 신원: `Authorization: Bearer <기기 토큰>` → 공용 서버 `GET /api/v1/auth/me`(`x-app-code: <app_code>`)로 `subject.id` 를 받는다. 60초 기억. 🔴 공용 서버가 응답하지 않으면 503 이지 401 이 아니다(mission §1.1 승계). △ 기기 토큰으로 `/auth/me` 가 같은 모양을 주는지는 실측 전이다.
+- 신원: `Authorization: Bearer <기기 토큰>` → 공용 서버 `GET /api/v1/auth/me`(`x-app-code: intervene`)로 `subject.id` 를 받는다. 60초 기억. 🔴 공용 서버가 응답하지 않으면 503 이지 401 이 아니다(mission §1.1 승계). △ 기기 토큰으로 `/auth/me` 가 같은 모양을 주는지는 실측 전이다.
 - 운영에서 인증 우회 플래그는 무시한다(mission 승계).
 
 ## 5. 보안(mission §1.2 승계 · 두 겹)
 
-- 서버는 조각 관리자 접속을 쓰지 않는다. **`<schema>_app` 역할**로 붙고 이 역할은 `<schema>` 스키마에만 권한이 있다. 조각 `public` 은 권한으로 막는다.
+- 서버는 조각 관리자 접속을 쓰지 않는다. **`intervene_app` 역할**로 붙고 이 역할은 `intervene` 스키마에만 권한이 있다. 조각 `public` 은 권한으로 막는다.
 - 관리자 접속값은 마이그레이션 스크립트만 쓰고, 실행할 때 조각 저장소의 env 파일에서 읽는다. 이 저장소로 복사하지 않는다(`common/SECRET_HANDLING.md` · 🔴 공개 저장소).
-- 🔴 `drizzle-kit push` 를 쓰지 않는다. 마이그레이션은 손 SQL(`server/db/migrations/NNNN_*.sql`)이고 러너는 `<schema>.` 밖을 건드리는 문장이 있으면 실행 전에 죽는다.
+- 🔴 `drizzle-kit push` 를 쓰지 않는다. 마이그레이션은 손 SQL(`server/db/migrations/NNNN_*.sql`)이고 러너는 `intervene.` 밖을 건드리는 문장이 있으면 실행 전에 죽는다.
 - 모든 표 RLS 켬 · `anon` · `authenticated` 권한 없음 · PostgREST 노출 목록에 넣지 않는다(`common/DRIZZLE_RLS_TRAP.md`).
-- 적용 뒤 `npm run db:check`(server): RLS · 익명 권한 · `<schema>_app` 이 `public` 을 못 읽는 것을 **실제로 읽어 보고** 잰다. 조각 `public` 표 수 · 행 수가 적용 앞뒤로 같은지 본다.
+- 적용 뒤 `npm run db:check`(server): RLS · 익명 권한 · `intervene_app` 이 `public` 을 못 읽는 것을 **실제로 읽어 보고** 잰다. 조각 `public` 표 수 · 행 수가 적용 앞뒤로 같은지 본다.
 
-## 6. 정할 것(Phase 1 · 사용자에게 선택지로 묻는다)
+## 6. ~~정할 것~~ → 결정 #31 로 닫혔다(2026-10-08)
 
 | 무엇 | 왜 지금 | 되돌리기 |
 |---|---|---|
