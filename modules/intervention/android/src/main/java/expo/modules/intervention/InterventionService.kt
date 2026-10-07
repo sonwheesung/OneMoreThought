@@ -33,6 +33,9 @@ import org.json.JSONObject
  *
  * 통과 상태(RULE_SYSTEM §3.3 · 미결정 D 추천안): [열기] 뒤 그 앱이 화면에서 벗어나고 GRACE_MS 가 지나면 끝난다.
  * 알림창 · 키보드 · 이 앱 자신의 창은 "벗어남"으로 치지 않는다.
+ *
+ * 확인 화면은 **액티비티**(InterventionActivity)로 띄운다(2026-10-08 · 대상 앱이 뒤에서 계속 돌던 문제).
+ * 0.8초 안에 그 화면이 안 뜨면(백그라운드 실행이 막힌 기기 △) 오버레이로 대신한다.
  */
 class InterventionService : AccessibilityService() {
 
@@ -45,8 +48,8 @@ class InterventionService : AccessibilityService() {
   private var overlay: View? = null
   private var overlayPkg: String? = null
 
-  /** [열기]로 통과시킨 패키지 → 화면에서 벗어난 시각(uptime). null 이면 아직 앞에 있다 */
-  private val passed = HashMap<String, Long?>()
+  private val passed get() = InterventionState.passed
+  private val main = android.os.Handler(android.os.Looper.getMainLooper())
   private var foreground: String? = null
 
   override fun onServiceConnected() {
@@ -61,6 +64,10 @@ class InterventionService : AccessibilityService() {
     if (pkg == foreground) return
     val prev = foreground
     foreground = pkg
+    // ⚠ 스파이크 진단: 확인 화면이 떠 있는 동안 앞에 나온 패키지(끼어든 창 찾기 · 2026-10-08). Phase 1 에서 뺀다(기둥 5)
+    if (InterventionState.activityAlive) {
+      SpikeStore.appendLog(this, JSONObject().put("kind", "fg").put("pkg", pkg).put("at", System.currentTimeMillis()))
+    }
 
     // 통과시킨 앱에서 벗어났다 → 벗어난 시각을 찍는다
     if (prev != null && passed.containsKey(prev) && passed[prev] == null) {
@@ -77,7 +84,28 @@ class InterventionService : AccessibilityService() {
       passed[pkg] = null // 다시 앞으로 왔다. 통과 유지
       return
     }
-    showOverlay(pkg, event.eventTime)
+    // 확인 화면이 맨 앞에 있으면 그대로 둔다. 뒤에 숨어 살아 있으면(대상 앱이 그 위로 왔다) 다시 앞으로 부른다(2026-10-08 구멍)
+    if (InterventionState.activityResumed || overlay != null) return
+    showActivity(pkg, event.eventTime)
+  }
+
+  private fun showActivity(pkg: String, eventUptime: Long) {
+    val i = Intent(this, InterventionActivity::class.java)
+      .putExtra(InterventionActivity.EXTRA_PKG, pkg)
+      .putExtra(InterventionActivity.EXTRA_EVENT_UPTIME, eventUptime)
+      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+    try {
+      startActivity(i)
+    } catch (e: Exception) {
+      SpikeStore.appendLog(this, JSONObject().put("kind", "error").put("pkg", pkg).put("error", e.toString()))
+    }
+    // 백그라운드 실행이 막히면 예외 없이 조용히 안 뜬다 → 0.8초 뒤 확인하고 오버레이로 대신
+    main.postDelayed({
+      if (!InterventionState.activityAlive && foreground == pkg && !isPassed(pkg)) {
+        SpikeStore.appendLog(this, JSONObject().put("kind", "fallbackOverlay").put("pkg", pkg))
+        showOverlay(pkg, eventUptime)
+      }
+    }, 800)
   }
 
   private fun isPassed(pkg: String): Boolean {

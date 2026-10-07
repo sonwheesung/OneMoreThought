@@ -22,6 +22,14 @@
   </queries>
 
   <application>
+    <!-- 실행 전 확인 화면(InterventionActivity.kt). 자기 태스크 · 최근 앱에 안 남는다 · 다른 앱이 부를 수 없다 -->
+    <activity
+        android:name="expo.modules.intervention.InterventionActivity"
+        android:exported="false"
+        android:excludeFromRecents="true"
+        android:launchMode="singleTask"
+        android:taskAffinity="com.vivacegames.onemorethought.intervention"
+        android:theme="@android:style/Theme.Material.NoActionBar" />
     <service
         android:name="expo.modules.intervention.InterventionService"
         android:exported="false"
