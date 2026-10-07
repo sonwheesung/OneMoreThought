@@ -1,0 +1,41 @@
+{
+  "name": "onemorethought",
+  "main": "expo-router/entry",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "start": "expo start --port 8095",
+    "typecheck": "tsc --noEmit",
+    "lint": "expo lint",
+    "check:chars": "node scripts/check-chars.mjs",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:manifest": "node scripts/check-manifest.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run check:chars && npm run check:manifest && npm run check:docs"
+  },
+  "dependencies": {
+    "expo": "~54.0.35",
+    "expo-constants": "~18.0.13",
+    "expo-linking": "~8.0.12",
+    "expo-localization": "~17.0.9",
+    "expo-router": "~6.0.24",
+    "expo-splash-screen": "~31.0.13",
+    "expo-status-bar": "~3.0.9",
+    "expo-system-ui": "~6.0.9",
+    "i18next": "^26.3.6",
+    "react": "19.1.0",
+    "react-i18next": "^17.0.11",
+    "react-native": "0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
+  }
+}

@@ -8,8 +8,11 @@ web-build/
 expo-env.d.ts
 
 # Native (CNG output - do not commit, regenerate with expo prebuild)
-android/
-ios/
+# 🔴 루트만 막는다. `android/` 로 쓰면 modules/*/android(앱 안 네이티브 모듈 소스)까지 빠진다(2026-10-08 실측)
+/android/
+/ios/
+modules/*/android/build/
+modules/*/android/.cxx/
 .kotlin/
 *.orig.*
 

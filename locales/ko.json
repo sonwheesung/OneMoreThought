@@ -1,0 +1,32 @@
+{
+  "spike": {
+    "title": "Phase 0 스파이크",
+    "noNative": "네이티브 모듈이 없어요. 개발 빌드로 실행해 주세요(Expo Go 로는 안 돼요).",
+    "status": "상태",
+    "service": "접근성 서비스",
+    "usage": "사용 기록 접근",
+    "advanced": "고급 보호 모드",
+    "on": "켜짐",
+    "off": "꺼짐",
+    "enableService": "앱 열기 전 확인 켜기",
+    "enableUsage": "사용 기록 접근 켜기",
+    "message": "메시지",
+    "targets": "대상 앱",
+    "save": "규칙 저장",
+    "saved": "저장했어요",
+    "openedToday": "오늘 열었어요",
+    "notOpenedToday": "오늘 아직 안 열었어요",
+    "log": "기록",
+    "refresh": "새로고침",
+    "clear": "지우기"
+  },
+  "disclosure": {
+    "title": "켜기 전에 알려 드려요",
+    "sees": "보는 것: 화면 앞에 나온 앱의 이름만 봐요.",
+    "notSees": "안 보는 것: 화면 내용, 입력한 글, 고르지 않은 앱은 보지 않아요.",
+    "why": "왜: 고른 앱을 정한 시간에 열 때 한 번 묻기 위해서예요.",
+    "where": "어디에 남나: 이 기기에만 있어요. 밖으로 보내지 않아요.",
+    "later": "나중에",
+    "agree": "동의하고 설정 열기"
+  }
+}

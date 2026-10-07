@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ⚠ 초안(2026-10-08 · Phase 0 스파이크). 사용자에게 보이는 문구는 출시 전 검수한다(KOREAN_WRITING.md §2) -->
+<resources>
+  <string name="intervention_service_label">App check-in</string>
+  <string name="intervention_service_description">Detects only the name of the app that comes to the front, so it can ask you once before opening an app you chose. It does not read screen content or anything you type. Nothing leaves this device.</string>
+  <string name="intervention_cancel">Cancel</string>
+  <string name="intervention_open">Open</string>
+</resources>

@@ -1,0 +1,32 @@
+{
+  "spike": {
+    "title": "Phase 0 spike",
+    "noNative": "Native module is missing. Run a development build (Expo Go cannot run this).",
+    "status": "Status",
+    "service": "Accessibility service",
+    "usage": "Usage access",
+    "advanced": "Advanced protection",
+    "on": "On",
+    "off": "Off",
+    "enableService": "Turn on app check",
+    "enableUsage": "Turn on usage access",
+    "message": "Message",
+    "targets": "Target apps",
+    "save": "Save rule",
+    "saved": "Saved",
+    "openedToday": "Opened today",
+    "notOpenedToday": "Not opened today",
+    "log": "Log",
+    "refresh": "Refresh",
+    "clear": "Clear"
+  },
+  "disclosure": {
+    "title": "Before you turn this on",
+    "sees": "What it checks: only the name of the app that comes to the front.",
+    "notSees": "What it does not check: screen content, anything you type, or apps you did not choose.",
+    "why": "Why: to ask you once when you open an app you chose, at the time you set.",
+    "where": "Where it stays: on this device only. Nothing is sent anywhere.",
+    "later": "Not now",
+    "agree": "Agree and open settings"
+  }
+}

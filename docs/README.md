@@ -50,9 +50,9 @@
 
 | 영역 | 상태 | 비고 |
 |---|---|---|
-| Expo 부트(SDK 54 · expo-router · TS strict · Metro **8095**) | ❌ | Phase 0 |
-| 네이티브 모듈 골격 · 개발 빌드 | ❌ | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §6 |
-| 감지 · 오버레이 스파이크 S1 ~ S6 | ❌ | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
+| Expo 부트(SDK 54 · expo-router · TS strict · Metro **8095**) | ✅ 2026-10-08 | Phase 0 · `verify` 5단계 |
+| 네이티브 모듈 골격 · 개발 빌드 | 🔨 2026-10-08 | Phase 0 · `modules/intervention`(접근성 서비스 · 오버레이 · 사용 기록 · 앱 목록 · 고급 보호 모드) · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §6 |
+| 감지 · 오버레이 스파이크 S1 ~ S7 | 🔨 2026-10-08 · 실측 전 | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
 | 규칙 판정 · 로컬 DB | ❌ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) |
 | 실행 전 확인(홈 · 만들기 · 확인 화면 · 권한 온보딩) | ❌ | Phase 2 |
 | 실행 확인(알람 · 알림 · 오늘 ✓) | ❌ | Phase 3 |
@@ -80,8 +80,25 @@
 > `test` 스킬이 이 절을 **읽어서** 그대로 돈다. 명령을 스킬에 복사하지 않는다(`common/DOC_SYSTEM.md` §2).
 > 새 가드를 만들면 여기에 명령을 추가하는 것까지가 완료다.
 
-**아직 없음.** Phase 0 에서 `npm run verify` 와 첫 가드(`typecheck` · `lint` · `check:chars` · `check:day` · `check:docs`)를 만들며 채운다.
-예정 가드: `check:rules`(TS ⇄ Kotlin 같은 시험표) · `check:manifest`(쓰지 않기로 한 권한이 매니페스트에 없다 · 접근성 서비스가 창 내용을 읽지 않는다 · `ANDROID_PLATFORM.md` §2 · §5) · `check:i18n`.
+한 방: **`npm run verify`**. 아래 **5개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
+
+| # | 명령 | 무엇 | 정본 |
+|---|---|---|---|
+| 1 | `npm run typecheck` | `tsc --noEmit`(strict · `noUncheckedIndexedAccess`) | — |
+| 2 | `npm run lint` | `expo lint` | — |
+| 3 | `npm run check:chars` | 제어문자 스윕(바이트로 읽는다 · 줄 중간 CR · 0x08 등) · SELF-TEST 8케이스 | mission · Re:Read 승계 |
+| 4 | `npm run check:manifest` | 금지 권한 5종이 막혀 있다 · 모듈이 요청하지 않는다 · 접근성 서비스가 창 내용을 못 읽는다 · 접근성 도구로 신고하지 않는다 · Kotlin 이 창 내용 · 접근성 동작 API 를 안 부른다 · 변이 8종 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §2 · §8.6 |
+| 5 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
+
+예정 가드: `check:day`(Phase 1 · `lib/day.ts`) · `check:rules`(TS ⇄ Kotlin 같은 시험표) · `check:i18n`.
+
+**개발 빌드(가드 밖 · 이 앱은 처음부터 이것으로만 확인한다)** 감지가 네이티브라 Expo Go 로는 돌지 않는다.
+1. `npx expo prebuild --platform android --no-install`(`android/` 는 커밋하지 않는다 · CNG). ⚠ prebuild 가 `package.json` 에 `android` · `ios` 실행 스크립트를 넣는다. 지운다(`expo run:android` 는 실기기로 갈 수 있다 · mission 함정).
+2. `ANDROID_HOME=$LOCALAPPDATA/Android/Sdk` 를 잡고 `cd android && ./gradlew assembleDebug -PreactNativeArchitectures=x86_64,arm64-v8a -PreactNativeDevServerPort=8095`.
+   🔴 **`-PreactNativeDevServerPort=8095` 를 빠뜨리지 않는다.** 없으면 디버그 앱이 8081(My Word 의 Metro)에서 코드를 받는다.
+3. 🔴 **권한 최종 판정은 APK 매니페스트다**(Re:Read 교훈): `aapt dump permissions android/app/build/outputs/apk/debug/app-debug.apk` 에 금지 권한 5종이 없어야 한다.
+4. 에뮬레이터: `ANDROID_AVD_HOME=D:\emulators\onemorethought` · `emulator -avd onemorethought -port 5590 -no-snapshot -no-boot-anim` · 모든 `adb` 에 `-s emulator-5590`. Metro 는 `npx expo start --port 8095 --offline`.
+5. 실기기(무선 디버깅): 기기 이름으로 부르고 다시 붙을 때마다 `adb reverse tcp:8095 tcp:8095`.
 
 ---
 

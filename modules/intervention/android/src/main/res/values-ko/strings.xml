@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ⚠ 초안(2026-10-08 · Phase 0 스파이크). 출시 전 ChatGPT 검수(KOREAN_WRITING.md §2) -->
+<resources>
+  <string name="intervention_service_label">앱 열기 전 확인</string>
+  <string name="intervention_service_description">화면 앞에 나온 앱의 이름만 확인해요. 고른 앱을 열 때 한 번 묻기 위해서예요. 화면 내용이나 입력한 글은 보지 않아요. 기기 밖으로 보내지 않아요.</string>
+  <string name="intervention_cancel">취소</string>
+  <string name="intervention_open">열기</string>
+</resources>
