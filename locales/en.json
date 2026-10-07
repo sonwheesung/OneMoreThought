@@ -25,7 +25,7 @@
     "sees": "What it checks: only the name of the app that comes to the front.",
     "notSees": "What it does not check: screen content, anything you type, or apps you did not choose.",
     "why": "Why: to ask you once when you open an app you chose, at the time you set.",
-    "where": "Where it stays: on this device only. Nothing is sent anywhere.",
+    "where": "What we send: the names of apps you chose, your check-in results, and device info, to improve the service and for statistics. We never send screen content, anything you type, or the messages you write.",
     "path": "Where to turn it on: Accessibility → Installed apps (or Downloaded apps) → App check-in",
     "later": "Not now",
     "agree": "Agree and open settings"
