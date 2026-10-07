@@ -65,6 +65,8 @@ class InterventionService : AccessibilityService() {
   override fun onServiceConnected() {
     super.onServiceConnected()
     registerReceiver(unlockReceiver, android.content.IntentFilter(Intent.ACTION_USER_PRESENT))
+    DiagLog.installCrashHandler(this)
+    DiagLog.recordExitReasons(this) // 지난번 프로세스가 왜 끝났나(제조사 절전 · 메모리 등)
     SpikeStore.appendLog(this, JSONObject().put("kind", "connected").put("at", System.currentTimeMillis()))
   }
 
@@ -157,11 +159,13 @@ class InterventionService : AccessibilityService() {
   }
 
   override fun onInterrupt() {
+    DiagLog.log(this, "service_interrupt")
     removeOverlay()
   }
 
   override fun onDestroy() {
     try { unregisterReceiver(unlockReceiver) } catch (_: Exception) {}
+    DiagLog.log(this, "service_destroyed")
     removeOverlay()
     super.onDestroy()
   }

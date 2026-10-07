@@ -24,6 +24,23 @@ class InterventionModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("Intervention")
 
+    OnCreate {
+      appContext.reactContext?.let {
+        DiagLog.installCrashHandler(it)
+        DiagLog.recordExitReasons(it)
+      }
+    }
+
+    // ── 진단(결정 #20 · #21 · docs/DIAGNOSTICS_SYSTEM.md) ──
+    /** JS 쪽 신호(전역 크래시 핸들러 등)도 같은 버퍼에. fieldsJson 은 JSON 객체 문자열 */
+    Function("logDiag") { kind: String, fieldsJson: String ->
+      val f = try { org.json.JSONObject(fieldsJson) } catch (_: Exception) { org.json.JSONObject() }
+      DiagLog.log(context, kind, f)
+    }
+    Function("getDiag") { DiagLog.read(context) }
+    Function("clearDiag") { DiagLog.clear(context) }
+    Function("diagSummary") { DiagLog.summary(context) }
+
     // ── 접근성 서비스(기능 A) ──
     Function("isServiceEnabled") {
       val me = ComponentName(context, InterventionService::class.java).flattenToString()

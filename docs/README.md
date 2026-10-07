@@ -10,7 +10,7 @@
 
 ## 1. 문서 목록
 
-`docs/` 바로 아래 **6개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **5개**(세는 법: `ls docs/review/*.md | wc -l`)
+`docs/` 바로 아래 **7개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **5개**(세는 법: `ls docs/review/*.md | wc -l`)
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
@@ -18,6 +18,7 @@
 | [`PLAN.md`](./PLAN.md) | 착수 순서(리뷰 → Phase 0 스파이크 ~ 8) · 완료 기준 · 막는 미결정 | ✅ 2026-10-06 |
 | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 2026-10-06 · 설계 초안(미결정 다수) |
 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) | 감지(접근성 · 사용 기록) · 오버레이 · 알람 · 앱 목록 · Expo 네이티브 · 권한 온보딩 · 🔴 Play 접근성 정책 · Phase 0 스파이크 | 🔨 2026-10-06 · 정책 원문 직접 대조(§8) · 사례 조사 반영 |
+| [`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md) | 진단 링 버퍼 · 미처리 예외 · 종료 이유 · 신호 목록 · 하루 요약 / 문의 첨부에 무엇이 가나(결정 #20 · #21 · #24) | 🔨 2026-10-08 · 기기 쪽 ✅ · 보내기 Phase 5 |
 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) | 문서 작업법(`common/DOC_SYSTEM.md` 의 프로젝트판 · mission 승계) | ✅ 2026-10-06 |
 | [`ORIGINAL_BRIEF.md`](./ORIGINAL_BRIEF.md) | 🔴 **원본 기획서 원문. 정본이 아니다** | ✅ 2026-10-06 |
 | [`README.md`](./README.md) | 이 색인 | ✅ 2026-10-06 |

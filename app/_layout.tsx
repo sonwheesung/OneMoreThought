@@ -3,6 +3,9 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import '@/lib/i18n';
+import { installJsCrashHandler } from '@/lib/diag';
+
+installJsCrashHandler();
 
 /**
  * 뿌리 레이아웃. Phase 0 은 스파이크 화면 한 장뿐이다(`docs/ANDROID_PLATFORM.md` §9).

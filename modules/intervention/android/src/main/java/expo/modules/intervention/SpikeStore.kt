@@ -36,8 +36,22 @@ internal object SpikeStore {
   fun message(context: Context): String =
     prefs(context).getString(KEY_MESSAGE, "") ?: ""
 
-  /** 감지 한 건을 남긴다. 지연은 이벤트 시각(uptime) → 오버레이가 처음 그려진 시각 */
+  /** 스파이크 기록 종류 → 진단 신호 이름(docs/DIAGNOSTICS_SYSTEM.md §2) */
+  private val SIGNAL = mapOf(
+    "shown" to "prompt_shown", "result" to "prompt_result", "fallbackOverlay" to "prompt_fallback",
+    "error" to "prompt_error", "connected" to "service_connected", "a11ySettings" to "settings_route",
+    "a11yDetailsFailed" to "settings_details_denied", "fg" to "fg_while_prompt",
+  )
+  /** 감지 → 확인 화면 첫 그림이 이보다 느리면 prompt_slow(placeholder 2026-10-08 · 1초) */
+  private const val SLOW_MS = 1000L
+
+  /** 감지 한 건을 남긴다(스파이크 화면용) + 같은 내용을 진단 신호 이름으로 진단 버퍼에도 */
   fun appendLog(context: Context, entry: JSONObject) {
+    val kind = entry.optString("kind")
+    SIGNAL[kind]?.let { DiagLog.log(context, it, JSONObject(entry.toString()).apply { remove("kind"); remove("at") }) }
+    if (kind == "shown" && entry.optLong("detectToDrawMs", 0) > SLOW_MS) {
+      DiagLog.log(context, "prompt_slow", JSONObject().put("ms", entry.optLong("detectToDrawMs")).put("pkg", entry.optString("pkg")))
+    }
     val p = prefs(context)
     val old = try { JSONArray(p.getString(KEY_LOG, "[]")) } catch (e: Exception) { JSONArray() }
     val next = JSONArray()

@@ -26,6 +26,13 @@ export interface InterventionNative {
   listLaunchableApps(): LaunchableApp[];
   advancedProtection(): 'on' | 'off' | 'unknown';
   sdkInt(): number;
+  /** 진단 버퍼에 한 건(결정 #20). fieldsJson = JSON 객체 문자열 */
+  logDiag(kind: string, fieldsJson: string): void;
+  /** JSON 배열 문자열(최신이 뒤) · 문의 첨부 · 미리보기용 */
+  getDiag(): string;
+  clearDiag(): void;
+  /** {device, counts} JSON · 하루 요약의 뼈대 */
+  diagSummary(): string;
 }
 
 export const Intervention = requireOptionalNativeModule<InterventionNative>('Intervention');
