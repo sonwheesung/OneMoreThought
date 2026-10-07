@@ -16,6 +16,8 @@ const blocked = [
   /[\\/]android[\\/]\.gradle[\\/].*/,
   /[\\/]android[\\/]\.cxx[\\/].*/,
   /[\\/]modules[\\/][^\\/]+[\\/]android[\\/]build[\\/].*/,
+  // 앱 서버(Next.js · 결정 #30)는 앱 번들과 관계없다. node_modules · .next 가 크다
+  /[\\/]server[\\/].*/,
 ];
 const existing = config.resolver.blockList;
 config.resolver.blockList = existing

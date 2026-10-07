@@ -51,3 +51,8 @@ secrets/
 
 # Claude Code 로컬 설정(개인 훅·권한) — 스킬(.claude/skills/)은 커밋한다
 .claude/settings.local.json
+
+# 앱 서버(Next.js) · env 는 server/.gitignore 가 막는다
+server/.next/
+server/next-env.d.ts
+*.tsbuildinfo

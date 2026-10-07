@@ -1,0 +1,25 @@
+{
+  "name": "intervene-server",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3900",
+    "build": "next build",
+    "start": "next start -p 3900",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:check": "node scripts/db-check.mjs",
+    "check:migrations": "node scripts/check-migrations.mjs",
+    "e2e": "node scripts/e2e.mjs"
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "postgres": "^3.4.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "typescript": "^5.9.2"
+  }
+}

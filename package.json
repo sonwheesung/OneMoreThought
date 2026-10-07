@@ -14,9 +14,10 @@
     "check:day": "node --disable-warning=ExperimentalWarning scripts/check-day.mjs",
     "check:docs": "node scripts/check-docs.mjs",
     "check:manifest": "node scripts/check-manifest.mjs",
+    "check:server": "npm --prefix server run typecheck && npm --prefix server run check:migrations",
     "check:rules": "node --disable-warning=ExperimentalWarning scripts/check-rules.mjs",
     "check:strike": "node scripts/check-strike.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run check:chars && npm run check:manifest && npm run check:strike && npm run check:day && npm run check:rules && npm run check:docs"
+    "verify": "npm run typecheck && npm run lint && npm run check:chars && npm run check:manifest && npm run check:strike && npm run check:day && npm run check:rules && npm run check:server && npm run check:docs"
   },
   "dependencies": {
     "expo": "~54.0.35",
