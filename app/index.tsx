@@ -4,6 +4,7 @@ import {
   AppState,
   FlatList,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -12,12 +13,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { cachedRules, putDevice, saveRule, syncNow } from '@/features/rules';
+import { subjectId } from '@/features/server';
+import { GRACE_DEFAULT, type Rule } from '@/lib/rules.ts';
 import { Intervention, type LaunchableApp } from '@/modules/intervention';
 
 /**
  * ⚠ Phase 0 스파이크 화면(`docs/ANDROID_PLATFORM.md` §9 S1 ~ S7). 출시 화면이 아니다.
  * 실제 홈 · 규칙 편집은 Phase 2 에서 `ui-design-reference` 를 먼저 보고 만든다(CLAUDE §13).
  *
+ * Phase 1(결정 #30): 저장은 기기 캐시(rules.json) → 서버. 이 화면은 실행 전 확인 규칙 하나를 시간대와 함께 만든다.
  * 🔴 접근성 설정으로 보내기 전에 공개 화면을 거친다(§7.1 · 실제 반려 사례 R2 의 반대):
  *    전체 화면 · 두 버튼 · 동의 전에는 아무것도 켜진 것처럼 보이지 않는다 · 뒤로가기는 동의가 아니다.
  */
@@ -48,6 +53,17 @@ function readStatus(): Status | null {
   };
 }
 
+/** "HH:MM" → 분. 틀리면 null */
+function toMin(v: string): number | null {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(v.trim());
+  if (!m) return null;
+  const h = Number(m[1]);
+  const mi = Number(m[2]);
+  return h < 24 && mi < 60 ? h * 60 + mi : null;
+}
+
+const hhmm = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+
 function parseLog(raw: string): LogEntry[] {
   try {
     const v: unknown = JSON.parse(raw);
@@ -61,24 +77,56 @@ export default function Spike() {
   const { t } = useTranslation();
   const [status, setStatus] = useState<Status | null>(() => readStatus());
   const [apps] = useState<LaunchableApp[]>(() => Intervention?.listLaunchableApps() ?? []);
-  const [targets, setTargets] = useState<string[]>([]);
-  const [message, setMessage] = useState('');
+  // 스파이크는 실행 전 확인 규칙 하나만 고친다(첫 번째 것 · 없으면 새로)
+  const [rule0] = useState<Rule | undefined>(() => cachedRules().find((r) => r.kind === 'intercept'));
+  const [targets, setTargets] = useState<string[]>(rule0?.targets ?? []);
+  const [message, setMessage] = useState(rule0?.message ?? '');
+  const [start, setStart] = useState(hhmm(rule0?.startMin ?? 0));
+  const [end, setEnd] = useState(hhmm(rule0?.endMin ?? 1439));
   const [log, setLog] = useState<LogEntry[]>([]);
   const [disclosure, setDisclosure] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [sync, setSync] = useState('');
+  const [queued, setQueued] = useState(0);
 
   const refresh = useCallback(() => {
     setStatus(readStatus());
-    if (Intervention) setLog(parseLog(Intervention.getLog()));
+    if (Intervention) {
+      setLog(parseLog(Intervention.getLog()));
+      setQueued(Intervention.queueCount());
+    }
   }, []);
+
+  const runSync = useCallback(async () => {
+    const r = await syncNow();
+    const f = r.flush.ok ? `↑${r.flush.value.sent}` : `↑✕ ${r.flush.reason}`;
+    const p = r.pull.ok ? `↓${r.pull.value.length}` : `↓✕ ${r.pull.reason}`;
+    setSync(`${f} · ${p} · ${new Date().toLocaleTimeString()}`);
+    refresh();
+  }, [refresh]);
 
   useEffect(() => {
     refresh();
+    void runSync();
+    if (Intervention) {
+      const c = Platform.constants as { Model?: string; Manufacturer?: string };
+      void putDevice({
+        model: [c.Manufacturer, c.Model].filter(Boolean).join(' '),
+        sdkInt: Intervention.sdkInt(),
+        appVersion: '0.1.0',
+        locale: Intl.DateTimeFormat().resolvedOptions().locale,
+        tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        advProtection: Intervention.advancedProtection(),
+      });
+    }
     const sub = AppState.addEventListener('change', (s) => {
-      if (s === 'active') refresh();
+      if (s === 'active') {
+        refresh();
+        void runSync();
+      }
     });
     return () => sub.remove();
-  }, [refresh]);
+  }, [refresh, runSync]);
 
   const opened = useMemo(() => {
     if (!Intervention || !status?.usage) return [];
@@ -95,13 +143,33 @@ export default function Spike() {
   }
 
   const toggle = (pkg: string) => {
-    setSaved(false);
+    setSaved(null);
     setTargets((cur) => (cur.includes(pkg) ? cur.filter((p) => p !== pkg) : [...cur, pkg]));
   };
 
-  const save = () => {
-    Intervention!.setSpikeRule(targets, message);
-    setSaved(true);
+  const save = async () => {
+    const s0 = toMin(start);
+    const e0 = toMin(end);
+    if (s0 === null || e0 === null || s0 === e0 || targets.length === 0 || !message.trim()) {
+      setSaved(t('spike.invalid'));
+      return;
+    }
+    const rule: Rule = {
+      id: rule0?.id ?? Intervention!.uuid(),
+      kind: 'intercept',
+      name: 'spike',
+      enabled: true,
+      days: 127,
+      startMin: s0,
+      endMin: e0,
+      targets,
+      message,
+      graceMin: rule0?.graceMin ?? GRACE_DEFAULT,
+      updatedAt: Date.now(),
+    };
+    const r = await saveRule(rule);
+    setSaved(t(`spike.saved_${r}`));
+    refresh();
   };
 
   const onOff = (v: boolean) => (v ? t('spike.on') : t('spike.off'));
@@ -122,6 +190,12 @@ export default function Spike() {
             <Text style={styles.body}>
               {t('spike.advanced')}: {status.advanced} · SDK {status.sdk}
             </Text>
+            <Text style={styles.small}>
+              {t('spike.sync')}: {sync || '…'} · {t('spike.queued')} {queued} · {subjectId()?.slice(0, 8) ?? '-'}
+            </Text>
+            <Pressable onPress={() => void runSync()}>
+              <Text style={styles.link}>{t('spike.syncNow')}</Text>
+            </Pressable>
             {!status.service && (
               <Pressable style={styles.btn} onPress={() => setDisclosure(true)}>
                 <Text style={styles.btnText}>{t('spike.enableService')}</Text>
@@ -138,12 +212,18 @@ export default function Spike() {
               style={styles.input}
               value={message}
               onChangeText={(v) => {
-                setSaved(false);
+                setSaved(null);
                 setMessage(v);
               }}
             />
-            <Pressable style={styles.btn} onPress={save}>
-              <Text style={styles.btnText}>{saved ? t('spike.saved') : t('spike.save')}</Text>
+            <Text style={styles.h2}>{t('spike.window')}</Text>
+            <View style={styles.row}>
+              <TextInput style={[styles.input, styles.flex]} value={start} onChangeText={setStart} placeholder="09:00" />
+              <Text style={styles.body}>~</Text>
+              <TextInput style={[styles.input, styles.flex]} value={end} onChangeText={setEnd} placeholder="18:00" />
+            </View>
+            <Pressable style={styles.btn} onPress={() => void save()}>
+              <Text style={styles.btnText}>{saved ?? t('spike.save')}</Text>
             </Pressable>
 
             {opened.map((o) => (

@@ -37,14 +37,23 @@ class InterventionActivity : Activity() {
   companion object {
     const val EXTRA_PKG = "pkg"
     const val EXTRA_EVENT_UPTIME = "eventUptime"
+    const val EXTRA_RULE_ID = "ruleId"
+    const val EXTRA_MESSAGE = "message"
   }
 
   private var pkg: String = ""
+  private var ruleId: String = ""
+  private var message: String = ""
+  private var shownAt = 0L
   private var decided = false
+  private var messageView: TextView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     pkg = intent.getStringExtra(EXTRA_PKG) ?: ""
+    ruleId = intent.getStringExtra(EXTRA_RULE_ID) ?: ""
+    message = intent.getStringExtra(EXTRA_MESSAGE) ?: ""
+    shownAt = System.currentTimeMillis()
     val eventUptime = intent.getLongExtra(EXTRA_EVENT_UPTIME, SystemClock.uptimeMillis())
     InterventionState.activityAlive = true
     val root = buildView()
@@ -73,6 +82,10 @@ class InterventionActivity : Activity() {
     super.onNewIntent(intent)
     setIntent(intent)
     pkg = intent.getStringExtra(EXTRA_PKG) ?: pkg
+    ruleId = intent.getStringExtra(EXTRA_RULE_ID) ?: ruleId
+    message = intent.getStringExtra(EXTRA_MESSAGE) ?: message
+    messageView?.text = message
+    shownAt = System.currentTimeMillis()
     decided = false
   }
 
@@ -116,7 +129,7 @@ class InterventionActivity : Activity() {
     if (decided) return
     decided = true
     record("open")
-    InterventionState.pass(pkg)
+    InterventionState.pass(pkg, RuleStore.rules(this).firstOrNull { it.id == ruleId }?.graceMin)
     InterventionState.pendingPkg = null
     // L3: 그사이 대상 앱이 꺼졌으면 우리 화면만 걷어서는 홈이 나온다. 실행 인텐트를 직접 부른다
     // (살아 있으면 아이콘을 누른 것처럼 그 화면 그대로 앞으로 온다)
@@ -128,10 +141,10 @@ class InterventionActivity : Activity() {
   }
 
   private fun record(result: String) {
-    SpikeStore.appendLog(
-      this,
-      JSONObject().put("kind", "result").put("pkg", pkg).put("result", result).put("at", System.currentTimeMillis()),
-    )
+    val now = System.currentTimeMillis()
+    SpikeStore.appendLog(this, JSONObject().put("kind", "result").put("pkg", pkg).put("result", result).put("at", now))
+    // 서버로 갈 기록(DATABASE §2.2 · 결정 #30)
+    if (ruleId.isNotEmpty()) EventQueue.prompt(this, ruleId, pkg, shownAt, result, now - shownAt)
   }
 
   /** 스파이크 화면. 실제 디자인은 Phase 2(`docs/UI_GUIDE.md` · ui-design-reference) */
@@ -148,12 +161,14 @@ class InterventionActivity : Activity() {
         cornerRadius = dp(20f).toFloat()
       }
     }
+    // 🔴 기둥 4: 사용자 메시지를 그대로
     val message = TextView(this).apply {
-      text = SpikeStore.message(this@InterventionActivity)
+      text = this@InterventionActivity.message
       setTextColor(Color.WHITE)
       setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
       gravity = Gravity.CENTER
     }
+    messageView = message
     card.addView(message, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
     val row = LinearLayout(this).apply {
       orientation = LinearLayout.HORIZONTAL
@@ -188,6 +203,13 @@ internal object InterventionState {
   @Volatile var pendingPkg: String? = null
   /** [열기]로 통과시킨 패키지 → 화면에서 벗어난 시각(uptime). null 이면 아직 앞에 있다 */
   val passed = HashMap<String, Long?>()
+  /** 통과시킨 패키지 → 그 규칙의 유예(분 · 결정 #29). 없으면 기본 1분 */
+  val graceMin = HashMap<String, Int>()
+  /** 서비스가 판정한 결과(패키지 → 규칙 · 메시지). 확인 화면 · 기록이 같은 규칙을 가리키게 */
+  val hits = HashMap<String, RuleJudge.Hit>()
 
-  @Synchronized fun pass(pkg: String) { passed[pkg] = null }
+  @Synchronized fun pass(pkg: String, grace: Int?) {
+    passed[pkg] = null
+    graceMin[pkg] = grace ?: RuleJudge.GRACE_DEFAULT
+  }
 }

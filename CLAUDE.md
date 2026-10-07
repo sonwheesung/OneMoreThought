@@ -480,7 +480,7 @@ OneMoreThought/
 | 이용약관 URL | ❌ Phase 6 | 유료 앱이라 둔다(결정 #18 · §7.1) · 조각 · My Word 약관을 고쳐 쓴다 |
 | 조각 DB `intervene` 스키마 · 역할 `intervene_app` | ✅ 2026-10-08 | 결정 #31 · 0001 적용 · 조각 `public` 앞뒤 같음 · `db:check` 29항목 · 로컬 서버 e2e 통과. 조각 세션은 떠 있지 않아 통지는 이 행과 `docs/DATABASE.md` §0 · 사용자 보고로 남겼다(mission 선례) |
 | 공용 서버 `app_code` `intervene` | ✅ 2026-10-08 | 공용 서버 세션이 그쪽 사용자 승인으로 등록 · bootstrap 200 실측(그쪽). `x-app-code` 헤더는 안 보고 토큰 클레임을 본다. 실제 기기 토큰 → `/auth/me` 는 앱이 처음 붙을 때 실측 △ |
-| Vercel `vg-intervene-sync` | ❌ | 결정 #31 · env(값은 stdin 으로만) |
+| Vercel `vg-intervene-sync` | ✅ 2026-10-08 | `https://vg-intervene-sync.vercel.app` · 팀 sonws · env 2개(값은 stdin 으로만) · health `db: up` · 가짜 토큰 401 |
 | common_server 진단 경로 · 문의 첨부 필드 · 디스코드 기준 알림(결정 #20 · #21) | ✅ 2026-10-08 진단 수집 · 문의 첨부 운영 배포(계약은 `docs/DIAGNOSTICS_SYSTEM.md` §4 · 요약 16KB · 첨부 512KB) · 디스코드 진단 알림 ✅ 2026-10-08 구현 · 전용 채널 연결 · 배포(그쪽 사용자가 웹훅을 그쪽에 직접 줌 · 결정 #32 그대로 · 중복은 그쪽 표 PK 로 막음) · 문의 알림 채널은 미설정(지금 필요 없음) · 이전 경과: 그쪽 사용자 승인 ✅(앱별 스위치 · 요약 90일 · 첨부 1년 · 기본 켬) · 그쪽 설계 중 · 이쪽은 필드 초안 · 크기 추정 회신(실측은 Phase 5) | ~~`common-93` 에 보냄~~(잘못 보냄 · 연출 사전 세션) → common_server 담당 세션에 다시 보냈다. 그쪽 답: 접수 · 승인 전엔 안 만든다 · 방향 제안(별도 테이블 · 앱별 스위치 · 보관 기간 분리 · 거부 사유 명시). 패키지 이름 항목은 그쪽이 사용자에게 따로 묻는다 |
 | 통신판매업 신고 | ✅ | 정본 `common/BUSINESS_INFO.md` §1(2026-10-07 확인 · 번호는 옮겨 적지 않는다) |
 | 처리방침 URL | ❌ Phase 6 | 서버가 없어도 필요하다(접근성 공개 · 데이터 보안). 게시처 미정(`vivace-games.com/<앱>/` 선례) |
@@ -512,4 +512,5 @@ OneMoreThought/
 - ✅ 2026-10-08 Phase 0 스파이크(S24 실측) · 엣지 결정(#19) · 진단(#20 · #21 · #24) · 판정 결정(#26 ~ #29) · **서버 정본(#30)** · 이름(#31).
 - ✅ 2026-10-08 Phase 1: `lib/day.ts` · `lib/rules.ts` + `check:day` · `check:rules`(같은 시험표를 Kotlin 도 읽는다) · `docs/DATABASE.md` · `server/` 골격 · 조각 DB `intervene` 스키마 적용 · 로컬 e2e 통과 · 공용 서버 `app_code` 등록(그쪽).
 - ✅ 2026-10-08 Kotlin 판정 `RuleJudge.kt` 가 같은 시험표를 시간대 4개에서 통과(`check:rules:kt` · 양성 대조 FAIL 확인). 공용 서버 디스코드 진단 알림 채널 연결 · 배포 끝(그쪽 · 결정 #32 그대로).
-- 🔴 다음: 기기 `rules.json` · `queue.jsonl`(스파이크 `SpikeStore` 대체) · Vercel `vg-intervene-sync` 배포 · 앱 ⇄ 서버 실기기 연결(기기 토큰 실측).
+- ✅ 2026-10-08 기기 `rules.json`(`RuleStore`) · `queue.jsonl`(`EventQueue`) · 접근성 서비스가 캐시 + `RuleJudge` 로 판정 · 확인 결과를 대기열에 · 앱이 기기 토큰으로 서버와 동기화 · Vercel 배포.
+- 🔴 다음(이전 계획): 기기 `rules.json` · `queue.jsonl`(스파이크 `SpikeStore` 대체) · Vercel `vg-intervene-sync` 배포 · 앱 ⇄ 서버 실기기 연결(기기 토큰 실측).

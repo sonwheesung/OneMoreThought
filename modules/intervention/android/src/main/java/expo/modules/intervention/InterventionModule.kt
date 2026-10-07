@@ -18,6 +18,10 @@ import java.util.Calendar
  * 실패는 JS 로 던지지 않고 false · null · "unknown" 을 돌려준다(SnoreLess alarm-tone 승계).
  */
 class InterventionModule : Module() {
+  private companion object {
+    const val KV = "intervene_kv"
+  }
+
   private val context: Context
     get() = appContext.reactContext ?: throw IllegalStateException("React context lost")
 
@@ -82,9 +86,29 @@ class InterventionModule : Module() {
       SpikeStore.appendLog(context, org.json.JSONObject().put("kind", "a11ySettings").put("route", if (opened) "details" else "list"))
     }
 
-    Function("setSpikeRule") { targets: List<String>, message: String ->
-      SpikeStore.setRule(context, targets, message)
+    // ── 규칙 캐시 · 기록 대기열(결정 #30 · docs/DATABASE.md §1.1 · §2) ──
+    /** JS 가 rules.json 을 쓴다(쓰는 쪽은 JS 하나). 못 읽는 JSON 이면 false 이고 이전 캐시를 지킨다 */
+    Function("setRules") { json: String -> RuleStore.write(context, json) }
+    Function("getRules") { RuleStore.raw(context) }
+    /** 대기열 앞에서 max 줄(JSON 배열 문자열) */
+    Function("queueRead") { max: Int -> EventQueue.read(context, max) }
+    /** 서버가 받은 마지막 id 까지 지운다(지우기는 Kotlin 이 잠금 안에서 한다). 지운 줄 수 */
+    Function("queueAck") { lastId: String -> EventQueue.ack(context, lastId) }
+    /** JS 쪽 사건(오프라인 규칙 편집 rule_put · rule_delete · 실행 확인 등). eventJson = JSON 객체 */
+    Function("queueAppend") { eventJson: String ->
+      try { EventQueue.append(context, org.json.JSONObject(eventJson)); true } catch (_: Exception) { false }
     }
+    Function("queueCount") { EventQueue.count(context) }
+    Function("queueHasRuleEdits") { EventQueue.hasRuleEdits(context) }
+
+    // ── 기기 저장값(공용 서버 기기 id · 토큰) ──
+    /** 🔴 앱 전용 SharedPreferences(다른 앱이 못 읽는다 · 백업 제외). 값은 로그 · 진단에 남기지 않는다 */
+    Function("kvGet") { key: String -> context.getSharedPreferences(KV, Context.MODE_PRIVATE).getString(key, null) }
+    Function("kvSet") { key: String, value: String? ->
+      context.getSharedPreferences(KV, Context.MODE_PRIVATE).edit().apply { if (value == null) remove(key) else putString(key, value) }.apply()
+    }
+    /** UUID v4(Hermes 에 crypto.randomUUID 가 없다) */
+    Function("uuid") { java.util.UUID.randomUUID().toString() }
 
     Function("getLog") { SpikeStore.log(context) }
     Function("clearLog") { SpikeStore.clearLog(context) }
@@ -120,13 +144,22 @@ class InterventionModule : Module() {
     }
 
     // ── 앱 고르기(§5) ──
+    /** 결정 #27 L: 이 앱 · 홈 런처 · 시스템 설정 · 전화는 목록에서 뺀다(서비스도 따로 거른다) */
     Function("listLaunchableApps") {
       val pm = context.packageManager
       val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+      val excluded = buildSet {
+        add(context.packageName)
+        add("com.android.settings")
+        pm.resolveActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0)?.activityInfo?.packageName?.let { add(it) }
+        try {
+          (context.getSystemService(Context.TELECOM_SERVICE) as? android.telecom.TelecomManager)?.defaultDialerPackage?.let { add(it) }
+        } catch (_: Exception) {}
+      }
       pm.queryIntentActivities(intent, 0)
         .map { it.activityInfo.packageName to it.loadLabel(pm).toString() }
         .distinctBy { it.first }
-        .filter { it.first != context.packageName }
+        .filter { it.first !in excluded }
         .sortedBy { it.second.lowercase() }
         .map { mapOf("packageName" to it.first, "label" to it.second) }
     }

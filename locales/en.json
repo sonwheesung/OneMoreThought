@@ -13,12 +13,19 @@
     "message": "Message",
     "targets": "Target apps",
     "save": "Save rule",
-    "saved": "Saved",
     "openedToday": "Opened today",
     "notOpenedToday": "Not opened today",
     "log": "Log",
     "refresh": "Refresh",
-    "clear": "Clear"
+    "clear": "Clear",
+    "invalid": "Check apps, message and time (HH:MM, start and end must differ)",
+    "saved_synced": "Saved (on server)",
+    "saved_queued": "Saved (will upload when online)",
+    "saved_failed": "Couldn't save",
+    "window": "Time window (may cross midnight)",
+    "sync": "Sync",
+    "queued": "queued",
+    "syncNow": "Sync now"
   },
   "disclosure": {
     "title": "Before you turn this on",

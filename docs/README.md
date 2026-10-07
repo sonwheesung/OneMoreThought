@@ -59,7 +59,7 @@
 | 감지 · 오버레이 스파이크 S1 ~ S7 | 🔨 2026-10-08 · S24 한 대 실측(삼성 외 기기 · 절전은 남음) | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
 | 하루 경계 `lib/day.ts` · 판정 순수 모듈 `lib/rules.ts` | ✅ 2026-10-08(TS) | Phase 1 · `check:day` · `check:rules` · 시험표 `tests/rules-cases.json` |
 | 판정 Kotlin(같은 시험표) | ✅ 2026-10-08 | `RuleJudge.kt` · `check:rules:kt` |
-| 기기 규칙 캐시 · 기록 대기열 | ❌ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) · ~~로컬 DB~~ → 결정 #30 |
+| 기기 규칙 캐시 · 기록 대기열 · 서버 연결 | 🔨 2026-10-08 코드 ✅ · 실기기 ⏳ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) · ~~로컬 DB~~ → 결정 #30 |
 | 실행 전 확인(홈 · 만들기 · 확인 화면 · 권한 온보딩) | ❌ | Phase 2 |
 | 실행 확인(알람 · 알림 · 오늘 ✓) | ❌ | Phase 3 |
 
@@ -67,7 +67,7 @@
 
 | 영역 | 상태 | 비고 |
 |---|---|---|
-| 앱 서버 | ~~🚫 결정 #5~~ → 🔨 2026-10-08 골격 · 스키마 · e2e ✅ · 배포 ❌ | 결정 #30 · 조각 Supabase 이 앱 스키마 · mission 승계(스키마 생성은 그날 사용자 확인) |
+| 앱 서버 | ~~🚫 결정 #5~~ → ✅ 2026-10-08 `vg-intervene-sync.vercel.app` 배포 · 스키마 · e2e | 결정 #30 · 조각 Supabase 이 앱 스키마 · mission 승계(스키마 생성은 그날 사용자 확인) |
 | common_server | ⏳ | 결정 #20 · 진단 · 문의 첨부는 공용 서버 세션 합의 대기 |
 
 ### 외부

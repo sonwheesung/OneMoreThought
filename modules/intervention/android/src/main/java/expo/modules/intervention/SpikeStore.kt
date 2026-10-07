@@ -9,32 +9,17 @@ import org.json.JSONObject
  * Phase 0 스파이크 저장소(docs/ANDROID_PLATFORM.md §9).
  *
  * 접근성 서비스는 RN 런타임 밖에서 돈다(§6). 그래서 JS 와 서비스가 SharedPreferences 하나를 같이 읽는다.
- * ⚠ 스파이크 전용이다. 규칙 저장소의 정본은 Phase 1 `docs/DATABASE.md` 에서 정한다(CLAUDE §6).
- *
- * 규칙은 아직 "대상 앱 + 메시지" 뿐이다(요일 · 시간대 판정은 Phase 1 · RULE_SYSTEM §3.1).
+ * ~~규칙 저장~~ → Phase 1 에서 `RuleStore`(rules.json)로 옮겼다(결정 #30). 여기에는 스파이크 화면의 감지 기록과
+ * 진단 신호 거울만 남았다. 확인 결과의 정본 기록은 `EventQueue`(서버로 간다)다.
  */
 internal object SpikeStore {
   private const val PREFS = "intervention_spike"
-  private const val KEY_TARGETS = "targets"
-  private const val KEY_MESSAGE = "message"
   private const val KEY_LOG = "log"
   private const val LOG_MAX = 50
 
   fun prefs(context: Context): SharedPreferences =
     context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-  fun setRule(context: Context, targets: List<String>, message: String) {
-    prefs(context).edit()
-      .putStringSet(KEY_TARGETS, targets.toSet())
-      .putString(KEY_MESSAGE, message)
-      .apply()
-  }
-
-  fun targets(context: Context): Set<String> =
-    prefs(context).getStringSet(KEY_TARGETS, emptySet()) ?: emptySet()
-
-  fun message(context: Context): String =
-    prefs(context).getString(KEY_MESSAGE, "") ?: ""
 
   /** 스파이크 기록 종류 → 진단 신호 이름(docs/DIAGNOSTICS_SYSTEM.md §2) */
   private val SIGNAL = mapOf(

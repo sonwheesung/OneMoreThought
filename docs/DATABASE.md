@@ -10,11 +10,11 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | 설계(이 문서) | ✅ 2026-10-08 | §6 이름은 결정 #31 |
-| 기기 규칙 캐시(`rules.json`) | ❌ | Phase 1 · 스파이크 `SpikeStore` 를 대체 |
-| 기록 대기열(`queue.jsonl`) | ❌ | Phase 1 |
+| 기기 규칙 캐시(`rules.json`) | ✅ 2026-10-08(코드) | `RuleStore.kt` · 접근성 서비스가 `RuleJudge` 로 판정 · 스파이크 `SpikeStore` 의 규칙 저장을 대체 · ⏳ 실기기 |
+| 기록 대기열(`queue.jsonl`) | ✅ 2026-10-08(코드) | `EventQueue.kt`(덧붙이기 · 읽기 · ack · 1MB 상한) · `features/rules.ts` 가 올린다 · ⏳ 실기기 |
 | `server/` 골격 · API 7개 | ✅ 2026-10-08 | mission 승계 · 로컬 e2e 통과(AUTH_STUB · 실제 조각 DB) |
 | 조각 DB `intervene` 스키마 · 전용 역할 | ✅ 2026-10-08 | 결정 #31 그날 확인 · 0001 · 조각 `public` 앞뒤 같음 · `db:check` 29항목. 🔴 조각 세션이 떠 있지 않아 통지는 이 행 · CLAUDE §15 · 사용자 보고로 남겼다 |
-| Vercel 배포 | ❌ | `vg-intervene-sync`(결정 #31) |
+| Vercel 배포 | ✅ 2026-10-08 | `https://vg-intervene-sync.vercel.app`(팀 sonws · `icn1`) · env 2개(`DATABASE_URL` 은 6543 · 값은 stdin 으로만) · health `db: up` · 토큰 없음 · 가짜 토큰 · 인증 우회 시도 전부 401 |
 | 공용 서버 `app_code` | ✅ 2026-10-08 | 그쪽 등록. 기기 토큰 → `/auth/me` 실측은 앱이 붙을 때 △ |
 
 ## 1. 구조
@@ -77,6 +77,17 @@
 
 - 크기 상한: ⚠ 1MB(placeholder · 2026-10-08). 넘으면 오래된 `prompt` · `check` 부터 버리고 진단에 `queue_trim` 을 남긴다. 규칙 편집(`rule_*`)은 버리지 않는다.
 - 🔴 메시지 원문은 `rule_put` 에만 있다. 사건마다 메시지를 다시 싣지 않는다(서버가 `ruleId` 로 잇는다 · 당시 문구는 §3 `rule_versions`).
+
+### 2.3 앱 쪽 코드(2026-10-08)
+
+| 파일 | 하는 일 |
+|---|---|
+| `features/server.ts` | 공용 서버 기기 토큰(`POST /api/v1/devices` · 기기 id 는 처음 한 번 만든 UUID) · 앱 서버 호출(401 이면 토큰을 한 번 다시 받는다) |
+| `features/rules.ts` | `saveRule` · `deleteRule`(캐시 먼저 → 서버 → 실패하면 대기열) · `flushQueue`(200개 묶음 · 200 이면 ack) · `pullRules`(대기열에 규칙 편집이 남아 있으면 덮지 않는다) · `syncNow` |
+| `RuleStore.kt` · `EventQueue.kt` | §2.1 · §2.2 |
+
+- 기기 id · 토큰은 앱 전용 SharedPreferences(`intervene_kv`)에 둔다. 다른 앱은 못 읽는다. 로그 · 진단에 남기지 않는다.
+- 결정 #27 L(제외 앱): 앱 고르기 목록에서 이 앱 · 홈 런처 · 시스템 설정 · 기본 전화 앱을 뺀다. 접근성 서비스도 홈 런처 · 설정을 판정 전에 거른다(이 앱 · 전화는 이미 "떠남 아님"으로 거른다).
 
 ## 3. 서버 표(`intervene`)
 

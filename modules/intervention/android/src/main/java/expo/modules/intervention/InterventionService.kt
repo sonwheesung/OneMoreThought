@@ -31,7 +31,8 @@ import org.json.JSONObject
  * 🔴 Play 정책(§8.2): [취소]의 "홈으로"는 사용자가 누른 뒤에만 일어나고, 접근성 동작(performGlobalAction)
  *    대신 홈 인텐트를 연다. 접근성으로 무언가를 실행하는 자리를 0 으로 둔다.
  *
- * 통과 상태(RULE_SYSTEM §3.3 · 미결정 D 추천안): [열기] 뒤 그 앱이 화면에서 벗어나고 GRACE_MS 가 지나면 끝난다.
+ * 판정(Phase 1 · 결정 #30): 기기 규칙 캐시(`RuleStore` · rules.json)를 `RuleJudge` 로 판정한다. 인터넷이 없어도 돈다.
+ * 통과 상태(RULE_SYSTEM §3.3 · 결정 #27 · #29): [열기] 뒤 그 앱이 화면에서 벗어나고 **그 규칙의 유예(분)** 가 지나면 끝난다.
  * 알림창 · 키보드 · 이 앱 자신의 창은 "벗어남"으로 치지 않는다.
  *
  * 확인 화면은 **액티비티**(InterventionActivity)로 띄운다(2026-10-08 · 대상 앱이 뒤에서 계속 돌던 문제).
@@ -40,8 +41,6 @@ import org.json.JSONObject
 class InterventionService : AccessibilityService() {
 
   companion object {
-    /** 미결정 D 추천안(placeholder 2026-10-08 · 60초) */
-    const val GRACE_MS = 60_000L
     /** 잠금 화면 · 알림창(G3 · 2026-10-08 결정 #19: 잠금은 떠난 것이 아니다) */
     private val NOT_LEAVING = setOf("com.android.systemui")
     /**
@@ -57,6 +56,7 @@ class InterventionService : AccessibilityService() {
 
   private var overlay: View? = null
   private var overlayPkg: String? = null
+  private var overlayShownAt = 0L
 
   private val passed get() = InterventionState.passed
   private val main = android.os.Handler(android.os.Looper.getMainLooper())
@@ -75,7 +75,7 @@ class InterventionService : AccessibilityService() {
     val pkg = event.packageName?.toString() ?: return
     if (pkg == packageName || pkg in NOT_LEAVING || isIme(pkg) || isInterruption(pkg)) return
     // L1: 고르지 않고 닫힌 확인 화면이 있다 → 그 앱이 다시 보이면 같은 패키지여도 다시 묻는다
-    if (pkg == foreground && pkg == InterventionState.pendingPkg && !InterventionState.activityResumed) {
+    if (pkg == foreground && pkg == InterventionState.pendingPkg && !InterventionState.activityResumed && InterventionState.hits.containsKey(pkg)) {
       showActivity(pkg, event.eventTime)
       return
     }
@@ -97,19 +97,26 @@ class InterventionService : AccessibilityService() {
       removeOverlay()
     }
 
-    if (pkg !in SpikeStore.targets(this)) return
+    if (isExcluded(pkg)) return // 결정 #27 L: 홈 런처 · 시스템 설정은 대상이 아니다(이 앱 · 전화는 위에서 걸렀다)
     if (isPassed(pkg)) {
       passed[pkg] = null // 다시 앞으로 왔다. 통과 유지
       return
     }
     // 확인 화면이 맨 앞에 있으면 그대로 둔다. 뒤에 숨어 살아 있으면(대상 앱이 그 위로 왔다) 다시 앞으로 부른다(2026-10-08 구멍)
     if (InterventionState.activityResumed || overlay != null) return
+    // 규칙 판정: 켜진 실행 전 확인 규칙 중 이 앱 · 이 시각에 걸리는 것. 겹치면 무작위 하나(결정 #26 F)
+    val hit = RuleJudge.pickIntercept(RuleStore.rules(this), pkg, java.util.Calendar.getInstance(), kotlin.random.Random.nextDouble())
+      ?: return
+    InterventionState.hits[pkg] = hit
     showActivity(pkg, event.eventTime)
   }
 
   private fun showActivity(pkg: String, eventUptime: Long) {
+    val hit = InterventionState.hits[pkg] ?: return
     val i = Intent(this, InterventionActivity::class.java)
       .putExtra(InterventionActivity.EXTRA_PKG, pkg)
+      .putExtra(InterventionActivity.EXTRA_RULE_ID, hit.ruleId)
+      .putExtra(InterventionActivity.EXTRA_MESSAGE, hit.message)
       .putExtra(InterventionActivity.EXTRA_EVENT_UPTIME, eventUptime)
       .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
     try {
@@ -126,12 +133,21 @@ class InterventionService : AccessibilityService() {
     }, 800)
   }
 
+  /** 통과 상태 판정은 RuleJudge.isPassed(TS 와 같은 시험표). 유예는 [열기]를 누른 그 규칙의 값(결정 #29) */
   private fun isPassed(pkg: String): Boolean {
-    if (!passed.containsKey(pkg)) return false
-    val leftAt = passed[pkg] ?: return true
-    if (SystemClock.uptimeMillis() - leftAt <= GRACE_MS) return true
-    passed.remove(pkg)
+    val present = passed.containsKey(pkg)
+    val grace = InterventionState.graceMin[pkg] ?: RuleJudge.GRACE_DEFAULT
+    if (RuleJudge.isPassed(present, passed[pkg], SystemClock.uptimeMillis(), grace)) return true
+    if (present) passed.remove(pkg)
     return false
+  }
+
+  /** 결정 #27 L: 홈 런처 · 시스템 설정(사용자가 권한을 끄러 가는 길을 막지 않는다) */
+  private fun isExcluded(pkg: String): Boolean {
+    if (pkg == "com.android.settings") return true
+    val home = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+    val launcher = packageManager.resolveActivity(home, 0)?.activityInfo?.packageName
+    return pkg == launcher
   }
 
   private fun isInterruption(pkg: String): Boolean {
@@ -200,6 +216,7 @@ class InterventionService : AccessibilityService() {
       wm.addView(root, params)
       overlay = root
       overlayPkg = pkg
+      overlayShownAt = System.currentTimeMillis()
       root.requestFocus()
     } catch (e: Exception) {
       SpikeStore.appendLog(this, JSONObject().put("kind", "error").put("pkg", pkg).put("error", e.toString()))
@@ -226,7 +243,7 @@ class InterventionService : AccessibilityService() {
 
   private fun open(pkg: String) {
     record(pkg, "open", null)
-    passed[pkg] = null
+    InterventionState.pass(pkg, InterventionState.hits[pkg]?.let { h -> graceOf(h.ruleId) })
     removeOverlay()
   }
 
@@ -235,7 +252,14 @@ class InterventionService : AccessibilityService() {
       .put("at", System.currentTimeMillis())
     if (extra != null) o.put("extra", extra)
     SpikeStore.appendLog(this, o)
+    // 서버로 갈 기록(DATABASE §2.2 · 결정 #30)
+    val hit = InterventionState.hits[pkg] ?: return
+    val now = System.currentTimeMillis()
+    val shown = if (overlayShownAt > 0) overlayShownAt else now
+    EventQueue.prompt(this, hit.ruleId, pkg, shown, result, now - shown)
   }
+
+  private fun graceOf(ruleId: String): Int? = RuleStore.rules(this).firstOrNull { it.id == ruleId }?.graceMin
 
   /** 스파이크 화면. 실제 디자인은 Phase 2(`docs/UI_GUIDE.md` · ui-design-reference) */
   private fun buildView(pkg: String): View {
@@ -265,7 +289,7 @@ class InterventionService : AccessibilityService() {
     }
     // 🔴 기둥 4: 사용자 메시지를 그대로. 다듬지 않는다
     val message = TextView(this).apply {
-      text = SpikeStore.message(this@InterventionService)
+      text = InterventionState.hits[pkg]?.message ?: ""
       setTextColor(Color.WHITE)
       setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
       gravity = Gravity.CENTER

@@ -13,12 +13,19 @@
     "message": "메시지",
     "targets": "대상 앱",
     "save": "규칙 저장",
-    "saved": "저장했어요",
     "openedToday": "오늘 열었어요",
     "notOpenedToday": "오늘 아직 안 열었어요",
     "log": "기록",
     "refresh": "새로고침",
-    "clear": "지우기"
+    "clear": "지우기",
+    "invalid": "대상 앱 · 메시지 · 시간(HH:MM · 시작과 끝이 달라야 해요)을 확인해 주세요",
+    "saved_synced": "저장했어요(서버까지)",
+    "saved_queued": "저장했어요(연결되면 올려요)",
+    "saved_failed": "저장하지 못했어요",
+    "window": "시간대(자정을 넘어도 돼요)",
+    "sync": "동기화",
+    "queued": "대기",
+    "syncNow": "지금 동기화"
   },
   "disclosure": {
     "title": "켜기 전에 알려 드려요",
