@@ -42,7 +42,17 @@ class InterventionService : AccessibilityService() {
   companion object {
     /** 미결정 D 추천안(placeholder 2026-10-08 · 60초) */
     const val GRACE_MS = 60_000L
+    /** 잠금 화면 · 알림창(G3 · 2026-10-08 결정 #19: 잠금은 떠난 것이 아니다) */
     private val NOT_LEAVING = setOf("com.android.systemui")
+    /**
+     * 시스템이 끼어든 것이지 사용자가 떠난 것이 아니다(L4 · 결정 #19). 통화 · 알람 · 타이머.
+     * 전화 상태 권한(위험 권한)을 받지 않으려고 패키지로 본다 △. 기본 전화 앱은 TelecomManager 로 더한다(권한 불필요).
+     * 📱 삼성 통화 화면 `com.samsung.android.incallui` 관측(갤럭시 S24 · 2026-10-08 16:40:06).
+     */
+    private val INTERRUPTIONS = setOf(
+      "com.samsung.android.incallui", "com.android.incallui", "com.google.android.dialer", "com.android.dialer",
+      "com.sec.android.app.clockpackage", "com.google.android.deskclock", "com.android.deskclock",
+    )
   }
 
   private var overlay: View? = null
@@ -54,13 +64,19 @@ class InterventionService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
+    registerReceiver(unlockReceiver, android.content.IntentFilter(Intent.ACTION_USER_PRESENT))
     SpikeStore.appendLog(this, JSONObject().put("kind", "connected").put("at", System.currentTimeMillis()))
   }
 
   override fun onAccessibilityEvent(event: AccessibilityEvent?) {
     if (event == null || event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
     val pkg = event.packageName?.toString() ?: return
-    if (pkg == packageName || pkg in NOT_LEAVING || isIme(pkg)) return
+    if (pkg == packageName || pkg in NOT_LEAVING || isIme(pkg) || isInterruption(pkg)) return
+    // L1: 고르지 않고 닫힌 확인 화면이 있다 → 그 앱이 다시 보이면 같은 패키지여도 다시 묻는다
+    if (pkg == foreground && pkg == InterventionState.pendingPkg && !InterventionState.activityResumed) {
+      showActivity(pkg, event.eventTime)
+      return
+    }
     if (pkg == foreground) return
     val prev = foreground
     foreground = pkg
@@ -116,6 +132,25 @@ class InterventionService : AccessibilityService() {
     return false
   }
 
+  private fun isInterruption(pkg: String): Boolean {
+    if (pkg in INTERRUPTIONS) return true
+    val tm = getSystemService(Context.TELECOM_SERVICE) as? android.telecom.TelecomManager ?: return false
+    return try { tm.defaultDialerPackage == pkg } catch (e: Exception) { false }
+  }
+
+  /**
+   * L1(화면 잠금 구멍): 확인 화면이 고르지 않은 채 닫혔는데(잠금 · 홈) 그 앱이 맨 앞인 채로 잠금이 풀리면
+   * 창 전환 이벤트가 안 올 수 있다(잠금 화면은 무시 대상이라 foreground 가 그대로다). 잠금 해제 신호로 직접 확인한다.
+   */
+  private val unlockReceiver = object : android.content.BroadcastReceiver() {
+    override fun onReceive(c: Context?, i: Intent?) {
+      val p = InterventionState.pendingPkg ?: return
+      if (foreground == p && !InterventionState.activityResumed && !isPassed(p)) {
+        showActivity(p, SystemClock.uptimeMillis())
+      }
+    }
+  }
+
   private fun isIme(pkg: String): Boolean {
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return false
     return imm.enabledInputMethodList.any { it.packageName == pkg }
@@ -126,6 +161,7 @@ class InterventionService : AccessibilityService() {
   }
 
   override fun onDestroy() {
+    try { unregisterReceiver(unlockReceiver) } catch (_: Exception) {}
     removeOverlay()
     super.onDestroy()
   }

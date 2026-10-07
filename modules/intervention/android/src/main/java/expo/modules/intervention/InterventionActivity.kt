@@ -92,6 +92,7 @@ class InterventionActivity : Activity() {
     if (!decided && !isChangingConfigurations) {
       decided = true
       record("dismissed")
+      InterventionState.pendingPkg = pkg // L1: 그 앱이 다시 보이면 다시 묻는다
       finish()
     }
   }
@@ -106,6 +107,7 @@ class InterventionActivity : Activity() {
     if (decided) return
     decided = true
     record("cancel")
+    InterventionState.pendingPkg = null
     startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     finish()
   }
@@ -115,7 +117,13 @@ class InterventionActivity : Activity() {
     decided = true
     record("open")
     InterventionState.pass(pkg)
-    finish() // 우리 화면이 걷히면 일시정지돼 있던 대상 앱이 다시 앞으로 온다
+    InterventionState.pendingPkg = null
+    // L3: 그사이 대상 앱이 꺼졌으면 우리 화면만 걷어서는 홈이 나온다. 실행 인텐트를 직접 부른다
+    // (살아 있으면 아이콘을 누른 것처럼 그 화면 그대로 앞으로 온다)
+    packageManager.getLaunchIntentForPackage(pkg)?.let {
+      try { startActivity(it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } catch (_: Exception) {}
+    }
+    finish()
     overridePendingTransition(0, 0)
   }
 
@@ -176,6 +184,8 @@ internal object InterventionState {
   @Volatile var activityAlive = false
   /** 확인 화면이 지금 맨 앞에 있나. alive 와 다르다: 뒤에 숨어 살아 있을 수 있다 */
   @Volatile var activityResumed = false
+  /** 고르지 않고 닫힌 확인 화면의 대상(L1). 취소 · 열기 · 통과로 지운다 */
+  @Volatile var pendingPkg: String? = null
   /** [열기]로 통과시킨 패키지 → 화면에서 벗어난 시각(uptime). null 이면 아직 앞에 있다 */
   val passed = HashMap<String, Long?>()
 
