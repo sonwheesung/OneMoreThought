@@ -84,7 +84,7 @@ export default function NewRuleMessage() {
         <Text style={[flowStyles.label, { color: c.text2 }]}>{t('rule.name')}</Text>
         <TextInput
           value={d.name}
-          onChangeText={(name) => setDraft({ name })}
+          onChangeText={(name) => setDraft({ name, nameTouched: true })}
           maxLength={20}
           placeholder={t('rule.name_ph')}
           placeholderTextColor={c.text3}

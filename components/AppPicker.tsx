@@ -1,12 +1,19 @@
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-import { Intervention, type LaunchableApp } from '@/modules/intervention';
-import { radius, spacing } from '@/theme/tokens.ts';
-import { usePalette } from '@/theme/useTheme.ts';
+import { Intervention, type LaunchableApp } from "@/modules/intervention";
+import { radius, spacing } from "@/theme/tokens.ts";
+import { usePalette } from "@/theme/useTheme.ts";
 
-import { CheckCircle, FlowScreen } from './flow.tsx';
+import { CheckCircle, FlowScreen } from "./flow.tsx";
 
 /**
  * 앱 고르기 · 시안 원모어 #8(여러 개 · 실행 전 확인) · #13(하나 · 실행 확인 · 라디오).
@@ -24,22 +31,40 @@ interface Props {
   onNext: () => void;
 }
 
-export function AppPicker({ step, total, title, sub, single, value, onChange, onNext }: Props) {
+export function AppPicker({
+  step,
+  total,
+  title,
+  sub,
+  single,
+  value,
+  onChange,
+  onNext,
+}: Props) {
   const { t } = useTranslation();
   const c = usePalette();
   const apps = useMemo<LaunchableApp[]>(
-    () => [...(Intervention?.listLaunchableApps() ?? [])].sort((a, b) => a.label.localeCompare(b.label)),
+    () =>
+      [...(Intervention?.listLaunchableApps() ?? [])].sort((a, b) =>
+        a.label.localeCompare(b.label),
+      ),
     [],
   );
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState("");
   const shown = useMemo(() => {
     const k = q.trim().toLocaleLowerCase();
-    return k ? apps.filter((a) => a.label.toLocaleLowerCase().includes(k)) : apps;
+    return k
+      ? apps.filter((a) => a.label.toLocaleLowerCase().includes(k))
+      : apps;
   }, [apps, q]);
-  const labelOf = (pkg: string) => apps.find((a) => a.packageName === pkg)?.label ?? '';
+  const labelOf = (pkg: string) =>
+    apps.find((a) => a.packageName === pkg)?.label ?? "";
   const flip = (pkg: string) => {
     if (single) onChange([pkg]);
-    else onChange(value.includes(pkg) ? value.filter((p) => p !== pkg) : [...value, pkg]);
+    else
+      onChange(
+        value.includes(pkg) ? value.filter((p) => p !== pkg) : [...value, pkg],
+      );
   };
 
   const head = (
@@ -47,28 +72,49 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
       <TextInput
         value={q}
         onChangeText={setQ}
-        placeholder={t('new.appSearch')}
+        placeholder={t("new.appSearch")}
         placeholderTextColor={c.text3}
         selectionColor={c.accent}
         cursorColor={c.accent}
-        style={[styles.search, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine, color: c.text }]}
+        style={[
+          styles.search,
+          {
+            backgroundColor: c.surfaceGlass,
+            borderColor: c.surfaceLine,
+            color: c.text,
+          },
+        ]}
       />
       {!single && (
         <View style={styles.chips}>
           {value.length === 0 ? (
-            <Text style={[styles.none, { color: c.text3 }]}>{t('new.appNone')}</Text>
+            <Text style={[styles.none, { color: c.text3 }]}>
+              {t("new.appNone")}
+            </Text>
           ) : (
             value.map((p) => (
               <Pressable
                 key={p}
                 onPress={() => flip(p)}
                 accessibilityRole="button"
-                accessibilityLabel={t('new.appRemove', { name: labelOf(p) })}
-                style={[styles.chip, { backgroundColor: c.chipSelected, borderColor: c.chipSelectedLine }]}>
-                <Text style={[styles.chipText, { color: c.chipSelectedText }]} numberOfLines={1}>
+                accessibilityLabel={t("new.appRemove", { name: labelOf(p) })}
+                style={[
+                  styles.chip,
+                  {
+                    backgroundColor: c.chipSelected,
+                    borderColor: c.chipSelectedLine,
+                  },
+                ]}
+              >
+                <Text
+                  style={[styles.chipText, { color: c.chipSelectedText }]}
+                  numberOfLines={1}
+                >
                   {labelOf(p)}
                 </Text>
-                <Text style={[styles.chipX, { color: c.chipSelectedText }]}>×</Text>
+                <Text style={[styles.chipX, { color: c.chipSelectedText }]}>
+                  ×
+                </Text>
               </Pressable>
             ))
           )}
@@ -85,27 +131,42 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
       sub={sub}
       head={head}
       noScroll
-      cta={!single && value.length ? t('new.nextN', { count: value.length }) : t('new.next')}
+      cta={
+        !single && value.length
+          ? t("new.nextN", { count: value.length })
+          : t("new.next")
+      }
       ctaDisabled={value.length === 0}
-      onCta={onNext}>
+      onCta={onNext}
+    >
       <FlatList
         data={shown}
         keyExtractor={(a) => a.packageName}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.list}
-        ItemSeparatorComponent={() => <View style={[styles.sep, { backgroundColor: c.line }]} />}
-        ListEmptyComponent={<Text style={[styles.empty, { color: c.text3 }]}>{t('new.appEmpty')}</Text>}
+        ItemSeparatorComponent={() => (
+          <View style={[styles.sep, { backgroundColor: c.line }]} />
+        )}
+        ListEmptyComponent={
+          <Text style={[styles.empty, { color: c.text3 }]}>
+            {t("new.appEmpty")}
+          </Text>
+        }
         renderItem={({ item }) => {
           const on = value.includes(item.packageName);
           return (
             <Pressable
               onPress={() => flip(item.packageName)}
-              accessibilityRole={single ? 'radio' : 'checkbox'}
+              accessibilityRole={single ? "radio" : "checkbox"}
               accessibilityState={{ checked: on }}
               accessibilityLabel={item.label}
-              style={styles.row}>
+              style={styles.row}
+            >
+              {/* 앱마다 색을 달리하지 않는다(무지개 금지 · 시안 세션) */}
               <View style={[styles.icon, { backgroundColor: c.accentSoft }]}>
-                <Text style={[styles.initial, { color: c.accentStrong }]}>{[...item.label][0] ?? ''}</Text>
+                <Text style={[styles.initial, { color: c.accent }]}>
+                  {[...item.label][0] ?? ""}
+                </Text>
               </View>
               <Text style={[styles.name, { color: c.text }]} numberOfLines={1}>
                 {item.label}
@@ -121,17 +182,50 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
 
 const styles = StyleSheet.create({
   headExtra: { marginTop: spacing.md, gap: spacing.md },
-  search: { height: 48, borderRadius: radius.input, borderWidth: 1, paddingHorizontal: spacing.lg, fontSize: 16 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, minHeight: 34 },
+  search: {
+    height: 48,
+    borderRadius: radius.input,
+    borderWidth: 1,
+    paddingHorizontal: spacing.lg,
+    fontSize: 16,
+  },
+  chips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+    minHeight: 34,
+  },
   none: { fontSize: 13, lineHeight: 34 },
-  chip: { height: 34, borderRadius: radius.chip, borderWidth: 1.5, flexDirection: 'row', alignItems: 'center', paddingLeft: 14, paddingRight: 10, gap: 6, maxWidth: 200 },
-  chipText: { fontSize: 14, fontWeight: '600', flexShrink: 1 },
-  chipX: { fontSize: 16, fontWeight: '600' },
+  chip: {
+    height: 34,
+    borderRadius: radius.chip,
+    borderWidth: 1.5,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 14,
+    paddingRight: 10,
+    gap: 6,
+    maxWidth: 200,
+  },
+  chipText: { fontSize: 14, fontWeight: "600", flexShrink: 1 },
+  chipX: { fontSize: 16, fontWeight: "600" },
   list: { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
   sep: { height: StyleSheet.hairlineWidth },
-  row: { minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
-  icon: { width: 40, height: 40, borderRadius: radius.row, alignItems: 'center', justifyContent: 'center' },
-  initial: { fontSize: 16, fontWeight: '700' },
-  name: { flex: 1, fontSize: 16, fontWeight: '600' },
-  empty: { fontSize: 14, textAlign: 'center', paddingVertical: spacing.xl },
+  row: {
+    minHeight: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.row,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  initial: { fontSize: 16, fontWeight: "700" },
+  name: { flex: 1, fontSize: 16, fontWeight: "600" },
+  empty: { fontSize: 14, textAlign: "center", paddingVertical: spacing.xl },
 });

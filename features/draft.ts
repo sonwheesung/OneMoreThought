@@ -20,12 +20,14 @@ export interface Draft {
   name: string;
   message: string;
   graceMin: number;
+  /** 사용자가 이름을 직접 고쳤나. 고쳤으면 «빠르게 고르기» 칩이 이름을 덮지 않는다 */
+  nameTouched: boolean;
 }
 
 /** 메시지 글자 수 상한(가로 확인 화면에서 두 줄 안쪽 · 시안 제안값 · 서버 상한 500 보다 작다) */
 export const MESSAGE_MAX = 40;
 
-const EMPTY: Draft = { targets: [], days: 0, startMin: 9 * 60, endMin: 18 * 60, name: '', message: '', graceMin: GRACE_DEFAULT };
+const EMPTY: Draft = { targets: [], days: 0, startMin: 9 * 60, endMin: 18 * 60, name: '', message: '', graceMin: GRACE_DEFAULT, nameTouched: false };
 
 let draft: Draft = EMPTY;
 const listeners = new Set<() => void>();
