@@ -41,6 +41,7 @@ internal object EventQueue {
       .put("result", result).put("tz", TimeZone.getDefault().id).put("dayKey", dayKeyOf(shownAt))
     if (decideMs != null) o.put("decideMs", decideMs)
     append(context, o)
+    PromptStats.add(context, dayKeyOf(shownAt), result)
   }
 
   /** 앞에서부터 max 줄(JSON 배열 문자열). 깨진 줄은 건너뛴다(그 줄은 ack 로 같이 지워진다) */

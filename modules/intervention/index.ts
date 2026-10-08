@@ -38,6 +38,10 @@ export interface InterventionNative {
   openUsageAccessSettings(): void;
   /** 오늘 자정 이후 처음 앞에 나온 시각(ms). 없거나 권한이 없으면 null */
   firstOpenedToday(packageName: string): number | null;
+  /** 최근 days 일 중 그 앱이 화면 앞에 나온 날(YYYY-MM-DD). 권한이 없으면 null */
+  openedDays(packageName: string, days: number): string[] | null;
+  /** {"YYYY-MM-DD": {cancel, open, dismissed}} JSON · 통계 화면용 하루 집계 */
+  promptStats(): string;
   listLaunchableApps(): LaunchableApp[];
   advancedProtection(): 'on' | 'off' | 'unknown';
   sdkInt(): number;

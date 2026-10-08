@@ -26,7 +26,8 @@
     "sync": "Sync",
     "queued": "queued",
     "syncNow": "Sync now",
-    "newFlow": "New rule (new screens · dev)"
+    "newFlow": "New rule (new screens · dev)",
+    "statsLink": "Last 7 days (new screen · dev)"
   },
   "disclosure": {
     "title": "Before you turn this on",
@@ -123,5 +124,20 @@
     "cancel": "Cancel",
     "open": "Open",
     "second": "“{{name}}” is on"
+  },
+  "stats": {
+    "title": "Last 7 days",
+    "promptTitle": "Ask before opening",
+    "promptNote": "How many times the check screen showed and what you chose.",
+    "shown": "Shown",
+    "cancel": "Cancel",
+    "open": "Open",
+    "checkTitle": "Remind if I don't open",
+    "by": "by {{time}}",
+    "checkNote": "✓ means you opened the app that day.",
+    "noCheck": "No reminder rules yet.",
+    "noUsage": "Usage access is off, so we can't show which days you opened it.",
+    "openedDay": "{{day}}: opened",
+    "notOpenedDay": "{{day}}: not opened"
   }
 }

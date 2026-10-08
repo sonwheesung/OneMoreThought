@@ -143,6 +143,27 @@ class InterventionModule : Module() {
       null
     }
 
+    /** 최근 days 일 중 그 앱이 화면 앞에 나온 날의 날짜 키들(결정 #26 K · 통계 7일 칸). 권한이 없으면 null */
+    Function("openedDays") { pkg: String, days: Int ->
+      if (!hasUsageAccess()) return@Function null
+      val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+      val start = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+        add(Calendar.DAY_OF_MONTH, -(days.coerceIn(1, 31) - 1))
+      }.timeInMillis
+      val events = usm.queryEvents(start, System.currentTimeMillis())
+      val e = UsageEvents.Event()
+      val out = linkedSetOf<String>()
+      while (events.hasNextEvent()) {
+        events.getNextEvent(e)
+        if (e.packageName == pkg && e.eventType == 1) out.add(EventQueue.dayKeyOf(e.timeStamp))
+      }
+      out.toList()
+    }
+
+    /** 통계용 하루 집계(PromptStats) JSON */
+    Function("promptStats") { PromptStats.read(context) }
+
     // ── 앱 고르기(§5) ──
     /** 결정 #27 L: 이 앱 · 홈 런처 · 시스템 설정 · 전화는 목록에서 뺀다(서비스도 따로 거른다) */
     Function("listLaunchableApps") {

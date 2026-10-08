@@ -26,7 +26,8 @@
     "sync": "동기화",
     "queued": "대기",
     "syncNow": "지금 동기화",
-    "newFlow": "새 규칙 만들기(새 화면 · 개발용)"
+    "newFlow": "새 규칙 만들기(새 화면 · 개발용)",
+    "statsLink": "최근 7일(새 화면 · 개발용)"
   },
   "disclosure": {
     "title": "켜기 전에 알려 드려요",
@@ -123,5 +124,20 @@
     "cancel": "취소",
     "open": "열기",
     "second": "‘{{name}}’ 규칙이 켜져 있어요"
+  },
+  "stats": {
+    "title": "최근 7일",
+    "promptTitle": "열기 전 확인",
+    "promptNote": "확인 화면이 뜬 횟수와 고른 것이에요.",
+    "shown": "확인",
+    "cancel": "취소",
+    "open": "열기",
+    "checkTitle": "안 열었을 때 알림",
+    "by": "{{time}}까지",
+    "checkNote": "✓ 는 그날 앱을 열었다는 뜻이에요.",
+    "noCheck": "아직 만든 알림 규칙이 없어요.",
+    "noUsage": "사용 기록 접근이 꺼져 있어서 연 날을 볼 수 없어요.",
+    "openedDay": "{{day}} 열었어요",
+    "notOpenedDay": "{{day}} 안 열었어요"
   }
 }
