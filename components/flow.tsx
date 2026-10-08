@@ -1,22 +1,13 @@
-import { router } from "expo-router";
-import { useEffect, useRef, type ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from 'expo-router';
+import { useEffect, useRef, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { motion, radius, size, spacing, type } from "@/theme/tokens.ts";
-import { usePalette, useReducedMotion } from "@/theme/useTheme.ts";
+import { motion, radius, size, spacing, type } from '@/theme/tokens.ts';
+import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 
-import { EASE, GlowBackground, PrimaryButton } from "./ui.tsx";
+import { EASE, GlowBackground, PrimaryButton } from './ui.tsx';
 
 /**
  * 규칙 만들기 흐름의 틀(시안 원모어 #7 ~ #11 · #13): 왼쪽 위 뒤로가기 · 진행 칸 · 큰 질문 26/700 · 한 줄 설명 · 아래 고정 주 버튼.
@@ -39,19 +30,7 @@ interface FlowProps {
   children: ReactNode;
 }
 
-export function FlowScreen({
-  step,
-  total,
-  title,
-  sub,
-  cta,
-  ctaDisabled,
-  onCta,
-  head,
-  noScroll,
-  footer,
-  children,
-}: FlowProps) {
+export function FlowScreen({ step, total, title, sub, cta, ctaDisabled, onCta, head, noScroll, footer, children }: FlowProps) {
   const c = usePalette();
   const reduced = useReducedMotion();
   // 들어옴: 오른쪽 24px → 0 · 220ms(시안 원모어 #11 · #17). 모션 줄이기면 스택 페이드만
@@ -78,10 +57,7 @@ export function FlowScreen({
   };
   return (
     <GlowBackground>
-      <SafeAreaView
-        style={styles.flex}
-        edges={["top", "bottom", "left", "right"]}
-      >
+      <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
         <View style={styles.bar}>
           <BackButton />
           <StepBar step={step} total={total} />
@@ -89,27 +65,16 @@ export function FlowScreen({
         </View>
         <Animated.View style={[styles.flex, slide]}>
           <View style={styles.head}>
-            <Text
-              style={[type.title, { color: c.text }]}
-              accessibilityRole="header"
-            >
+            <Text style={[type.title, { color: c.text }]} accessibilityRole="header">
               {title}
             </Text>
-            {sub ? (
-              <Text style={[type.sub, styles.sub, { color: c.text2 }]}>
-                {sub}
-              </Text>
-            ) : null}
+            {sub ? <Text style={[type.sub, styles.sub, { color: c.text2 }]}>{sub}</Text> : null}
             {head}
           </View>
           {noScroll ? (
             <View style={styles.flex}>{children}</View>
           ) : (
-            <ScrollView
-              style={styles.flex}
-              contentContainerStyle={styles.body}
-              keyboardShouldPersistTaps="handled"
-            >
+            <ScrollView style={styles.flex} contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
               {children}
             </ScrollView>
           )}
@@ -130,14 +95,10 @@ export function BackButton() {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={t("common.back")}
+      accessibilityLabel={t('common.back')}
       hitSlop={8}
-      onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
-      style={[
-        styles.back,
-        { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine },
-      ]}
-    >
+      onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      style={[styles.back, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }]}>
       <Text style={[styles.backText, { color: c.text }]}>‹</Text>
     </Pressable>
   );
@@ -149,13 +110,7 @@ export function StepBar({ step, total }: { step: number; total: number }) {
   return (
     <View style={styles.steps} accessibilityLabel={`${step} / ${total}`}>
       {Array.from({ length: total }, (_, i) => (
-        <View
-          key={i}
-          style={[
-            styles.stepCell,
-            { backgroundColor: i < step ? c.accent : c.line },
-          ]}
-        />
+        <View key={i} style={[styles.stepCell, { backgroundColor: i < step ? c.accent : c.line }]} />
       ))}
     </View>
   );
@@ -207,13 +162,8 @@ export function Chip({
           borderWidth: on ? 1.5 : 1,
         },
         style,
-      ]}
-    >
-      <Text
-        style={[styles.chipText, { color: on ? c.chipSelectedText : c.text2 }]}
-      >
-        {label}
-      </Text>
+      ]}>
+      <Text style={[styles.chipText, { color: on ? c.chipSelectedText : c.text2 }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -223,12 +173,7 @@ export function CheckCircle({ on, radio }: { on: boolean; radio?: boolean }) {
   const c = usePalette();
   const v = useOnValue(on);
   return (
-    <View
-      style={[
-        styles.check,
-        { borderColor: on && radio ? c.chipSelectedLine : c.lineStrong },
-      ]}
-    >
+    <View style={[styles.check, { borderColor: on && radio ? c.chipSelectedLine : c.lineStrong }]}>
       <Animated.View
         style={[
           radio ? styles.radioDot : styles.checkFill,
@@ -244,8 +189,7 @@ export function CheckCircle({ on, radio }: { on: boolean; radio?: boolean }) {
               },
             ],
           },
-        ]}
-      >
+        ]}>
         {!radio && <View style={[styles.tick, { borderColor: c.onAccent }]} />}
       </Animated.View>
     </View>
@@ -253,43 +197,27 @@ export function CheckCircle({ on, radio }: { on: boolean; radio?: boolean }) {
 }
 
 /** 유리 카드(반경 28) */
-export function GlassCard({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: StyleProp<ViewStyle>;
-}) {
+export function GlassCard({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const c = usePalette();
-  return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine },
-        style,
-      ]}
-    >
-      {children}
-    </View>
-  );
+  return <View style={[styles.card, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }, style]}>{children}</View>;
 }
 
 export const flowStyles = StyleSheet.create({
   label: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
     lineHeight: 18,
     marginBottom: spacing.sm,
   },
-  row: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
 });
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   bar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
   },
@@ -299,11 +227,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   backText: { fontSize: 26, lineHeight: 30, marginTop: -3 },
-  steps: { flexDirection: "row", gap: 6 },
+  steps: { flexDirection: 'row', gap: 6 },
   stepCell: { width: 18, height: 4, borderRadius: 2 },
   head: {
     paddingHorizontal: spacing.xl,
@@ -326,27 +254,27 @@ const styles = StyleSheet.create({
   chip: {
     borderRadius: radius.chip,
     paddingHorizontal: spacing.lg,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  chipText: { fontSize: 14, fontWeight: "600" },
+  chipText: { fontSize: 14, fontWeight: '600' },
   check: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   checkFill: {
-    position: "absolute",
+    position: 'absolute',
     top: -2,
     left: -2,
     right: -2,
     bottom: -2,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   radioDot: { width: 12, height: 12, borderRadius: 6 },
   tick: {
@@ -354,7 +282,7 @@ const styles = StyleSheet.create({
     height: 11,
     borderRightWidth: 2,
     borderBottomWidth: 2,
-    transform: [{ rotate: "45deg" }],
+    transform: [{ rotate: '45deg' }],
     marginTop: -2,
   },
   card: { borderRadius: radius.card, borderWidth: 1, padding: 18 },

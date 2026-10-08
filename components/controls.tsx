@@ -1,18 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import {
-  Animated,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Animated, Modal, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
-import { motion, radius, size, spacing } from "@/theme/tokens.ts";
-import { usePalette, useReducedMotion } from "@/theme/useTheme.ts";
+import { motion, radius, size, spacing } from '@/theme/tokens.ts';
+import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 
-import { EASE } from "./ui.tsx";
+import { EASE } from './ui.tsx';
 
 /**
  * 설정 화면 부품 · 시안 원모어 #16: 스위치 · 확인창 · 알약 안내.
@@ -20,15 +12,7 @@ import { EASE } from "./ui.tsx";
  */
 
 /** 스위치 48×28 · 200ms · 손잡이 14 → 22. 트랙 색은 JS 드라이버 · 손잡이 위치는 네이티브(값을 섞지 않는다) */
-export function Switch({
-  value,
-  onChange,
-  label,
-}: {
-  value: boolean;
-  onChange: (v: boolean) => void;
-  label: string;
-}) {
+export function Switch({ value, onChange, label }: { value: boolean; onChange: (v: boolean) => void; label: string }) {
   const c = usePalette();
   const reduced = useReducedMotion();
   const pos = useRef(new Animated.Value(value ? 1 : 0)).current;
@@ -55,8 +39,7 @@ export function Switch({
         value
           ? { backgroundColor: c.switchOn, borderColor: c.switchOn }
           : { backgroundColor: c.switchOffTrack, borderColor: c.switchOffLine },
-      ]}
-    >
+      ]}>
       <Animated.View
         style={{
           width: knob,
@@ -112,39 +95,20 @@ export function useDialog() {
   return { open, show, hide, p };
 }
 
-export function Dialog({
-  d,
-  onClose,
-  children,
-}: {
-  d: ReturnType<typeof useDialog>;
-  onClose: () => void;
-  children: ReactNode;
-}) {
+export function Dialog({ d, onClose, children }: { d: ReturnType<typeof useDialog>; onClose: () => void; children: ReactNode }) {
   const c = usePalette();
-  const dark = useColorScheme() === "dark";
+  const dark = useColorScheme() === 'dark';
   return (
-    <Modal
-      transparent
-      visible={d.open}
-      onRequestClose={onClose}
-      statusBarTranslucent
-    >
+    <Modal transparent visible={d.open} onRequestClose={onClose} statusBarTranslucent>
       <Animated.View
         style={[
           StyleSheet.absoluteFill,
           {
-            backgroundColor: dark ? "rgba(0,0,0,0.5)" : "rgba(19,18,49,0.35)",
+            backgroundColor: dark ? 'rgba(0,0,0,0.5)' : 'rgba(19,18,49,0.35)',
             opacity: d.p,
           },
-        ]}
-      >
-        <Pressable
-          style={StyleSheet.absoluteFill}
-          onPress={onClose}
-          accessibilityElementsHidden
-          importantForAccessibility="no"
-        />
+        ]}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityElementsHidden importantForAccessibility="no" />
       </Animated.View>
       <View style={styles.center} pointerEvents="box-none">
         <Animated.View
@@ -163,8 +127,7 @@ export function Dialog({
                 },
               ],
             },
-          ]}
-        >
+          ]}>
           {children}
         </Animated.View>
       </View>
@@ -174,7 +137,7 @@ export function Dialog({
 
 /** 알약 안내: text 바탕 · bg 글자 · 200ms + 1.6초 + 200ms */
 export function useToast() {
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState('');
   const p = useRef(new Animated.Value(0)).current;
   const show = (m: string) => {
     setMsg(m);
@@ -204,8 +167,7 @@ export function Toast({ t }: { t: ReturnType<typeof useToast> }) {
     <Animated.View
       pointerEvents="none"
       style={[styles.toast, { backgroundColor: c.text, opacity: t.p }]}
-      accessibilityLiveRegion="polite"
-    >
+      accessibilityLiveRegion="polite">
       <Text style={[styles.toastText, { color: c.bg }]}>{t.msg}</Text>
     </Animated.View>
   );
@@ -217,16 +179,16 @@ const styles = StyleSheet.create({
     height: size.switchH,
     borderRadius: 14,
     borderWidth: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   center: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: spacing.xl,
   },
   box: {
-    width: "100%",
+    width: '100%',
     maxWidth: 400,
     borderRadius: radius.card,
     borderWidth: 1,
@@ -234,12 +196,12 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   toast: {
-    position: "absolute",
-    alignSelf: "center",
+    position: 'absolute',
+    alignSelf: 'center',
     bottom: 40,
     borderRadius: radius.chip,
     paddingHorizontal: 18,
     paddingVertical: 10,
   },
-  toastText: { fontSize: 14, fontWeight: "600" },
+  toastText: { fontSize: 14, fontWeight: '600' },
 });
