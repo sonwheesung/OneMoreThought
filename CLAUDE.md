@@ -204,9 +204,9 @@
 
 정본: [`docs/RULE_SYSTEM.md`](./docs/RULE_SYSTEM.md)
 
-- 실행 전 확인: 대상 앱 · 요일 · 시작 ~ 끝(자정을 넘을 수 있다 · 요일 판정은 ⚠ 미결정 C) · 메시지.
+- 실행 전 확인: 대상 앱 · 요일 · 시작 ~ 끝(자정을 넘을 수 있다 · 시작한 날의 요일로 판정 · 결정 #26) · 메시지 · 다시 묻기 유예(규칙마다 · 결정 #29).
 - 실행 확인: 대상 앱 하나 · 요일 · 확인 시각 · 메시지 · 알림 버튼 [나중에] [<앱> 열기].
-- 겹치는 규칙(⚠ 미결정 F) · 통과 상태(⚠ 미결정 D) · [취소] 목적지(⚠ 미결정 E) · "실행"의 정의(⚠ 미결정 K) · 확인 시각을 놓쳤을 때(⚠ 미결정 J).
+- ~~겹치는 규칙(⚠ 미결정 F) · 통과 상태(⚠ 미결정 D) · [취소] 목적지(⚠ 미결정 E) · "실행"의 정의(⚠ 미결정 K) · 확인 시각을 놓쳤을 때(⚠ 미결정 J).~~ → 전부 닫혔다: 겹치면 무작위 하나 · 화면 앞이면 실행(#26) · 통과 유예 기본 1분 · [취소]는 홈(#27) · 유예 값 · 놓친 알림은 버림(#28) · 규칙마다 유예(#29). 판정 코드는 `lib/rules.ts` · `RuleJudge.kt`(같은 시험표 `tests/rules-cases.json`).
 
 ## 9. 도메인 (2): Android 감지 · 개입 · 권한
 
@@ -233,14 +233,14 @@
 
 | 영역 | 선택 | 상태 |
 |---|---|---|
-| 앱 | Expo SDK 54 · RN 0.81.5 · React 19.1.0 | ❌ Phase 0 |
-| 언어 | TypeScript ~5.9 (`strict` · `noUncheckedIndexedAccess`) | ❌ Phase 0 |
-| 라우팅 | expo-router ~6.0 | ❌ Phase 0 |
-| 상태 | zustand ^5 | ❌ Phase 0 |
+| 앱 | Expo SDK 54 · RN 0.81.5 · React 19.1.0 | ✅ 2026-10-08 |
+| 언어 | TypeScript ~5.9 (`strict` · `noUncheckedIndexedAccess`) | ✅ 2026-10-08 |
+| 라우팅 | expo-router ~6.0 | ✅ 2026-10-08 |
+| 상태 | zustand ^5 | ❌ 아직 안 깔았다(Phase 2 화면에서 필요하면) |
 | ~~로컬 DB~~ | ~~expo-sqlite ~16.0~~ → 결정 #30 으로 쓰지 않는다. 기기는 작은 JSON 파일(규칙 캐시 · 대기열 · 진단) | 🚫 |
-| 서버 · DB | 앱 전용 서버(Next.js · postgres.js · 손 SQL 마이그레이션 · Vercel `icn1`) + **조각 Supabase 의 별도 스키마** · 전용 DB 역할 · RLS(mission `docs/SYNC_SYSTEM.md` §1 승계 · 결정 #23 · #30) | ❌ Phase 1 ~ 5 |
-| 네이티브 | Expo 로컬 모듈(`modules/` · Kotlin) + config plugin. 🔴 **처음부터 개발 빌드**(Expo Go 로는 감지가 안 돈다) | ❌ Phase 0 스파이크 |
-| 다국어 | i18next · react-i18next · expo-localization (언어 목록은 ⚠ 미결정 H) | ❌ Phase 0 |
+| 서버 · DB | 앱 전용 서버(Next.js · postgres.js · 손 SQL 마이그레이션 · Vercel `icn1`) + **조각 Supabase 의 별도 스키마** · 전용 DB 역할 · RLS(mission `docs/SYNC_SYSTEM.md` §1 승계 · 결정 #23 · #30) | ✅ 2026-10-08 `vg-intervene-sync` · 스키마 `intervene`(`docs/DATABASE.md`) |
+| 네이티브 | Expo 로컬 모듈(`modules/` · Kotlin) + config plugin. 🔴 **처음부터 개발 빌드**(Expo Go 로는 감지가 안 돈다) | 🔨 2026-10-08 `modules/intervention`(감지 · 확인 화면 · 판정 · 캐시 · 대기열 · 진단) |
+| 다국어 | i18next · react-i18next · expo-localization (`en` 기본 · `ko` · 결정 #14) | ✅ 2026-10-08 골격 |
 | 알림 | 네이티브 모듈에서 직접(알람 수신기가 JS 없이 돌아야 한다 · `ANDROID_PLATFORM.md` §4) | ❌ Phase 3 |
 | 아이콘 | lucide-react-native · react-native-svg | ❌ |
 | ~~광고~~ | ~~react-native-google-mobile-ads(AdMob)~~ → 결정 #16 으로 빠졌다 | 🚫 |
@@ -253,10 +253,10 @@
 
 | Metro | 서버 | 에뮬레이터 |
 |---:|---:|---|
-| **8095** | ➖ 없음 | AVD `onemorethought` · **5590** (2026-10-06 예약 · 미생성) |
+| **8095** | **3900**(2026-10-08 · 결정 #30) | AVD `onemorethought` · **5590** (2026-10-06 예약 · 미생성 · 🔴 지금은 실기기만 쓴다) |
 
 ⚠ 포트를 **반드시 명시**해서 띄운다. 지정하지 않으면 Metro 기본값 8081 로 모여 My Word 와 충돌한다.
-⚠ 모든 `adb` 에 `-s emulator-5590`. 개발 빌드는 `-PreactNativeDevServerPort=8095` 를 빠뜨리지 않는다(mission `docs/README.md` §3 의 함정).
+⚠ 모든 `adb` 에 기기를 지정한다(`-s <폰 시리얼>` · 에뮬레이터를 쓰게 되면 `-s emulator-5590`). PC 에 다른 프로젝트 에뮬레이터가 떠 있을 수 있다(2026-10-08 `emulator-5576` 관측). 개발 빌드는 `-PreactNativeDevServerPort=8095` 를 빠뜨리지 않는다(mission `docs/README.md` §3 의 함정).
 🔴 감지 · 절전 · 재부팅 검증은 **실기기**(삼성 포함)가 필요하다. 에뮬레이터만으로 닫지 않는다(`ANDROID_PLATFORM.md` §9).
 
 ---
@@ -494,7 +494,7 @@ OneMoreThought/
 
 ## 16. 현재 상태
 
-**2026-10-06 기준: 문서 체계만 세웠다. 코드 0줄.**
+~~**2026-10-06 기준: 문서 체계만 세웠다. 코드 0줄.**~~ → **2026-10-09 기준: Phase 0 스파이크(S24) · Phase 1 코드 · 서버 배포까지. Phase 1 실기기 확인이 남았다**(아래 마지막 줄).
 
 - ✅ 기획서 원문 보존([`docs/ORIGINAL_BRIEF.md`](./docs/ORIGINAL_BRIEF.md))
 - ✅ 이 문서 · `docs/README.md` · `docs/PLAN.md` · `docs/DOC_DISCIPLINE.md` · `docs/RULE_SYSTEM.md` · `docs/ANDROID_PLATFORM.md`
