@@ -15,7 +15,7 @@
 | `server/` 골격 · API 7개 | ✅ 2026-10-08 | mission 승계 · 로컬 e2e 통과(AUTH_STUB · 실제 조각 DB) |
 | 조각 DB `intervene` 스키마 · 전용 역할 | ✅ 2026-10-08 | 결정 #31 그날 확인 · 0001 · 조각 `public` 앞뒤 같음 · `db:check` 29항목. 🔴 조각 세션이 떠 있지 않아 통지는 이 행 · CLAUDE §15 · 사용자 보고로 남겼다 |
 | Vercel 배포 | ✅ 2026-10-08 | `https://vg-intervene-sync.vercel.app`(팀 sonws · `icn1`) · env 2개(`DATABASE_URL` 은 6543 · 값은 stdin 으로만) · health `db: up` · 토큰 없음 · 가짜 토큰 · 인증 우회 시도 전부 401 |
-| 공용 서버 `app_code` | ✅ 2026-10-08 | 그쪽 등록. 기기 토큰 → `/auth/me` 실측은 앱이 붙을 때 △ |
+| 공용 서버 `app_code` | ✅ 2026-10-08 | 그쪽 등록. ✅ 2026-10-08 14:49 실기기(갤럭시 S24): 기기 토큰 발급 → 앱 서버 `/api/rules` 가 그 토큰을 받아 동기화 `↑0 · ↓0` · 주체 번호 표시 |
 
 ## 1. 구조
 
