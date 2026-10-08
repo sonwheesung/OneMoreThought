@@ -29,12 +29,19 @@
   },
   "disclosure": {
     "title": "Before you turn this on",
-    "sees": "What it checks: only the name of the app that comes to the front.",
-    "notSees": "What it does not check: screen content, anything you type, or apps you did not choose.",
-    "why": "Why: to ask you once when you open an app you chose, at the time you set.",
-    "where": "What we send: the names of apps you chose, your check-in results, and device info, to improve the service and for statistics. The messages you write are also used to improve the service. We never read or send screen content or anything you type.",
+    "why": "This uses the accessibility permission to ask you once when you open an app you chose, at the time you set.",
+    "seesTitle": "What it checks",
+    "sees": "Only the name of the app that comes to the front.",
+    "notSeesTitle": "What it does not check",
+    "notSees": "Screen content, anything you type, or apps you did not choose.",
+    "whereTitle": "What we send",
+    "where": "The names of apps you chose, your check-in results, and device info, to improve the service and for statistics. The messages you write are also used to improve the service. We never read or send screen content or anything you type.",
     "path": "Where to turn it on: Accessibility → Installed apps (or Downloaded apps) → App check-in",
     "later": "Not now",
-    "agree": "Agree and open settings"
+    "agree": "Agree and open settings",
+    "enabled": "It's on",
+    "stillOff": "It's still off. You need to turn it on in Settings.",
+    "reopen": "Open settings again",
+    "done": "Done"
   }
 }

@@ -66,4 +66,6 @@
 - 2026-10-09 시안 배포 받음(motion.vivace-games.com/onemore · 1 ~ 17 · 항목별 md 는 시안 세션 `catalog/onemore/N.md`). 색 정본은 시안 세션 `tools/qa/out/omt_life/calm_tokens.md` §5.
   - 0단계 ✅ `theme/tokens.ts` 라이트 · 다크 색 + 반경 · 높이 · 글자 · 모션 · Kotlin `colors.xml` 41색(값을 그대로 붙임). 메시지는 32 / **600**(RN 에 650 이 없다 · 시안 정본 변경 1).
   - 원모어 #1 ~ #3 ✅ 코드 · 빌드: `ConfirmView.kt`(액티비티 · 오버레이판이 같은 그림) · 테마 `Theme.Intervention.Confirm`(불투명 · 창 전환 없음) · 세로 / 가로 배치 · 같은 유리 알약 · 메타 줄(이름은 시스템에서 읽음) · 둘째 줄 `intervention_rule` · 글자 묶음만 6dp 등장 · [취소] 140ms 걷힘 · [열기] 즉시.
-    ⏳ 실기기 확인 전(사용자 시험이 끝난 뒤 설치): RenderEffect 블러 · `lineBreakWordStyle` · 창 전환 없음 · 가로 inset(내비 바 오른쪽 · 왼쪽 · 제스처).
+  - 결정 #34(사용자 · 원모어 #16 에서 나온 질문): «이 기기 데이터 지우기»는 기기 캐시만. 시안 세션에 전달했다.
+  - 원모어 #12 ✅ 코드 · 가드: `app/permission/accessibility.tsx`(전체 화면 · 세 덩어리 · [나중에] 유리 알약 1 : [동의하고 설정 열기] 1.35 · 높이 56 · 돌아오면 실제 값을 읽어 켜졌어요 / 아직 꺼져 있어요 · 뒤로가기 = 나중에). 공용 부품 `components/ui.tsx`(번짐 배경 · 유리 알약 · 주 버튼 · 줄 단위 등장) · `components/Glyph.tsx` · `theme/useTheme.ts`(밝기 · 모션 줄이기). 그라데이션은 새 의존성 없이 `experimental_backgroundImage`(새 아키텍처). 문구 키는 덩어리별로 나눴다(`disclosure.*Title` · 🔴 검수 전).
+  - ⏳ 실기기 확인 전(사용자 시험이 끝난 뒤 설치): RenderEffect 블러 · `lineBreakWordStyle` · 창 전환 없음 · 가로 inset(내비 바 오른쪽 · 왼쪽 · 제스처).

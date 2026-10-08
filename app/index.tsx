@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import {
   AppState,
   FlatList,
-  Modal,
   Platform,
   Pressable,
   StyleSheet,
@@ -11,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cachedRules, putDevice, saveRule, syncNow } from '@/features/rules';
@@ -23,8 +23,7 @@ import { Intervention, type LaunchableApp } from '@/modules/intervention';
  * 실제 홈 · 규칙 편집은 Phase 2 에서 `ui-design-reference` 를 먼저 보고 만든다(CLAUDE §13).
  *
  * Phase 1(결정 #30): 저장은 기기 캐시(rules.json) → 서버. 이 화면은 실행 전 확인 규칙 하나를 시간대와 함께 만든다.
- * 🔴 접근성 설정으로 보내기 전에 공개 화면을 거친다(§7.1 · 실제 반려 사례 R2 의 반대):
- *    전체 화면 · 두 버튼 · 동의 전에는 아무것도 켜진 것처럼 보이지 않는다 · 뒤로가기는 동의가 아니다.
+ * 🔴 접근성 설정으로 보내기 전에 공개 화면(`app/permission/accessibility.tsx` · §7.1)을 거친다.
  */
 
 interface LogEntry {
@@ -84,7 +83,6 @@ export default function Spike() {
   const [start, setStart] = useState(hhmm(rule0?.startMin ?? 0));
   const [end, setEnd] = useState(hhmm(rule0?.endMin ?? 1439));
   const [log, setLog] = useState<LogEntry[]>([]);
-  const [disclosure, setDisclosure] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [sync, setSync] = useState('');
   const [queued, setQueued] = useState(0);
@@ -197,7 +195,7 @@ export default function Spike() {
               <Text style={styles.link}>{t('spike.syncNow')}</Text>
             </Pressable>
             {!status.service && (
-              <Pressable style={styles.btn} onPress={() => setDisclosure(true)}>
+              <Pressable style={styles.btn} onPress={() => router.push('/permission/accessibility')}>
                 <Text style={styles.btnText}>{t('spike.enableService')}</Text>
               </Pressable>
             )}
@@ -265,37 +263,12 @@ export default function Spike() {
         )}
       />
 
-      {/* S6 공개 화면 초안(ANDROID_PLATFORM §7.1). 뒤로가기(onRequestClose)는 동의가 아니다 */}
-      <Modal visible={disclosure} animationType="slide" onRequestClose={() => setDisclosure(false)}>
-        <SafeAreaView style={[styles.page, styles.disclosure]}>
-          <Text style={styles.h1}>{t('disclosure.title')}</Text>
-          <Text style={styles.body}>{t('disclosure.sees')}</Text>
-          <Text style={styles.body}>{t('disclosure.notSees')}</Text>
-          <Text style={styles.body}>{t('disclosure.why')}</Text>
-          <Text style={styles.body}>{t('disclosure.where')}</Text>
-          <Text style={styles.small}>{t('disclosure.path')}</Text>
-          <View style={styles.row}>
-            <Pressable style={[styles.btn, styles.flex]} onPress={() => setDisclosure(false)}>
-              <Text style={styles.btnText}>{t('disclosure.later')}</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.btn, styles.flex, styles.primary]}
-              onPress={() => {
-                setDisclosure(false);
-                Intervention!.openAccessibilitySettings();
-              }}>
-              <Text style={styles.btnText}>{t('disclosure.agree')}</Text>
-            </Pressable>
-          </View>
-        </SafeAreaView>
-      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   page: { flex: 1, paddingHorizontal: 16, backgroundColor: '#fff' },
-  disclosure: { justifyContent: 'center', gap: 12 },
   h1: { fontSize: 22, fontWeight: '700', marginTop: 16, marginBottom: 8 },
   h2: { fontSize: 16, fontWeight: '700', marginTop: 16, marginBottom: 4 },
   body: { fontSize: 15, lineHeight: 22 },
@@ -303,7 +276,6 @@ const styles = StyleSheet.create({
   mono: { fontSize: 12, fontFamily: 'monospace' },
   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, fontSize: 16 },
   btn: { backgroundColor: '#333', borderRadius: 8, padding: 12, marginTop: 8, alignItems: 'center' },
-  primary: { backgroundColor: '#1d4ed8' },
   btnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   flex: { flex: 1 },
