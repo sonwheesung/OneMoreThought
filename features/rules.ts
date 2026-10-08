@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import type { Rule } from '@/lib/rules.ts';
 import { Intervention } from '@/modules/intervention';
 
@@ -90,6 +92,20 @@ export async function pullRules(): Promise<Result<Rule[]>> {
 }
 
 /** 기기 정보(DATABASE §3 devices) */
+/** 앱을 열 때 한 번: 기기 정보(모델 · Android · 앱 버전 · 지역 · 시간대 · 고급 보호)를 서버에 올린다(결정 #21 · DATABASE §3) */
+export function reportDevice() {
+  if (!Intervention) return;
+  const c = Platform.constants as { Model?: string; Manufacturer?: string };
+  void putDevice({
+    model: [c.Manufacturer, c.Model].filter(Boolean).join(' '),
+    sdkInt: Intervention.sdkInt(),
+    appVersion: '0.1.0',
+    locale: Intl.DateTimeFormat().resolvedOptions().locale,
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    advProtection: Intervention.advancedProtection(),
+  });
+}
+
 export async function putDevice(info: { model?: string; sdkInt?: number; appVersion?: string; locale?: string; tz?: string; advProtection?: string }) {
   return appCall('/api/device', { method: 'PUT', body: info });
 }

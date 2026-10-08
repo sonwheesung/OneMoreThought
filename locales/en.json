@@ -162,5 +162,32 @@
     "wiped": "Erased from this device",
     "contact": "Contact us",
     "contact_soon": "Coming soon."
+  },
+  "home": {
+    "title": "Today's rules",
+    "asked": "Asked {{count}} times today",
+    "askedNone": "Haven't asked yet today",
+    "ruleCount": "{{count}} rules",
+    "seeStats": "See history",
+    "groupIntercept": "Ask when I open an app",
+    "groupCheck": "Remind if I don't open",
+    "appsMore": "{{first}} +{{count}}",
+    "new": "New rule",
+    "permOff": "Accessibility access is off",
+    "usageOff": "Usage access is off",
+    "permBoth": "2 permissions are off",
+    "permOn": "Turn on",
+    "emptyTitle": "No rules yet",
+    "emptyBody": "When you open an app you chose, we ask once — in your own words.",
+    "emptyPreview": "Example · buttons don't work here",
+    "emptyHint": "You can also get a reminder when you don't open an app.",
+    "exampleRule": "Work hours",
+    "exampleApp": "Game",
+    "devSpike": "Test tools (dev)"
+  },
+  "example": {
+    "work": "Back to work?",
+    "money": "Gotta earn.",
+    "night": "Early morning tomorrow."
   }
 }

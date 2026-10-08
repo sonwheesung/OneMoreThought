@@ -162,5 +162,32 @@
     "wiped": "이 기기에서 지웠어요",
     "contact": "문의하기",
     "contact_soon": "곧 열려요."
+  },
+  "home": {
+    "title": "오늘의 규칙",
+    "asked": "오늘 {{count}}번 물어봤어요",
+    "askedNone": "오늘은 아직 묻지 않았어요",
+    "ruleCount": "규칙 {{count}}개",
+    "seeStats": "기록 보기",
+    "groupIntercept": "앱을 열 때 묻기",
+    "groupCheck": "안 열었을 때 알림",
+    "appsMore": "{{first}} 외 {{count}}",
+    "new": "규칙 만들기",
+    "permOff": "접근성 권한이 꺼져 있어요",
+    "usageOff": "사용 기록 권한이 꺼져 있어요",
+    "permBoth": "권한 2개가 꺼져 있어요",
+    "permOn": "켜기",
+    "emptyTitle": "아직 규칙이 없어요",
+    "emptyBody": "고른 앱을 열 때, 내가 쓴 한 문장으로 한 번 물어봐요.",
+    "emptyPreview": "예시 · 버튼은 눌리지 않아요",
+    "emptyHint": "앱을 안 열었을 때 알려 주는 규칙도 만들 수 있어요.",
+    "exampleRule": "업무시간",
+    "exampleApp": "게임",
+    "devSpike": "시험 도구(개발용)"
+  },
+  "example": {
+    "work": "일 해야지 게임하게?",
+    "money": "돈 벌어야지.",
+    "night": "내일 아침 일찍이잖아."
   }
 }

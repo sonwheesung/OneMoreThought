@@ -9,7 +9,7 @@ import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 installJsCrashHandler();
 
 /**
- * 뿌리 레이아웃. 첫 화면은 아직 스파이크(`app/index.tsx` · Phase 1 실기기 시험 도구)다.
+ * 뿌리 레이아웃. 첫 화면은 홈(`app/index.tsx` · 원모어 #4 ~ #6). 시험 도구(스파이크)는 `app/dev/spike.tsx`(개발 빌드에서만 홈 아래 링크).
  * 전환(시안 원모어 #17): 페이드 220ms + 화면 안 내용이 오른쪽 24px 에서 들어옴 · 모션 줄이기면 200ms 크로스페이드만 · 출렁임 없음.
  * 바탕을 bg 로 깔아 전환 중 흰색이 번쩍이지 않게 한다.
  */

@@ -1,294 +1,189 @@
+import { router, useFocusEffect, type Href } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  AppState,
-  FlatList,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import { router, type Href } from 'expo-router';
+import { Animated, AppState, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { cachedRules, putDevice, saveRule, syncNow } from '@/features/rules';
-import { subjectId } from '@/features/server';
-import { GRACE_DEFAULT, type Rule } from '@/lib/rules.ts';
-import { Intervention, type LaunchableApp } from '@/modules/intervention';
+import { GlassCard } from '@/components/flow.tsx';
+import { Glyph } from '@/components/Glyph.tsx';
+import { EmptyHome, PermissionRow, RuleRow, ruleLine, SummaryRing } from '@/components/Home.tsx';
+import { GlowBackground, PrimaryButton, useStagger } from '@/components/ui.tsx';
+import { resetDraft } from '@/features/draft.ts';
+import { cachedRules, reportDevice, saveRule, syncNow } from '@/features/rules';
+import { todayKey } from '@/lib/day.ts';
+import type { Rule } from '@/lib/rules.ts';
+import { Intervention } from '@/modules/intervention';
+import { spacing } from '@/theme/tokens.ts';
+import { usePalette } from '@/theme/useTheme.ts';
 
 /**
- * ⚠ Phase 0 스파이크 화면(`docs/ANDROID_PLATFORM.md` §9 S1 ~ S7). 출시 화면이 아니다.
- * 실제 홈 · 규칙 편집은 Phase 2 에서 `ui-design-reference` 를 먼저 보고 만든다(CLAUDE §13).
- *
- * Phase 1(결정 #30): 저장은 기기 캐시(rules.json) → 서버. 이 화면은 실행 전 확인 규칙 하나를 시간대와 함께 만든다.
- * 🔴 접근성 설정으로 보내기 전에 공개 화면(`app/permission/accessibility.tsx` · §7.1)을 거친다.
+ * 홈 · 시안 원모어 #4 · #5 · #6 · 기획서 §11. 이 앱의 주인공 화면이다(통계는 보조 · 결정 #28).
+ * - 맨 위: 권한이 꺼졌으면 호박색 줄(기둥 7 · 켜짐을 읽은 뒤에만 접힌다).
+ * - 요약: «오늘 N번 물어봤어요» 사실 한 줄(평가 · 연속 기록 없음 · 기둥 2).
+ * - 규칙 두 묶음(열기 전 확인 · 안 열었을 때 알림) · 줄마다 켜고 끄기(saveRule).
+ * - 아래 엄지 자리 [+ 규칙 만들기](이 화면의 유일한 그라데이션).
+ * 앞으로 돌아올 때마다 서버와 맞추고(syncNow) 캐시를 다시 읽는다. 시험 도구(스파이크)는 app/dev/spike.tsx.
  */
-
-interface LogEntry {
-  kind: string;
-  pkg?: string;
-  result?: string;
-  detectToDrawMs?: number;
-  at?: number;
-  error?: string;
-}
-
-interface Status {
-  service: boolean;
-  usage: boolean;
-  advanced: 'on' | 'off' | 'unknown';
-  sdk: number;
-}
-
-function readStatus(): Status | null {
-  if (!Intervention) return null;
-  return {
-    service: Intervention.isServiceEnabled(),
-    usage: Intervention.hasUsageAccess(),
-    advanced: Intervention.advancedProtection(),
-    sdk: Intervention.sdkInt(),
-  };
-}
-
-/** "HH:MM" → 분. 틀리면 null */
-function toMin(v: string): number | null {
-  const m = /^(\d{1,2}):(\d{2})$/.exec(v.trim());
-  if (!m) return null;
-  const h = Number(m[1]);
-  const mi = Number(m[2]);
-  return h < 24 && mi < 60 ? h * 60 + mi : null;
-}
-
-const hhmm = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
-
-function parseLog(raw: string): LogEntry[] {
+function todayAsked(): number {
   try {
-    const v: unknown = JSON.parse(raw);
-    return Array.isArray(v) ? (v as LogEntry[]) : [];
+    const all = JSON.parse(Intervention?.promptStats() ?? '{}') as Record<string, Partial<Record<string, number>>>;
+    const d = all[todayKey()] ?? {};
+    return (d.cancel ?? 0) + (d.open ?? 0) + (d.dismissed ?? 0);
   } catch {
-    return [];
+    return 0;
   }
 }
 
-export default function Spike() {
+export default function Home() {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<Status | null>(() => readStatus());
-  const [apps] = useState<LaunchableApp[]>(() => Intervention?.listLaunchableApps() ?? []);
-  // 스파이크는 실행 전 확인 규칙 하나만 고친다(첫 번째 것 · 없으면 새로)
-  const [rule0] = useState<Rule | undefined>(() => cachedRules().find((r) => r.kind === 'intercept'));
-  const [targets, setTargets] = useState<string[]>(rule0?.targets ?? []);
-  const [message, setMessage] = useState(rule0?.message ?? '');
-  const [start, setStart] = useState(hhmm(rule0?.startMin ?? 0));
-  const [end, setEnd] = useState(hhmm(rule0?.endMin ?? 1439));
-  const [log, setLog] = useState<LogEntry[]>([]);
-  const [saved, setSaved] = useState<string | null>(null);
-  const [sync, setSync] = useState('');
-  const [queued, setQueued] = useState(0);
+  const c = usePalette();
+  const [rules, setRules] = useState<Rule[]>(() => cachedRules());
+  const [serviceOn, setServiceOn] = useState(() => Intervention?.isServiceEnabled() ?? true);
+  const [usageOn, setUsageOn] = useState(() => Intervention?.hasUsageAccess() ?? true);
+  const [asked, setAsked] = useState(todayAsked);
+  const apps = useMemo(() => Intervention?.listLaunchableApps() ?? [], []);
+  const rise = useStagger(3, 60);
 
-  const refresh = useCallback(() => {
-    setStatus(readStatus());
-    if (Intervention) {
-      setLog(parseLog(Intervention.getLog()));
-      setQueued(Intervention.queueCount());
-    }
+  const reread = useCallback(() => {
+    setRules(cachedRules());
+    setServiceOn(Intervention?.isServiceEnabled() ?? true);
+    setUsageOn(Intervention?.hasUsageAccess() ?? true);
+    setAsked(todayAsked());
   }, []);
 
-  const runSync = useCallback(async () => {
-    const r = await syncNow();
-    const f = r.flush.ok ? `↑${r.flush.value.sent}` : `↑✕ ${r.flush.reason}`;
-    const p = r.pull.ok ? `↓${r.pull.value.length}` : `↓✕ ${r.pull.reason}`;
-    setSync(`${f} · ${p} · ${new Date().toLocaleTimeString()}`);
-    refresh();
-  }, [refresh]);
-
   useEffect(() => {
-    refresh();
-    void runSync();
-    if (Intervention) {
-      const c = Platform.constants as { Model?: string; Manufacturer?: string };
-      void putDevice({
-        model: [c.Manufacturer, c.Model].filter(Boolean).join(' '),
-        sdkInt: Intervention.sdkInt(),
-        appVersion: '0.1.0',
-        locale: Intl.DateTimeFormat().resolvedOptions().locale,
-        tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        advProtection: Intervention.advancedProtection(),
-      });
-    }
+    reportDevice();
+    const pull = () => void syncNow().then(reread);
+    pull();
     const sub = AppState.addEventListener('change', (s) => {
-      if (s === 'active') {
-        refresh();
-        void runSync();
-      }
+      if (s !== 'active') return;
+      reread(); // 🔴 실제 상태를 다시 읽는다 — 켜짐을 확인한 뒤에만 줄이 접힌다
+      pull();
     });
     return () => sub.remove();
-  }, [refresh, runSync]);
+  }, [reread]);
 
-  const opened = useMemo(() => {
-    if (!Intervention || !status?.usage) return [];
-    return targets.map((p) => ({ pkg: p, at: Intervention!.firstOpenedToday(p) }));
-  }, [targets, status?.usage, log]); // eslint-disable-line react-hooks/exhaustive-deps
+  // 만들기 흐름에서 저장하고 돌아오면 캐시를 다시 읽는다
+  useFocusEffect(reread);
 
-  if (!Intervention || !status) {
-    return (
-      <SafeAreaView style={styles.page}>
-        <Text style={styles.h1}>{t('spike.title')}</Text>
-        <Text style={styles.body}>{t('spike.noNative')}</Text>
-      </SafeAreaView>
+  const toggle = (r: Rule, enabled: boolean) => {
+    const next = { ...r, enabled, updatedAt: Date.now() };
+    setRules((rs) => rs.map((x) => (x.id === r.id ? next : x))); // 화면 먼저
+    void saveRule(next); // 'queued' 도 성공(오프라인이면 대기열 · 확인 화면은 캐시로 바로 따른다)
+  };
+
+  const intercepts = rules.filter((r) => r.kind === 'intercept');
+  const checks = rules.filter((r) => r.kind === 'check');
+  // 그 권한이 필요한 켜진 규칙이 있을 때만 알린다(권한은 규칙을 만들 때 묻는다 · 기획서 §21)
+  const needService = !serviceOn && intercepts.some((r) => r.enabled);
+  const needUsage = !usageOn && checks.some((r) => r.enabled);
+  const permText = needService && needUsage ? t('home.permBoth') : needService ? t('home.permOff') : t('home.usageOff');
+  const enable = () => (needService ? router.push('/permission/accessibility') : Intervention?.openUsageAccessSettings());
+
+  const group = (title: string, list: Rule[]) =>
+    list.length === 0 ? null : (
+      <View style={styles.group}>
+        <Text style={[styles.groupTitle, { color: c.text3 }]}>{title}</Text>
+        {list.map((r, i) => (
+          <View key={r.id}>
+            {i > 0 && <View style={[styles.sep, { backgroundColor: c.line }]} />}
+            <RuleRow rule={r} line={ruleLine(r, apps, t)} onToggle={(on) => toggle(r, on)} />
+          </View>
+        ))}
+      </View>
     );
-  }
-
-  const toggle = (pkg: string) => {
-    setSaved(null);
-    setTargets((cur) => (cur.includes(pkg) ? cur.filter((p) => p !== pkg) : [...cur, pkg]));
-  };
-
-  const save = async () => {
-    const s0 = toMin(start);
-    const e0 = toMin(end);
-    if (s0 === null || e0 === null || s0 === e0 || targets.length === 0 || !message.trim()) {
-      setSaved(t('spike.invalid'));
-      return;
-    }
-    const rule: Rule = {
-      id: rule0?.id ?? Intervention!.uuid(),
-      kind: 'intercept',
-      name: 'spike',
-      enabled: true,
-      days: 127,
-      startMin: s0,
-      endMin: e0,
-      targets,
-      message,
-      graceMin: rule0?.graceMin ?? GRACE_DEFAULT,
-      updatedAt: Date.now(),
-    };
-    const r = await saveRule(rule);
-    setSaved(t(`spike.saved_${r}`));
-    refresh();
-  };
-
-  const onOff = (v: boolean) => (v ? t('spike.on') : t('spike.off'));
 
   return (
-    <SafeAreaView style={styles.page}>
-      <FlatList
-        data={apps}
-        keyExtractor={(a) => a.packageName}
-        ListHeaderComponent={
-          <View>
-            <Text style={styles.h1}>{t('spike.title')}</Text>
+    <GlowBackground>
+      <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
+        <ScrollView contentContainerStyle={styles.body}>
+          <PermissionRow visible={needService || needUsage} text={permText} onEnable={enable} />
 
-            <Text style={styles.h2}>{t('spike.status')}</Text>
-            <Text style={styles.body}>
-              {t('spike.service')}: {onOff(status.service)} · {t('spike.usage')}: {onOff(status.usage)}
-            </Text>
-            <Text style={styles.body}>
-              {t('spike.advanced')}: {status.advanced} · SDK {status.sdk}
-            </Text>
-            <Text style={styles.small}>
-              {t('spike.sync')}: {sync || '…'} · {t('spike.queued')} {queued} · {subjectId()?.slice(0, 8) ?? '-'}
-            </Text>
-            <Pressable onPress={() => void runSync()}>
-              <Text style={styles.link}>{t('spike.syncNow')}</Text>
-            </Pressable>
-            {/* 개발용 입구: 새 만들기 흐름(시안 원모어 #7 ~ #11 · #13). 시험 도구 배치는 바꾸지 않는다 */}
-            <Pressable onPress={() => router.push('/rules/new' as Href)}>
-              <Text style={styles.link}>{t('spike.newFlow')}</Text>
-            </Pressable>
-            <Pressable onPress={() => router.push('/stats' as Href)}>
-              <Text style={styles.link}>{t('spike.statsLink')}</Text>
-            </Pressable>
-            <Pressable onPress={() => router.push('/settings' as Href)}>
-              <Text style={styles.link}>{t('spike.settingsLink')}</Text>
-            </Pressable>
-            {!status.service && (
-              <Pressable style={styles.btn} onPress={() => router.push('/permission/accessibility')}>
-                <Text style={styles.btnText}>{t('spike.enableService')}</Text>
-              </Pressable>
-            )}
-            {!status.usage && (
-              <Pressable style={styles.btn} onPress={() => Intervention!.openUsageAccessSettings()}>
-                <Text style={styles.btnText}>{t('spike.enableUsage')}</Text>
-              </Pressable>
-            )}
-
-            <Text style={styles.h2}>{t('spike.message')}</Text>
-            <TextInput
-              style={styles.input}
-              value={message}
-              onChangeText={(v) => {
-                setSaved(null);
-                setMessage(v);
-              }}
-            />
-            <Text style={styles.h2}>{t('spike.window')}</Text>
-            <View style={styles.row}>
-              <TextInput style={[styles.input, styles.flex]} value={start} onChangeText={setStart} placeholder="09:00" />
-              <Text style={styles.body}>~</Text>
-              <TextInput style={[styles.input, styles.flex]} value={end} onChangeText={setEnd} placeholder="18:00" />
-            </View>
-            <Pressable style={styles.btn} onPress={() => void save()}>
-              <Text style={styles.btnText}>{saved ?? t('spike.save')}</Text>
-            </Pressable>
-
-            {opened.map((o) => (
-              <Text key={o.pkg} style={styles.body}>
-                {o.pkg}: {o.at ? `${t('spike.openedToday')} ${new Date(o.at).toLocaleTimeString()}` : t('spike.notOpenedToday')}
+          <View style={styles.head}>
+            <View style={styles.flex}>
+              <Text style={[styles.date, { color: c.text3 }]}>
+                {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', weekday: 'long' })}
               </Text>
-            ))}
-
-            <View style={styles.row}>
-              <Text style={styles.h2}>{t('spike.log')}</Text>
-              <Pressable onPress={refresh}>
-                <Text style={styles.link}>{t('spike.refresh')}</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  Intervention!.clearLog();
-                  refresh();
-                }}>
-                <Text style={styles.link}>{t('spike.clear')}</Text>
-              </Pressable>
-            </View>
-            {log.slice(0, 15).map((e, i) => (
-              <Text key={i} style={styles.mono}>
-                {e.kind} {e.pkg ?? ''} {e.result ?? ''} {e.detectToDrawMs != null ? `${e.detectToDrawMs}ms` : ''}{' '}
-                {e.error ?? ''}
+              <Text style={[styles.title, { color: c.text }]} accessibilityRole="header">
+                {t('home.title')}
               </Text>
-            ))}
-
-            <Text style={styles.h2}>{t('spike.targets')}</Text>
+            </View>
+            <Pressable
+              onPress={() => router.push('/settings' as Href)}
+              accessibilityRole="button"
+              accessibilityLabel={t('settings.title')}
+              hitSlop={8}
+              style={[styles.gearBtn, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }]}>
+              <Glyph name="gear" color={c.text2} size={18} hole={c.bg} />
+            </Pressable>
           </View>
-        }
-        renderItem={({ item }) => (
-          <Pressable onPress={() => toggle(item.packageName)} style={styles.app}>
-            <Text style={styles.body}>
-              {targets.includes(item.packageName) ? '☑' : '☐'} {item.label}
-            </Text>
-            <Text style={styles.small}>{item.packageName}</Text>
-          </Pressable>
-        )}
-      />
 
-    </SafeAreaView>
+          {rules.length === 0 ? (
+            <EmptyHome />
+          ) : (
+            <>
+              <Animated.View style={rise.style(0)}>
+                <Pressable onPress={() => router.push('/stats' as Href)} accessibilityRole="button">
+                  <GlassCard style={styles.summary}>
+                    <SummaryRing count={asked} />
+                    <View style={styles.flex}>
+                      <Text style={[styles.summaryText, { color: c.text }]}>
+                        {asked === 0 ? t('home.askedNone') : t('home.asked', { count: asked })}
+                      </Text>
+                      <Text style={[styles.summarySub, { color: c.text2 }]}>
+                        {t('home.ruleCount', { count: rules.length })} · {t('home.seeStats')}
+                      </Text>
+                    </View>
+                  </GlassCard>
+                </Pressable>
+              </Animated.View>
+              <Animated.View style={rise.style(1)}>
+                <GlassCard style={styles.list}>
+                  {group(t('home.groupIntercept'), intercepts)}
+                  {intercepts.length > 0 && checks.length > 0 && <View style={[styles.groupSep, { backgroundColor: c.line }]} />}
+                  {group(t('home.groupCheck'), checks)}
+                </GlassCard>
+              </Animated.View>
+            </>
+          )}
+
+          {__DEV__ && (
+            <Pressable onPress={() => router.push('/dev/spike' as Href)} style={styles.dev}>
+              <Text style={[styles.devText, { color: c.text3 }]}>{t('home.devSpike')}</Text>
+            </Pressable>
+          )}
+        </ScrollView>
+
+        <View style={styles.foot}>
+          <PrimaryButton
+            label={`+ ${t('home.new')}`}
+            onPress={() => {
+              resetDraft();
+              router.push('/rules/new' as Href);
+            }}
+          />
+        </View>
+      </SafeAreaView>
+    </GlowBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, paddingHorizontal: 16, backgroundColor: '#fff' },
-  h1: { fontSize: 22, fontWeight: '700', marginTop: 16, marginBottom: 8 },
-  h2: { fontSize: 16, fontWeight: '700', marginTop: 16, marginBottom: 4 },
-  body: { fontSize: 15, lineHeight: 22 },
-  small: { fontSize: 12, color: '#777' },
-  mono: { fontSize: 12, fontFamily: 'monospace' },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 10, fontSize: 16 },
-  btn: { backgroundColor: '#333', borderRadius: 8, padding: 12, marginTop: 8, alignItems: 'center' },
-  btnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   flex: { flex: 1 },
-  link: { color: '#1d4ed8', marginTop: 12 },
-  app: { paddingVertical: 8, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#ddd' },
+  body: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md },
+  head: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: spacing.xs },
+  date: { fontSize: 13, fontWeight: '500' },
+  title: { fontSize: 28, fontWeight: '700', lineHeight: 36 },
+  gearBtn: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  summary: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
+  summaryText: { fontSize: 16, fontWeight: '600' },
+  summarySub: { fontSize: 13, marginTop: 2 },
+  list: { paddingVertical: spacing.sm },
+  group: { gap: 2 },
+  groupTitle: { fontSize: 12.5, fontWeight: '600', marginTop: spacing.sm, marginBottom: 2 },
+  sep: { height: StyleSheet.hairlineWidth, marginLeft: 54 },
+  groupSep: { height: StyleSheet.hairlineWidth, marginVertical: spacing.sm },
+  foot: { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, paddingTop: spacing.sm },
+  dev: { alignSelf: 'center', paddingVertical: spacing.md },
+  devText: { fontSize: 12 },
 });
