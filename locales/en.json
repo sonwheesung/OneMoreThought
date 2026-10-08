@@ -27,7 +27,8 @@
     "queued": "queued",
     "syncNow": "Sync now",
     "newFlow": "New rule (new screens · dev)",
-    "statsLink": "Last 7 days (new screen · dev)"
+    "statsLink": "Last 7 days (new screen · dev)",
+    "settingsLink": "Settings (new screen · dev)"
   },
   "disclosure": {
     "title": "Before you turn this on",
@@ -139,5 +140,25 @@
     "noUsage": "Usage access is off, so we can't show which days you opened it.",
     "openedDay": "{{day}}: opened",
     "notOpenedDay": "{{day}}: not opened"
+  },
+  "settings": {
+    "title": "Settings",
+    "groupDiag": "Diagnostics",
+    "groupData": "Data",
+    "groupHelp": "Help",
+    "diag": "Send diagnostic summary",
+    "diag_sub": "Once a day: error counts, device info and usage stats.",
+    "diag_on": "Diagnostic summary is on",
+    "diag_off": "Diagnostic summary is off",
+    "wipe": "Erase from this device only",
+    "wipe_sub": "The copy on our server stays.",
+    "wipe_q": "Erase from this device only?",
+    "wipe_body": "Rules and unsent changes will be removed from this phone. This can't be undone.",
+    "wipe_note": "The copy on our server stays. To delete it too, tell us via Contact us.",
+    "wipe_do": "Erase",
+    "cancel": "Cancel",
+    "wiped": "Erased from this device",
+    "contact": "Contact us",
+    "contact_soon": "Coming soon."
   }
 }

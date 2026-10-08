@@ -27,7 +27,8 @@
     "queued": "대기",
     "syncNow": "지금 동기화",
     "newFlow": "새 규칙 만들기(새 화면 · 개발용)",
-    "statsLink": "최근 7일(새 화면 · 개발용)"
+    "statsLink": "최근 7일(새 화면 · 개발용)",
+    "settingsLink": "설정(새 화면 · 개발용)"
   },
   "disclosure": {
     "title": "켜기 전에 알려 드려요",
@@ -139,5 +140,25 @@
     "noUsage": "사용 기록 접근이 꺼져 있어서 연 날을 볼 수 없어요.",
     "openedDay": "{{day}} 열었어요",
     "notOpenedDay": "{{day}} 안 열었어요"
+  },
+  "settings": {
+    "title": "설정",
+    "groupDiag": "진단",
+    "groupData": "데이터",
+    "groupHelp": "도움",
+    "diag": "진단 요약 보내기",
+    "diag_sub": "하루 한 번 보내요. 오류 개수 · 기기 정보 · 사용 통계",
+    "diag_on": "진단 요약을 켰어요",
+    "diag_off": "진단 요약을 껐어요",
+    "wipe": "이 기기에서만 지우기",
+    "wipe_sub": "서버에 있는 사본은 남아요.",
+    "wipe_q": "이 기기에서만 지울까요?",
+    "wipe_body": "규칙과 아직 보내지 못한 변경이 이 휴대폰에서 사라져요. 되돌릴 수 없어요.",
+    "wipe_note": "서버에 있는 사본은 남아요. 서버 기록까지 지우려면 문의하기로 알려 주세요.",
+    "wipe_do": "지우기",
+    "cancel": "취소",
+    "wiped": "이 기기에서 지웠어요",
+    "contact": "문의하기",
+    "contact_soon": "곧 열려요."
   }
 }

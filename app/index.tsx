@@ -201,6 +201,9 @@ export default function Spike() {
             <Pressable onPress={() => router.push('/stats' as Href)}>
               <Text style={styles.link}>{t('spike.statsLink')}</Text>
             </Pressable>
+            <Pressable onPress={() => router.push('/settings' as Href)}>
+              <Text style={styles.link}>{t('spike.settingsLink')}</Text>
+            </Pressable>
             {!status.service && (
               <Pressable style={styles.btn} onPress={() => router.push('/permission/accessibility')}>
                 <Text style={styles.btnText}>{t('spike.enableService')}</Text>

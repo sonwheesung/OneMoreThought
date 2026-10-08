@@ -42,6 +42,7 @@ export interface InterventionNative {
   openedDays(packageName: string, days: number): string[] | null;
   /** {"YYYY-MM-DD": {cancel, open, dismissed}} JSON · 통계 화면용 하루 집계 */
   promptStats(): string;
+  clearPromptStats(): void;
   listLaunchableApps(): LaunchableApp[];
   advancedProtection(): 'on' | 'off' | 'unknown';
   sdkInt(): number;

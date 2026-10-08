@@ -163,6 +163,7 @@ class InterventionModule : Module() {
 
     /** 통계용 하루 집계(PromptStats) JSON */
     Function("promptStats") { PromptStats.read(context) }
+    Function("clearPromptStats") { PromptStats.clear(context) }
 
     // ── 앱 고르기(§5) ──
     /** 결정 #27 L: 이 앱 · 홈 런처 · 시스템 설정 · 전화는 목록에서 뺀다(서비스도 따로 거른다) */

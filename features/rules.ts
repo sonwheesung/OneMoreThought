@@ -95,7 +95,7 @@ export async function putDevice(info: { model?: string; sdkInt?: number; appVers
 }
 
 /**
- * 「이 기기에서만 지우기」(결정 #34): 규칙 캐시 · 미전송 대기열 · 기기 가명을 지운다. 서버는 부르지 않는다(사본은 남는다).
+ * 「이 기기에서만 지우기」(결정 #34): 규칙 캐시 · 미전송 대기열 · 기기 가명 · 기기 통계 집계 · 디버그 기록을 지운다. 서버는 부르지 않는다(사본은 남는다).
  * 가명을 새로 받으므로 다음 동기화는 빈 서버 주체를 본다. 보내지 못한 변경도 사라진다(화면 문구가 밝힌다).
  */
 export function clearLocal(): boolean {
@@ -106,6 +106,8 @@ export function clearLocal(): boolean {
     if (!last || Intervention.queueAck(last) === 0) break;
   }
   resetIdentity();
+  Intervention.clearPromptStats(); // 통계 화면의 기기 하루 집계
+  Intervention.clearLog(); // 디버그 기록
   return writeCache([], 0);
 }
 

@@ -28,6 +28,11 @@ internal object PromptStats {
     }
   }
 
+  /** 「이 기기에서만 지우기」(결정 #34) */
+  fun clear(context: Context) {
+    synchronized(lock) { context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().remove(KEY).apply() }
+  }
+
   /** {"YYYY-MM-DD": {"cancel": n, "open": n, "dismissed": n}} */
   fun read(context: Context): String =
     context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, "{}") ?: "{}"
