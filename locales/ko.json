@@ -25,7 +25,8 @@
     "window": "시간대(자정을 넘어도 돼요)",
     "sync": "동기화",
     "queued": "대기",
-    "syncNow": "지금 동기화"
+    "syncNow": "지금 동기화",
+    "newFlow": "새 규칙 만들기(새 화면 · 개발용)"
   },
   "disclosure": {
     "title": "켜기 전에 알려 드려요",
@@ -43,5 +44,79 @@
     "stillOff": "아직 꺼져 있어요. 설정에서 직접 켜야 해요.",
     "reopen": "설정 다시 열기",
     "done": "완료"
+  },
+  "common": {
+    "back": "뒤로"
+  },
+  "new": {
+    "kindQ": "어떤 규칙을 만들까요?",
+    "kindSub": "나중에 바꿀 수 있어요.",
+    "intercept": "앱을 열 때 묻기",
+    "interceptBody": "고른 앱을 열면 내가 쓴 문장으로 한 번 물어봐요.",
+    "interceptExample": "업무 시간에 게임을 열면 “일 해야지?”",
+    "check": "안 열었을 때 알림",
+    "checkBody": "정한 시각까지 그 앱을 안 열었으면 알려 줘요.",
+    "checkExample": "밤 9시까지 일기 앱을 안 열었으면 한 번 알림",
+    "exampleTag": "예:",
+    "next": "다음",
+    "nextN": "다음 · {{count}}개",
+    "appQ": "어떤 앱에서 물어볼까요?",
+    "appSub": "여러 개 고를 수 있어요.",
+    "appSearch": "앱 이름으로 찾기",
+    "appNone": "아직 고른 앱이 없어요",
+    "appEmpty": "맞는 앱이 없어요",
+    "appRemove": "{{name}} 빼기",
+    "whenQ": "언제 물어볼까요?",
+    "whenSub": "이 시간에 고른 앱을 열면 물어봐요.",
+    "presets": "빠르게 고르기",
+    "preset_work": "업무시간 · 평일 9–18시",
+    "preset_work_name": "업무시간",
+    "preset_night": "잠들 시간 · 매일 23–7시",
+    "preset_night_name": "잠들 시간",
+    "preset_weekend": "주말 · 10–22시",
+    "preset_weekend_name": "주말",
+    "days": "요일",
+    "dayNames": "월,화,수,목,금,토,일",
+    "weekday": "평일",
+    "weekend": "주말",
+    "everyday": "매일",
+    "daysNone": "요일을 골라 주세요",
+    "start": "시작",
+    "end": "끝",
+    "nextDay": "다음 날",
+    "whenSame": "시작과 끝이 같아요",
+    "whenLabel": "{{days}} {{start}} – {{next}}{{end}}",
+    "save": "저장",
+    "saved": "저장했어요",
+    "saveFailed": "저장하지 못했어요. 다시 눌러 주세요."
+  },
+  "newCheck": {
+    "appQ": "어떤 앱을 열었는지 볼까요?",
+    "appSub": "앱 하나만 고를 수 있어요.",
+    "timeQ": "몇 시까지 열면 될까요?",
+    "timeSub": "그 시각까지 안 열었으면 한 번 알려요.",
+    "time": "확인 시각",
+    "timeLine": "{{time}}까지 {{app}}을(를) 안 열었으면 한 번 알려요.",
+    "messageQ": "알림에 뭐라고 쓸까요?",
+    "messageSub": "알림에 이 문장이 그대로 보여요.",
+    "message_ph": "예: 오늘 일기 썼어?",
+    "name_ph": "예: 일기"
+  },
+  "rule": {
+    "message_q": "뭐라고 물어볼까요?",
+    "message_sub": "앱을 열 때 이 문장이 가장 크게 보여요.",
+    "message_ph": "예: 일 해야지?",
+    "message_empty": "여기에 쓴 문장이 보여요",
+    "name": "규칙 이름",
+    "name_ph": "예: 업무시간",
+    "preview_tag": "미리보기 · 버튼은 눌리지 않아요",
+    "preview_hint": "그림이라 눌러도 기록되지 않아요",
+    "grace_q": "연 뒤 다시 묻기까지",
+    "grace_min": "{{count}}분"
+  },
+  "confirm": {
+    "cancel": "취소",
+    "open": "열기",
+    "second": "‘{{name}}’ 규칙이 켜져 있어요"
   }
 }

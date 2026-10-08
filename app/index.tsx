@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cachedRules, putDevice, saveRule, syncNow } from '@/features/rules';
@@ -193,6 +193,10 @@ export default function Spike() {
             </Text>
             <Pressable onPress={() => void runSync()}>
               <Text style={styles.link}>{t('spike.syncNow')}</Text>
+            </Pressable>
+            {/* 개발용 입구: 새 만들기 흐름(시안 원모어 #7 ~ #11 · #13). 시험 도구 배치는 바꾸지 않는다 */}
+            <Pressable onPress={() => router.push('/rules/new' as Href)}>
+              <Text style={styles.link}>{t('spike.newFlow')}</Text>
             </Pressable>
             {!status.service && (
               <Pressable style={styles.btn} onPress={() => router.push('/permission/accessibility')}>
