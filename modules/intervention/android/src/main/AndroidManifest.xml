@@ -29,7 +29,7 @@
         android:excludeFromRecents="true"
         android:launchMode="singleTask"
         android:taskAffinity="com.vivacegames.onemorethought.intervention"
-        android:theme="@android:style/Theme.Material.NoActionBar" />
+        android:theme="@style/Theme.Intervention.Confirm" />
     <service
         android:name="expo.modules.intervention.InterventionService"
         android:exported="false"

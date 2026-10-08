@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  확인 화면 테마 · 결정 #33 · 시안 원모어 #1(calm_tokens.md §5).
+  🔴 창은 불투명(omt_bg) · windowIsTranslucent=false · 창 블러 없음: 뒤의 대상 앱이 비치지 않게(확인 화면을 액티비티로 바꾼 이유 · 2026-10-08).
+  창 전환 애니메이션 없음: 전환 중엔 뒤 앱이 비치거나 기기마다 다르게 미끄러진다.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <style name="Theme.Intervention.Confirm" parent="android:Theme.Material.NoActionBar">
+    <item name="android:windowBackground">@color/omt_bg</item>
+    <item name="android:windowIsTranslucent">false</item>
+    <item name="android:windowShowWallpaper">false</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+    <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+    <item name="android:windowAnimationStyle">@null</item>
+  </style>
+</resources>

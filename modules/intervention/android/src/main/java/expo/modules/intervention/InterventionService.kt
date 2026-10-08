@@ -3,12 +3,8 @@ package expo.modules.intervention
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.PixelFormat
-import android.graphics.drawable.GradientDrawable
 import android.os.SystemClock
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +12,7 @@ import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.TextView
 import org.json.JSONObject
 
 /**
@@ -57,6 +50,9 @@ class InterventionService : AccessibilityService() {
   private var overlay: View? = null
   private var overlayPkg: String? = null
   private var overlayShownAt = 0L
+  private var overlayView: ConfirmView? = null
+  /** 오버레이에서 이미 골랐다(걷히는 140ms 동안 두 번 누름 · 뒤로가기를 막는다) */
+  private var overlayDeciding = false
 
   private val passed get() = InterventionState.passed
   private val main = android.os.Handler(android.os.Looper.getMainLooper())
@@ -199,6 +195,12 @@ class InterventionService : AccessibilityService() {
       WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
       PixelFormat.TRANSLUCENT,
     )
+    // 가로에서 노치 · 시스템 막대 자리까지 우리 바탕을 깔고, 글자 · 알약은 ConfirmView 가 inset 만큼 안쪽에 둔다
+    if (android.os.Build.VERSION.SDK_INT >= 30) {
+      params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+    } else if (android.os.Build.VERSION.SDK_INT >= 28) {
+      params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+    }
     // S1 · S2: 이벤트 시각 → 오버레이가 처음 그려진 시각
     root.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
       override fun onPreDraw(): Boolean {
@@ -231,17 +233,28 @@ class InterventionService : AccessibilityService() {
     }
     overlay = null
     overlayPkg = null
+    overlayView = null
+    overlayDeciding = false
   }
 
+  /** 시안 원모어 #3: 먼저 기록 → 글자 · 알약만 140ms 걷힘 → 오버레이 걷고 홈. 두 번 눌러도 한 번만 */
   private fun cancel(pkg: String) {
+    if (overlay == null || overlayDeciding) return
+    overlayDeciding = true
     record(pkg, "cancel", null)
-    removeOverlay()
-    val home = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
-      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    startActivity(home)
+    val goHome = {
+      removeOverlay()
+      val home = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      startActivity(home)
+    }
+    overlayView?.dismiss(goHome) ?: goHome()
   }
 
+  /** 🔴 [열기]는 걷힘 · 대기 없이 즉시(기둥 1) */
   private fun open(pkg: String) {
+    if (overlay == null || overlayDeciding) return
+    overlayDeciding = true
     record(pkg, "open", null)
     InterventionState.pass(pkg, InterventionState.hits[pkg]?.let { h -> graceOf(h.ruleId) })
     removeOverlay()
@@ -261,9 +274,8 @@ class InterventionService : AccessibilityService() {
 
   private fun graceOf(ruleId: String): Int? = RuleStore.rules(this).firstOrNull { it.id == ruleId }?.graceMin
 
-  /** 스파이크 화면. 실제 디자인은 Phase 2(`docs/UI_GUIDE.md` · ui-design-reference) */
+  /** 오버레이판도 확인 화면과 같은 그림(ConfirmView · 결정 #33). 뒤로가기 = [취소] · 바탕은 불투명 omt_bg */
   private fun buildView(pkg: String): View {
-    val dp = { v: Float -> TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, resources.displayMetrics).toInt() }
     val root = object : FrameLayout(this) {
       override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         // 뒤로가기 = [취소](RULE_SYSTEM §3.2)
@@ -274,50 +286,13 @@ class InterventionService : AccessibilityService() {
         return super.dispatchKeyEvent(event)
       }
     }
-    root.setBackgroundColor(Color.argb(235, 18, 18, 22))
     root.isFocusable = true
     root.isFocusableInTouchMode = true
-
-    val card = LinearLayout(this).apply {
-      orientation = LinearLayout.VERTICAL
-      gravity = Gravity.CENTER_HORIZONTAL
-      setPadding(dp(28f), dp(32f), dp(28f), dp(24f))
-      background = GradientDrawable().apply {
-        setColor(Color.rgb(32, 32, 38))
-        cornerRadius = dp(20f).toFloat()
-      }
-    }
-    // 🔴 기둥 4: 사용자 메시지를 그대로. 다듬지 않는다
-    val message = TextView(this).apply {
-      text = InterventionState.hits[pkg]?.message ?: ""
-      setTextColor(Color.WHITE)
-      setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-      gravity = Gravity.CENTER
-    }
-    card.addView(message, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-
-    val row = LinearLayout(this).apply {
-      orientation = LinearLayout.HORIZONTAL
-      setPadding(0, dp(28f), 0, 0)
-    }
-    val cancelBtn = Button(this).apply {
-      text = getString(R.string.intervention_cancel)
-      setOnClickListener { cancel(pkg) }
-    }
-    val openBtn = Button(this).apply {
-      text = getString(R.string.intervention_open)
-      setOnClickListener { open(pkg) }
-    }
-    val half = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-    row.addView(cancelBtn, half)
-    row.addView(openBtn, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = dp(12f) })
-    card.addView(row, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-
-    root.addView(
-      card,
-      FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-        .apply { setMargins(dp(24f), 0, dp(24f), 0) },
-    )
+    val hit = InterventionState.hits[pkg]
+    val confirm = ConfirmView(this, pkg, hit?.message ?: "", hit?.ruleName ?: "", onCancel = { cancel(pkg) }, onOpen = { open(pkg) })
+    overlayView = confirm
+    root.addView(confirm.root, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+    confirm.playReveal()
     return root
   }
 }

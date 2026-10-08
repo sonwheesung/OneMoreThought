@@ -5,5 +5,7 @@
   <string name="intervention_service_description">Detects only the name of the app that comes to the front, so it can ask you once before opening an app you chose. It does not read screen content or anything you type. The names of apps you chose and your check-in results are used to improve the service and for statistics.</string>
   <string name="intervention_cancel">Cancel</string>
   <string name="intervention_open">Open</string>
+  <!-- 확인 화면 둘째 줄(RULE_SYSTEM §3 · 결정 #27 M · 🔴 문구 검수 전) -->
+  <string name="intervention_rule">“%1$s” is on</string>
   <string name="intervention_settings_path">Tap Installed apps (or Downloaded apps) → App check-in → turn it on</string>
 </resources>

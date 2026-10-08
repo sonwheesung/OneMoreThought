@@ -1,19 +1,13 @@
 package expo.modules.intervention
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.TypedValue
-import android.view.Gravity
-import android.view.ViewGroup
+import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.TextView
 import org.json.JSONObject
 
 /**
@@ -46,7 +40,7 @@ class InterventionActivity : Activity() {
   private var message: String = ""
   private var shownAt = 0L
   private var decided = false
-  private var messageView: TextView? = null
+  private var view: ConfirmView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -56,8 +50,12 @@ class InterventionActivity : Activity() {
     shownAt = System.currentTimeMillis()
     val eventUptime = intent.getLongExtra(EXTRA_EVENT_UPTIME, SystemClock.uptimeMillis())
     InterventionState.activityAlive = true
-    val root = buildView()
+    edgeToEdge()
+    val confirm = ConfirmView(this, pkg, message, ruleName(), onCancel = { cancel() }, onOpen = { open() })
+    view = confirm
+    val root = confirm.root
     setContentView(root)
+    confirm.playReveal()
     // S1 · S2: 감지 이벤트 시각 → 우리 화면이 처음 그려진 시각
     root.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
       override fun onPreDraw(): Boolean {
@@ -84,7 +82,8 @@ class InterventionActivity : Activity() {
     pkg = intent.getStringExtra(EXTRA_PKG) ?: pkg
     ruleId = intent.getStringExtra(EXTRA_RULE_ID) ?: ruleId
     message = intent.getStringExtra(EXTRA_MESSAGE) ?: message
-    messageView?.text = message
+    view?.setMessage(message, ruleName())
+    view?.playReveal()
     shownAt = System.currentTimeMillis()
     decided = false
   }
@@ -116,15 +115,25 @@ class InterventionActivity : Activity() {
     super.onDestroy()
   }
 
+  /** 시안 원모어 #3: 먼저 기록 → 글자 · 알약만 140ms 걷힘(바탕은 불투명 그대로) → 홈을 전환 없이 */
   private fun cancel() {
     if (decided) return
     decided = true
     record("cancel")
     InterventionState.pendingPkg = null
-    startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-    finish()
+    val goHome = {
+      startActivity(
+        Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        noTransition(),
+      )
+      finish()
+      @Suppress("DEPRECATION")
+      overridePendingTransition(0, 0)
+    }
+    view?.dismiss(goHome) ?: goHome()
   }
 
+  /** 🔴 [열기]는 걷힘 · 대기 없이 즉시(기둥 1) */
   private fun open() {
     if (decided) return
     decided = true
@@ -134,10 +143,28 @@ class InterventionActivity : Activity() {
     // L3: 그사이 대상 앱이 꺼졌으면 우리 화면만 걷어서는 홈이 나온다. 실행 인텐트를 직접 부른다
     // (살아 있으면 아이콘을 누른 것처럼 그 화면 그대로 앞으로 온다)
     packageManager.getLaunchIntentForPackage(pkg)?.let {
-      try { startActivity(it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } catch (_: Exception) {}
+      try { startActivity(it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), noTransition()) } catch (_: Exception) {}
     }
     finish()
+    @Suppress("DEPRECATION")
     overridePendingTransition(0, 0)
+  }
+
+  /** 기기 기본 창 전환이 끼지 않게(전환 중엔 뒤 앱이 비치거나 미끄러진다) */
+  private fun noTransition(): Bundle? = ActivityOptions.makeCustomAnimation(this, 0, 0).toBundle()
+
+  private fun ruleName(): String =
+    RuleStore.rules(this).firstOrNull { it.id == ruleId }?.name ?: InterventionState.hits[pkg]?.ruleName ?: ""
+
+  /** 시스템 막대 뒤까지 우리 바탕을 깐다(막대는 테마에서 투명 · 글자 · 알약은 ConfirmView 가 inset 만큼 안쪽에) */
+  private fun edgeToEdge() {
+    if (Build.VERSION.SDK_INT >= 30) {
+      window.setDecorFitsSystemWindows(false)
+    } else {
+      @Suppress("DEPRECATION")
+      window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or
+        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+    }
   }
 
   private fun record(result: String) {
@@ -145,72 +172,6 @@ class InterventionActivity : Activity() {
     SpikeStore.appendLog(this, JSONObject().put("kind", "result").put("pkg", pkg).put("result", result).put("at", now))
     // 서버로 갈 기록(DATABASE §2.2 · 결정 #30)
     if (ruleId.isNotEmpty()) EventQueue.prompt(this, ruleId, pkg, shownAt, result, now - shownAt)
-  }
-
-  /** 스파이크 화면. 실제 디자인은 Phase 2(`docs/UI_GUIDE.md` · ui-design-reference) */
-  private fun buildView(): FrameLayout {
-    val dp = { v: Float -> TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, resources.displayMetrics).toInt() }
-    val root = FrameLayout(this)
-    root.setBackgroundColor(Color.rgb(18, 18, 22))
-    // 시스템 막대(상태 · 내비게이션) · 노치 영역만큼 안쪽으로. 가로에서 카드가 내비 바 밑으로 들어가던 것(2026-10-09 시안 세션 지적 ·
-    // 📱 갤럭시 S24 가로 캡처). 색과 무관해서 디자인(결정 #33) 반영 전에 먼저 넣는다
-    root.setOnApplyWindowInsetsListener { v, insets ->
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-        val b = insets.getInsets(android.view.WindowInsets.Type.systemBars() or android.view.WindowInsets.Type.displayCutout())
-        v.setPadding(b.left, b.top, b.right, b.bottom)
-      } else {
-        @Suppress("DEPRECATION")
-        v.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom)
-      }
-      insets
-    }
-    // 카드 최대 폭 520dp(가로 · 태블릿에서 버튼이 끝없이 길어지지 않게)
-    val maxCard = dp(520f)
-    val card = object : LinearLayout(this) {
-      override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val w = MeasureSpec.getSize(widthMeasureSpec)
-        val spec = if (w > maxCard) MeasureSpec.makeMeasureSpec(maxCard, MeasureSpec.EXACTLY) else widthMeasureSpec
-        super.onMeasure(spec, heightMeasureSpec)
-      }
-    }.apply {
-      orientation = LinearLayout.VERTICAL
-      gravity = Gravity.CENTER_HORIZONTAL
-      setPadding(dp(28f), dp(32f), dp(28f), dp(24f))
-      background = GradientDrawable().apply {
-        setColor(Color.rgb(32, 32, 38))
-        cornerRadius = dp(20f).toFloat()
-      }
-    }
-    // 🔴 기둥 4: 사용자 메시지를 그대로
-    val message = TextView(this).apply {
-      text = this@InterventionActivity.message
-      setTextColor(Color.WHITE)
-      setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-      gravity = Gravity.CENTER
-    }
-    messageView = message
-    card.addView(message, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-    val row = LinearLayout(this).apply {
-      orientation = LinearLayout.HORIZONTAL
-      setPadding(0, dp(28f), 0, 0)
-    }
-    val cancelBtn = Button(this).apply {
-      text = getString(R.string.intervention_cancel)
-      setOnClickListener { cancel() }
-    }
-    val openBtn = Button(this).apply {
-      text = getString(R.string.intervention_open)
-      setOnClickListener { open() }
-    }
-    row.addView(cancelBtn, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-    row.addView(openBtn, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = dp(12f) })
-    card.addView(row, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-    root.addView(
-      card,
-      FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-        .apply { setMargins(dp(24f), 0, dp(24f), 0) },
-    )
-    return root
   }
 }
 

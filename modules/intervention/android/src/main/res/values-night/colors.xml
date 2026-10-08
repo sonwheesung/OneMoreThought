@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 어두운 판(같은 색조) · ⏳ 임시값 · values/colors.xml 과 이름이 같아야 한다 -->
+<!--
+  확인 화면(네이티브) 색 · 결정 #33 «새벽 호수» · RN theme/tokens.ts 와 같은 이름(omt_ + 토큰 이름 snake_case).
+  값의 정본: 시안 세션(연출 사전) calm_tokens.md §5 · 대비 AA(2026-10-09 받음). 쓰임 규칙은 같은 문서 §4.
+  🚫 빨강을 쓰지 않는다(기둥 2). 반투명은 #AARRGGBB.
+-->
 <resources>
-  <color name="omt_bg">#14131C</color>
-  <color name="omt_surface">#14FFFFFF</color>
-  <color name="omt_line">#1AFFFFFF</color>
-  <color name="omt_text">#F2F0FA</color>
-  <color name="omt_text2">#B9B5CC</color>
-  <color name="omt_text3">#7D7993</color>
-  <color name="omt_accent">#6F86FF</color>
-  <color name="omt_accent_end">#A07BFF</color>
-  <color name="omt_on_accent">#FFFFFF</color>
-  <color name="omt_warn">#E0A54A</color>
+    <color name="omt_bg">#FF131231</color>
+    <color name="omt_surface">#FF1F1E3D</color>
+    <color name="omt_line">#14FFFFFF</color>
+    <color name="omt_text">#FFECEBFA</color>
+    <color name="omt_text2">#FFABAACB</color>
+    <color name="omt_text3">#FF8C8BAE</color>
+    <!-- accent = CTA 그라데이션 시작색. 그라데이션을 못 그리면 omt_accent_solid -->
+    <color name="omt_accent">#FFADA9F8</color>
+    <color name="omt_accent_end">#FFB79CF3</color>
+    <color name="omt_on_accent">#FF16173A</color>
+    <color name="omt_warn">#FFF2BE6E</color>
+    <color name="omt_warn_bg">#17F2BE6E</color>
+    <color name="omt_warn_line">#38F2BE6E</color>
+    <color name="omt_warn_dot">#FFF2BE6E</color>
+    <color name="omt_on_warn">#FF2B1A00</color>
+    <color name="omt_bg_glow_a">#FF29265E</color>
+    <color name="omt_bg_glow_b">#FF123A33</color>
+    <color name="omt_bg_glow_c">#FF382447</color>
+    <color name="omt_surface_glass">#0FFFFFFF</color>
+    <color name="omt_surface_line">#17FFFFFF</color>
+    <color name="omt_line_strong">#FF73729A</color>
+    <color name="omt_accent_solid">#FFB2A3F6</color>
+    <color name="omt_accent_strong">#FFD6D2FA</color>
+    <color name="omt_accent_soft">#29ADA9F8</color>
+    <color name="omt_accent_glow">#4D9E95F0</color>
+    <color name="omt_mint">#FF8DD1BB</color>
+    <color name="omt_mint2">#FF3E9E83</color>
+    <color name="omt_mint_text">#FF8DD1BB</color>
+    <color name="omt_mint_soft">#248DD1BB</color>
+    <color name="omt_switch_on">#FF9E95F0</color>
+    <color name="omt_switch_off_track">#0FFFFFFF</color>
+    <color name="omt_switch_off_line">#FF73729A</color>
+    <color name="omt_knob">#FFFFFFFF</color>
+    <color name="omt_chip">#0FFFFFFF</color>
+    <color name="omt_chip_selected">#2EADA9F8</color>
+    <color name="omt_chip_selected_text">#FFD6D2FA</color>
+    <color name="omt_chip_selected_line">#FF9E95F0</color>
+    <color name="omt_focus">#FFADA9F8</color>
+    <color name="omt_disabled">#0DFFFFFF</color>
+    <color name="omt_disabled_text">#FF5F5E82</color>
+    <color name="omt_confirm_btn">#14FFFFFF</color>
+    <color name="omt_confirm_btn_line">#24FFFFFF</color>
 </resources>
