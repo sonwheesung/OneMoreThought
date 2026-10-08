@@ -57,7 +57,7 @@
 
 ## 6. 시안 세션과 합의한 것 (2026-10-09)
 
-- 분석 보고서: `C:\game\commonnimation	ools\qa\out\project_survey\REPORT.md`(연출 사전 세션 · common-56). 시안은 motion.vivace-games.com «프로젝트 시안» 카테고리 키 `onemore`.
+- 분석 보고서: `C:\game\common\animation\tools\qa\out\project_survey\REPORT.md`(연출 사전 세션 · common-56). 시안은 motion.vivace-games.com «프로젝트 시안» 카테고리 키 `onemore`.
 - 받은 추천안: 톤 A «숨 고르기 종이»(배경 #F7F5F0 · 강조 먼지빛 남색 #3E4C6D · 세이지 #7C8F7A · 꺼짐 경고 호박 #B7791F · 빨강 없음 · 다크판 있음) · 반경 16 · 테두리 · 시스템 글꼴 · 글자 13 · 15 · 20 · 28 · 확인 화면 버튼 같은 무게 · 시스템 밝기를 따름 · 기본 Animated + Kotlin 애니메이터(새 의존성 0) · 일러스트 없음.
 - 그쪽이 찾은 문제: 확인 화면에 우리 앱 · 대상 앱 이름이 없다(ANDROID_PLATFORM §8.2 정책 위험) · 가로에서 내비 바 영역 미반영 · 기본 Button 이 기기마다 다르다.
 - 이쪽이 짚은 것: 앱 이름은 `R.string.app_name` 으로 읽는다(서비스명 미정 · 미결정 N) · 둘째 줄(결정 #27 M)을 유지 · 만들기 흐름의 확인 화면 미리보기는 버튼 비활성(기록이 서버로 가지 않게).
