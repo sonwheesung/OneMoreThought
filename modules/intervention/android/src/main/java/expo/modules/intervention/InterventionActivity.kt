@@ -152,7 +152,27 @@ class InterventionActivity : Activity() {
     val dp = { v: Float -> TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, resources.displayMetrics).toInt() }
     val root = FrameLayout(this)
     root.setBackgroundColor(Color.rgb(18, 18, 22))
-    val card = LinearLayout(this).apply {
+    // 시스템 막대(상태 · 내비게이션) · 노치 영역만큼 안쪽으로. 가로에서 카드가 내비 바 밑으로 들어가던 것(2026-10-09 시안 세션 지적 ·
+    // 📱 갤럭시 S24 가로 캡처). 색과 무관해서 디자인(결정 #33) 반영 전에 먼저 넣는다
+    root.setOnApplyWindowInsetsListener { v, insets ->
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        val b = insets.getInsets(android.view.WindowInsets.Type.systemBars() or android.view.WindowInsets.Type.displayCutout())
+        v.setPadding(b.left, b.top, b.right, b.bottom)
+      } else {
+        @Suppress("DEPRECATION")
+        v.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom)
+      }
+      insets
+    }
+    // 카드 최대 폭 520dp(가로 · 태블릿에서 버튼이 끝없이 길어지지 않게)
+    val maxCard = dp(520f)
+    val card = object : LinearLayout(this) {
+      override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val w = MeasureSpec.getSize(widthMeasureSpec)
+        val spec = if (w > maxCard) MeasureSpec.makeMeasureSpec(maxCard, MeasureSpec.EXACTLY) else widthMeasureSpec
+        super.onMeasure(spec, heightMeasureSpec)
+      }
+    }.apply {
       orientation = LinearLayout.VERTICAL
       gravity = Gravity.CENTER_HORIZONTAL
       setPadding(dp(28f), dp(32f), dp(28f), dp(24f))

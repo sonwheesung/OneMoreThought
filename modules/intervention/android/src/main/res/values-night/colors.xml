@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 어두운 판(같은 색조) · ⏳ 임시값 · values/colors.xml 과 이름이 같아야 한다 -->
+<resources>
+  <color name="omt_bg">#14131C</color>
+  <color name="omt_surface">#14FFFFFF</color>
+  <color name="omt_line">#1AFFFFFF</color>
+  <color name="omt_text">#F2F0FA</color>
+  <color name="omt_text2">#B9B5CC</color>
+  <color name="omt_text3">#7D7993</color>
+  <color name="omt_accent">#6F86FF</color>
+  <color name="omt_accent_end">#A07BFF</color>
+  <color name="omt_on_accent">#FFFFFF</color>
+  <color name="omt_warn">#E0A54A</color>
+</resources>
