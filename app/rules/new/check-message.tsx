@@ -1,17 +1,20 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { CheckNotificationPicture } from '@/components/CheckNotificationPicture.tsx';
 import { FlowScreen, flowStyles } from '@/components/flow.tsx';
 import { SaveResult } from '@/components/SaveResult.tsx';
+import { hhmm } from '@/components/TimeWheel.tsx';
 import { MESSAGE_MAX, saveDraft, setDraft, useDraft } from '@/features/draft.ts';
+import { Intervention } from '@/modules/intervention';
 import { radius, spacing } from '@/theme/tokens.ts';
 import { usePalette } from '@/theme/useTheme.ts';
 
 /**
  * 실행 확인 · 알림 메시지 · 규칙 이름 · 시안 원모어 #13 · 진행 3/3. 저장은 saveDraft(= saveRule) 한 번.
- * 🔴 메시지는 쓴 그대로(기둥 4). 알림 미리보기는 원모어 #14 에서.
+ * 🔴 메시지는 쓴 그대로(기둥 4). 아래 알림 미리보기(원모어 #14)는 그림이다.
  */
 export default function NewCheckMessage() {
   const { t } = useTranslation();
@@ -19,6 +22,10 @@ export default function NewCheckMessage() {
   const d = useDraft();
   const [state, setState] = useState<'edit' | 'saving' | 'saved' | 'failed'>('edit');
   const ready = d.message.trim().length > 0 && d.name.trim().length > 0;
+  const app = useMemo(
+    () => Intervention?.listLaunchableApps().find((a) => a.packageName === d.targets[0])?.label ?? '',
+    [d.targets],
+  );
 
   const save = async () => {
     if (!ready || state === 'saving' || state === 'saved') return;
@@ -56,6 +63,10 @@ export default function NewCheckMessage() {
         <Text style={[styles.count, { color: c.text3 }]}>
           {[...d.message].length} / {MESSAGE_MAX}
         </Text>
+      </View>
+      <View>
+        <Text style={[flowStyles.label, { color: c.text2 }]}>{t('newCheck.preview_tag')}</Text>
+        <CheckNotificationPicture message={d.message} app={app} time={hhmm(d.startMin)} />
       </View>
       <View>
         <Text style={[flowStyles.label, { color: c.text2 }]}>{t('rule.name')}</Text>

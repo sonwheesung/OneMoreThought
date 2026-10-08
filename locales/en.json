@@ -100,7 +100,12 @@
     "messageQ": "What should the reminder say?",
     "messageSub": "The reminder shows this line as you wrote it.",
     "message_ph": "e.g. Did you journal today?",
-    "name_ph": "e.g. Journal"
+    "name_ph": "e.g. Journal",
+    "preview_tag": "Notification preview · buttons don't work",
+    "preview_now": "now",
+    "notifyBody": "You haven't opened {{app}} by {{time}}.",
+    "later": "Later",
+    "open": "Open {{app}}"
   },
   "rule": {
     "message_q": "What should we ask?",
