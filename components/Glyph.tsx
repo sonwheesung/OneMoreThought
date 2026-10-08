@@ -8,7 +8,9 @@ export type GlyphName = 'eye' | 'eyeOff' | 'send' | 'check';
 
 export function Glyph({ name, color, size = 20 }: { name: GlyphName; color: string; size?: number }) {
   const s = size;
-  const line = Math.max(1.5, s / 11);
+  // 시안 선 굵기 1.6 ~ 1.8 · 끝은 둥글게(막대에 반경)
+  const line = 1.7;
+  const cap = line / 2;
   if (name === 'check') {
     return (
       <View style={{ width: s, height: s }} importantForAccessibility="no-hide-descendants">
@@ -32,7 +34,7 @@ export function Glyph({ name, color, size = 20 }: { name: GlyphName; color: stri
     // 위로 나가는 화살표
     return (
       <View style={{ width: s, height: s, alignItems: 'center' }} importantForAccessibility="no-hide-descendants">
-        <View style={{ position: 'absolute', top: s * 0.2, width: line, height: s * 0.62, backgroundColor: color }} />
+        <View style={{ position: 'absolute', top: s * 0.2, width: line, height: s * 0.62, borderRadius: cap, backgroundColor: color }} />
         <View
           style={{
             position: 'absolute',
@@ -64,6 +66,7 @@ export function Glyph({ name, color, size = 20 }: { name: GlyphName; color: stri
             position: 'absolute',
             width: line,
             height: s * 1.02,
+            borderRadius: cap,
             backgroundColor: color,
             transform: [{ rotate: '-45deg' }],
           }}

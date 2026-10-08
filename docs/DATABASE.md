@@ -83,9 +83,10 @@
 | 파일 | 하는 일 |
 |---|---|
 | `features/server.ts` | 공용 서버 기기 토큰(`POST /api/v1/devices` · 기기 id 는 처음 한 번 만든 UUID) · 앱 서버 호출(401 이면 토큰을 한 번 다시 받는다) |
-| `features/rules.ts` | `saveRule` · `deleteRule`(캐시 먼저 → 서버 → 실패하면 대기열) · `flushQueue`(200개 묶음 · 200 이면 ack) · `pullRules`(대기열에 규칙 편집이 남아 있으면 덮지 않는다) · `syncNow` |
+| `features/rules.ts` | `saveRule` · `deleteRule`(캐시 먼저 → 서버 → 실패하면 대기열) · `flushQueue`(200개 묶음 · 200 이면 ack) · `pullRules`(대기열에 규칙 편집이 남아 있으면 덮지 않는다) · `syncNow` · `clearLocal`(결정 #34 · 캐시 · 대기열을 비우고 기기 가명을 새로 받는다 · 서버는 부르지 않는다) |
 | `RuleStore.kt` · `EventQueue.kt` | §2.1 · §2.2 |
 
+- 「이 기기에서만 지우기」(결정 #34)는 기기 id · 토큰 · 주체를 지워 새 가명으로 바뀐다. 옛 주체 번호는 `cs_prev_subjects` 에 남겨 문의에 붙인다(서버 기록 삭제 요청을 찾을 길).
 - 기기 id · 토큰은 앱 전용 SharedPreferences(`intervene_kv`)에 둔다. 다른 앱은 못 읽는다. 로그 · 진단에 남기지 않는다.
 - 결정 #27 L(제외 앱): 앱 고르기 목록에서 이 앱 · 홈 런처 · 시스템 설정 · 기본 전화 앱을 뺀다. 접근성 서비스도 홈 런처 · 설정을 판정 전에 거른다(이 앱 · 전화는 이미 "떠남 아님"으로 거른다).
 

@@ -15,6 +15,8 @@ export const APP_SERVER_URL = (process.env.EXPO_PUBLIC_APP_SERVER_URL ?? 'https:
 const KEY_DEVICE = 'cs_device_id';
 const KEY_TOKEN = 'cs_token';
 const KEY_SUBJECT = 'cs_subject';
+/** 「이 기기에서만 지우기」 전에 쓰던 주체 번호들(JSON 배열 · 문의에 붙여 서버 기록을 찾게 · 결정 #34) */
+const KEY_PREV_SUBJECTS = 'cs_prev_subjects';
 const TIMEOUT_MS = 10_000;
 
 export type Fail = 'offline' | 'unauthorized' | 'upstream' | 'invalid' | 'no-native' | 'error';
@@ -68,6 +70,30 @@ export async function ensureToken(force = false): Promise<Result<string>> {
 /** 이 기기의 공용 서버 주체 번호(화면 · 진단 표시용 · 가명) */
 export function subjectId(): string | null {
   return Intervention?.kvGet(KEY_SUBJECT) ?? null;
+}
+
+/** 지우기 전에 쓰던 주체 번호들(오래된 것이 앞) */
+export function previousSubjects(): string[] {
+  try {
+    const v: unknown = JSON.parse(Intervention?.kvGet(KEY_PREV_SUBJECTS) ?? '[]');
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 새 가명으로 바꾼다(결정 #34). 기기 id · 토큰 · 주체를 지워 다음 호출에서 새로 등록된다.
+ * 🔴 그래야 다음 동기화에서 옛 서버 사본이 다시 내려오지 않는다("지웠는데 그대로"를 막는다 · 시안 세션 지적 ①).
+ * 옛 주체 번호는 남겨 문의에 붙인다(서버 기록 삭제 요청을 찾을 길 · 지적 ②).
+ */
+export function resetIdentity(): void {
+  if (!Intervention) return;
+  const old = subjectId();
+  if (old) Intervention.kvSet(KEY_PREV_SUBJECTS, JSON.stringify([...previousSubjects().filter((x) => x !== old), old]));
+  Intervention.kvSet(KEY_DEVICE, null);
+  Intervention.kvSet(KEY_TOKEN, null);
+  Intervention.kvSet(KEY_SUBJECT, null);
 }
 
 /** 앱 서버 호출. 401 이면 기기 토큰을 한 번 다시 받아 재시도한다 */

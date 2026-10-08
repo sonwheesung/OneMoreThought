@@ -1,7 +1,7 @@
 import type { Rule } from '@/lib/rules.ts';
 import { Intervention } from '@/modules/intervention';
 
-import { appCall, type Result } from './server';
+import { appCall, resetIdentity, type Result } from './server';
 
 /**
  * 규칙 저장 · 동기화(docs/DATABASE.md §2 · §4 · 결정 #30).
@@ -92,6 +92,21 @@ export async function pullRules(): Promise<Result<Rule[]>> {
 /** 기기 정보(DATABASE §3 devices) */
 export async function putDevice(info: { model?: string; sdkInt?: number; appVersion?: string; locale?: string; tz?: string; advProtection?: string }) {
   return appCall('/api/device', { method: 'PUT', body: info });
+}
+
+/**
+ * 「이 기기에서만 지우기」(결정 #34): 규칙 캐시 · 미전송 대기열 · 기기 가명을 지운다. 서버는 부르지 않는다(사본은 남는다).
+ * 가명을 새로 받으므로 다음 동기화는 빈 서버 주체를 본다. 보내지 못한 변경도 사라진다(화면 문구가 밝힌다).
+ */
+export function clearLocal(): boolean {
+  if (!Intervention) return false;
+  for (let guard = 0; guard < 10_000; guard++) {
+    const batch = JSON.parse(Intervention.queueRead(500)) as { id?: string }[];
+    const last = batch[batch.length - 1]?.id;
+    if (!last || Intervention.queueAck(last) === 0) break;
+  }
+  resetIdentity();
+  return writeCache([], 0);
 }
 
 /** 앱을 열 때 · 앞으로 돌아올 때: 올리기 → 받기 */
