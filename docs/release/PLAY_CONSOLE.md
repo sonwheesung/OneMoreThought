@@ -29,6 +29,9 @@
 
 ## 2. 스토어 등록정보
 
+> 🔴 2026-10-09: **"안 열었을 때 알림"(실행 확인 알림)을 설명에서 뺐다.** 이번 빌드에는 알람 · 알림 발송 코드가 없다(결정 #37 · `modules/intervention` 에 AlarmManager · 알림 없음). 사용자 규칙 *없는 기능을 약속하는 문구 금지*(결정 #33). Phase 3 에서 알림이 나가면 설명 문단 · 기능 줄 · 권한 줄(사용 기록 접근 · 알림)을 되살린다. 처리방침 · 약관 소개 문단도 같은 날 같이 뺐다(`docs/legal/`).
+> 나이 확인(결정 #41)은 설명에 넣지 않는다(처리방침 제11조 · 약관 제5조에 있다).
+
 ### 2.1 영어 (en-US · 기본)
 
 - **App name**: `OneMoreThought`
@@ -40,11 +43,8 @@ Pause for one more thought — before you open the app you're trying to cut back
 
 Pick the apps you want to think twice about and write one sentence to yourself, like "Really ordering again?". When you open one of those apps during the times you set, the app shows your sentence once and lets you choose: Cancel, or Open. Open always works with one tap. Nothing is blocked or locked — you decide.
 
-It also works the other way. Pick an app you mean to open every day (a workout log, a language app) and a time. If you haven't opened it by then, you get one gentle reminder. Just one a day.
-
 WHAT IT DOES
 • Ask before opening: your own sentence, shown once, only during the days and hours you choose
-• Remind if not opened: one notification a day if the app you planned to open hasn't been opened yet
 • A simple weekly view of how often you were asked, cancelled or opened anyway — no scores, no blame
 • Light and dark themes
 
@@ -55,8 +55,6 @@ WHAT IT DOESN'T DO
 
 PERMISSIONS
 • Accessibility (only for "ask before opening"): detects which app comes to the front so it can ask you at the right moment. Shown and agreed to inside the app before you turn it on.
-• Usage access (only for "remind if not opened"): checks whether that one app was opened today.
-• Notifications: for the daily reminder.
 
 DATA
 Your rules, the messages you write and your prompt results are stored on our server and used to improve the service and for statistics. Screen content and anything you type are never read or sent. Details: https://vivace-games.com/onemorethought/privacy
@@ -67,7 +65,7 @@ One-time purchase. All future updates included.
 ### 2.2 한국어 (ko-KR)
 
 - **앱 이름**: `OneMoreThought`
-- **간단한 설명**(80자 이하): `고른 앱을 열 때 내가 쓴 한 문장으로 한 번 묻고, 잊은 앱은 한 번 알려 줘요.`
+- **간단한 설명**(80자 이하): `고른 앱을 열 때, 내가 쓴 한 문장으로 한 번 더 생각하게 해 줘요.`
 - **자세한 설명**:
 
 ```
@@ -75,11 +73,8 @@ One-time purchase. All future updates included.
 
 한 번 더 생각하고 싶은 앱을 고르고 나에게 하는 한 문장을 적어요. 예를 들면 "정말 시킬 거야?". 정한 요일과 시간에 그 앱을 열면 내 문장이 한 번 뜨고, [취소]와 [열기] 중에서 고르면 돼요. [열기]는 언제나 한 번에 눌려요. 막거나 잠그지 않아요. 결정은 내가 해요.
 
-반대로도 쓸 수 있어요. 매일 열기로 한 앱(운동 기록, 외국어 공부)과 시각을 정해 두면, 그때까지 안 열었을 때 한 번 알려 줘요. 하루에 한 번만요.
-
 이런 걸 해요
 • 열기 전에 묻기: 내가 고른 요일과 시간에만, 내가 쓴 문장으로 한 번
-• 안 열었을 때 알림: 열기로 한 앱을 아직 안 열었으면 하루 한 번
 • 지난 7일 동안 몇 번 물었고, 몇 번 취소하고 열었는지 보여 줘요. 점수나 꾸중은 없어요.
 • 밝은 화면 · 어두운 화면
 
@@ -90,8 +85,6 @@ One-time purchase. All future updates included.
 
 권한
 • 접근성(열기 전에 묻기에만): 어떤 앱이 화면 앞에 나왔는지 알아야 제때 물을 수 있어요. 켜기 전에 앱 안에서 먼저 알려 드리고 동의를 받아요.
-• 사용 기록 접근(안 열었을 때 알림에만): 그 앱 하나를 오늘 열었는지만 확인해요.
-• 알림: 하루 한 번 알림을 보내요.
 
 데이터
 규칙, 직접 쓴 메시지, 확인 결과는 회사 서버에 저장되고 서비스 개선과 통계에 쓰여요. 화면 내용과 입력한 글은 읽지도 보내지도 않아요. 자세한 내용: https://vivace-games.com/onemorethought/privacy
