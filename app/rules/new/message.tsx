@@ -7,7 +7,7 @@ import { ConfirmThumb } from '@/components/ConfirmThumb.tsx';
 import { Chip, FlowScreen, flowStyles, useEdit } from '@/components/flow.tsx';
 import { SaveResult } from '@/components/SaveResult.tsx';
 import { EASE } from '@/components/ui.tsx';
-import { MESSAGE_MAX, saveDraft, setDraft, useDraft } from '@/features/draft.ts';
+import { interceptStep, MESSAGE_MAX, saveDraft, setDraft, useDraft } from '@/features/draft.ts';
 import { GRACE_CHOICES } from '@/lib/rules.ts';
 import { Intervention } from '@/modules/intervention';
 import { radius, spacing } from '@/theme/tokens.ts';
@@ -56,8 +56,7 @@ export default function NewRuleMessage() {
   const field = [styles.field, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine, color: c.text }];
   return (
     <FlowScreen
-      step={4}
-      total={4}
+      {...interceptStep(4)}
       title={t('rule.message_q')}
       sub={t('rule.message_sub')}
       edit={edit.editing}

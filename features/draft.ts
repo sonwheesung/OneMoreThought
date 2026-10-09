@@ -24,6 +24,16 @@ export interface Draft {
   nameTouched: boolean;
 }
 
+/**
+ * «안 열었을 때 알림»(check) 규칙을 만들 수 있나. 2026-10-10 사용자 선택 «알림이 나올 때까지 숨김»:
+ * 이 빌드는 확인 시각 알림을 아직 보내지 않는다(Phase 3) → 없는 기능을 약속하지 않는다. 알림이 나오면 true.
+ * 끄면 [+ 규칙 만들기]가 종류 고르기를 건너뛰고 앱 고르기로 간다(3단계).
+ */
+export const CHECK_RULES_ENABLED = false;
+
+/** 만들기(실행 전 확인) 흐름의 단계 번호. 종류 고르기가 없으면 하나씩 당겨진다 */
+export const interceptStep = (n: 2 | 3 | 4) => ({ step: CHECK_RULES_ENABLED ? n : n - 1, total: CHECK_RULES_ENABLED ? 4 : 3 });
+
 /** 메시지 글자 수 상한(가로 확인 화면에서 두 줄 안쪽 · 시안 제안값 · 서버 상한 500 보다 작다) */
 export const MESSAGE_MAX = 40;
 

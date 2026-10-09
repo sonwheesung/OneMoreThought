@@ -7,7 +7,7 @@ import { daysLabel, DayPicker } from '@/components/DayPicker.tsx';
 import { Chip, FlowScreen, GlassCard, flowStyles, useEdit } from '@/components/flow.tsx';
 import { hhmm, TimeWheel } from '@/components/TimeWheel.tsx';
 import { EASE } from '@/components/ui.tsx';
-import { setDraft, useDraft } from '@/features/draft.ts';
+import { interceptStep, setDraft, useDraft } from '@/features/draft.ts';
 import { END_OF_DAY } from '@/lib/rules.ts';
 import { motion, radius, spacing } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
@@ -44,8 +44,7 @@ export default function NewRuleWhen() {
 
   return (
     <FlowScreen
-      step={3}
-      total={4}
+      {...interceptStep(3)}
       title={t('new.whenQ')}
       sub={t('new.whenSub')}
       edit={edit.editing}

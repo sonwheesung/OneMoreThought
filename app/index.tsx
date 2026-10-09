@@ -10,7 +10,7 @@ import { Glyph } from '@/components/Glyph.tsx';
 import { EmptyHome, PermissionRow, RuleRow, ruleLine, SummaryRing } from '@/components/Home.tsx';
 import { GlowBackground, PrimaryButton, useStagger } from '@/components/ui.tsx';
 import { ageAnswer } from '@/features/age.ts';
-import { resetDraft, takeFlash } from '@/features/draft.ts';
+import { CHECK_RULES_ENABLED, resetDraft, takeFlash } from '@/features/draft.ts';
 import { cachedRules, reportDevice, saveRule, syncNow } from '@/features/rules';
 import { todayKey } from '@/lib/day.ts';
 import type { Rule } from '@/lib/rules.ts';
@@ -176,8 +176,13 @@ function Home() {
           <PrimaryButton
             label={`+ ${t('home.new')}`}
             onPress={() => {
-              resetDraft();
-              router.push('/rules/new' as Href);
+              if (CHECK_RULES_ENABLED) {
+                resetDraft();
+                router.push('/rules/new' as Href);
+              } else {
+                resetDraft('intercept'); // 종류가 하나뿐이면 고르기를 건너뛴다
+                router.push('/rules/new/apps' as Href);
+              }
             }}
           />
         </View>

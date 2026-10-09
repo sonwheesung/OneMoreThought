@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AppPicker } from '@/components/AppPicker.tsx';
 import { useEdit } from '@/components/flow.tsx';
-import { setDraft, useDraft } from '@/features/draft.ts';
+import { interceptStep, setDraft, useDraft } from '@/features/draft.ts';
 
 /** 실행 전 확인 · 앱 고르기(여러 개) · 시안 원모어 #8 · 진행 2/4 */
 export default function NewRuleApps() {
@@ -13,8 +13,7 @@ export default function NewRuleApps() {
   return (
     <AppPicker
       edit={edit}
-      step={2}
-      total={4}
+      {...interceptStep(2)}
       title={t('new.appQ')}
       sub={t('new.appSub')}
       value={d.targets}
