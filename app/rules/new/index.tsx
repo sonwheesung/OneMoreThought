@@ -47,7 +47,19 @@ export default function NewRuleKind() {
   );
 }
 
-function KindCard({ on, onPress, title, body, example }: { on: boolean; onPress: () => void; title: string; body: string; example: string }) {
+function KindCard({
+  on,
+  onPress,
+  title,
+  body,
+  example,
+}: {
+  on: boolean;
+  onPress: () => void;
+  title: string;
+  body: string;
+  example: string;
+}) {
   const c = usePalette();
   const v = useOnValue(on);
   const { t } = useTranslation();

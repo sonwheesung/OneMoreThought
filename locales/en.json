@@ -122,7 +122,23 @@
     "preview_tag": "Preview · buttons don't work",
     "preview_hint": "It's just a picture — nothing is recorded",
     "grace_q": "Ask again after opening",
-    "grace_min": "{{count}} min"
+    "grace_min": "{{count}} min",
+    "on": "On",
+    "off": "Off",
+    "on_sub": "Shows during the times you set.",
+    "on_sub_check": "Checks once at the time you set.",
+    "off_sub": "Won't ask while off.",
+    "f_apps": "Apps",
+    "f_when": "Days · time",
+    "f_check": "Days · check time",
+    "f_message": "Message",
+    "toggled_on": "Turned on “{{name}}”",
+    "toggled_off": "Turned off “{{name}}”",
+    "delete": "Delete rule",
+    "delete_q": "Delete “{{name}}”?",
+    "delete_body": "It'll be removed from this phone and our server. Past history stays.",
+    "delete_do": "Delete",
+    "deleted": "Rule deleted"
   },
   "confirm": {
     "cancel": "Cancel",
@@ -201,5 +217,10 @@
     "night": "Early morning tomorrow.",
     "night_rule": "Bedtime",
     "night_app": "Video app"
+  },
+  "edit": {
+    "header": "Edit",
+    "save": "Save",
+    "saved": "Saved"
   }
 }

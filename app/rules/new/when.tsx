@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import { daysLabel, DayPicker } from '@/components/DayPicker.tsx';
-import { Chip, FlowScreen, GlassCard, flowStyles } from '@/components/flow.tsx';
+import { Chip, FlowScreen, GlassCard, flowStyles, useEdit } from '@/components/flow.tsx';
 import { hhmm, TimeWheel } from '@/components/TimeWheel.tsx';
 import { EASE } from '@/components/ui.tsx';
 import { setDraft, useDraft } from '@/features/draft.ts';
@@ -29,6 +29,7 @@ export default function NewRuleWhen() {
   const { t } = useTranslation();
   const c = usePalette();
   const d = useDraft();
+  const edit = useEdit();
   const nextDay = d.endMin < d.startMin;
   const same = d.endMin === d.startMin;
   const allDay = d.startMin === 0 && d.endMin === END_OF_DAY;
@@ -47,9 +48,11 @@ export default function NewRuleWhen() {
       total={4}
       title={t('new.whenQ')}
       sub={t('new.whenSub')}
-      cta={t('new.next')}
-      ctaDisabled={!d.days || same}
-      onCta={() => router.push('/rules/new/message')}>
+      edit={edit.editing}
+      footer={edit.footer}
+      cta={edit.editing ? edit.cta : t('new.next')}
+      ctaDisabled={!d.days || same || edit.saving}
+      onCta={edit.editing ? edit.save : () => router.push('/rules/new/message')}>
       <View>
         <Text style={[flowStyles.label, { color: c.text2 }]}>{t('new.presets')}</Text>
         <View style={flowStyles.row}>

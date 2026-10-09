@@ -7,7 +7,7 @@ import { radius, spacing } from '@/theme/tokens.ts';
 import { usePalette } from '@/theme/useTheme.ts';
 
 import { AppIcon } from './AppIcon.tsx';
-import { CheckCircle, FlowScreen } from './flow.tsx';
+import { CheckCircle, FlowScreen, useEdit } from './flow.tsx';
 
 /**
  * 앱 고르기 · 시안 원모어 #8(여러 개 · 실행 전 확인) · #13(하나 · 실행 확인 · 라디오).
@@ -23,9 +23,11 @@ interface Props {
   value: string[];
   onChange: (targets: string[]) => void;
   onNext: () => void;
+  /** 고치기(시안 원모어 #18) · useEdit() 값 */
+  edit?: ReturnType<typeof useEdit>;
 }
 
-export function AppPicker({ step, total, title, sub, single, value, onChange, onNext }: Props) {
+export function AppPicker({ step, total, title, sub, single, value, onChange, onNext, edit }: Props) {
   const { t } = useTranslation();
   const c = usePalette();
   const apps = useMemo<LaunchableApp[]>(
@@ -99,9 +101,11 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
       sub={sub}
       head={head}
       noScroll
-      cta={!single && value.length ? t('new.nextN', { count: value.length }) : t('new.next')}
-      ctaDisabled={value.length === 0}
-      onCta={onNext}>
+      edit={edit?.editing}
+      footer={edit?.footer}
+      cta={edit?.editing ? edit.cta : !single && value.length ? t('new.nextN', { count: value.length }) : t('new.next')}
+      ctaDisabled={value.length === 0 || !!edit?.saving}
+      onCta={edit?.editing ? edit.save : onNext}>
       <FlatList
         data={shown}
         keyExtractor={(a) => a.packageName}

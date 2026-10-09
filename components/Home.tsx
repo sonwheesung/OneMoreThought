@@ -32,22 +32,35 @@ export function ruleLine(r: Rule, apps: LaunchableApp[], t: (k: string, o?: Reco
   return [when, who].filter(Boolean).join(' · ');
 }
 
-export function RuleRow({ rule, line, onToggle }: { rule: Rule; line: string; onToggle: (on: boolean) => void }) {
+/** 줄을 누르면 규칙 자세히(시안 원모어 #18) · 스위치는 그 자리에서 켜고 끈다 */
+export function RuleRow({
+  rule,
+  line,
+  onToggle,
+  onOpen,
+}: {
+  rule: Rule;
+  line: string;
+  onToggle: (on: boolean) => void;
+  onOpen: () => void;
+}) {
   const c = usePalette();
   const on = rule.enabled;
   return (
     <View style={[styles.row, !on && styles.dim]}>
-      <View style={styles.icon}>
-        <Glyph name={rule.kind === 'check' ? 'check' : 'eye'} color={on ? c.accent : c.disabledText} size={18} />
-      </View>
-      <View style={styles.flex}>
-        <Text style={[styles.name, { color: c.text }]} numberOfLines={1}>
-          {rule.name}
-        </Text>
-        <Text style={[styles.line, { color: c.text2 }]} numberOfLines={1}>
-          {line}
-        </Text>
-      </View>
+      <Pressable onPress={onOpen} accessibilityRole="button" accessibilityLabel={`${rule.name}, ${line}`} style={styles.open}>
+        <View style={styles.icon}>
+          <Glyph name={rule.kind === 'check' ? 'check' : 'eye'} color={on ? c.accent : c.disabledText} size={18} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={[styles.name, { color: c.text }]} numberOfLines={1}>
+            {rule.name}
+          </Text>
+          <Text style={[styles.line, { color: c.text2 }]} numberOfLines={1}>
+            {line}
+          </Text>
+        </View>
+      </Pressable>
       <Switch value={on} onChange={onToggle} label={rule.name} />
     </View>
   );
@@ -159,6 +172,7 @@ export function EmptyHome() {
 }
 
 const styles = StyleSheet.create({
+  open: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 64 },
   dim: { opacity: 0.55 },

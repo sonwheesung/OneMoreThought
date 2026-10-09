@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { CheckNotificationPicture } from '@/components/CheckNotificationPicture.tsx';
-import { FlowScreen, flowStyles } from '@/components/flow.tsx';
+import { FlowScreen, flowStyles, useEdit } from '@/components/flow.tsx';
 import { SaveResult } from '@/components/SaveResult.tsx';
 import { hhmm } from '@/components/TimeWheel.tsx';
 import { MESSAGE_MAX, saveDraft, setDraft, useDraft } from '@/features/draft.ts';
@@ -20,6 +20,7 @@ export default function NewCheckMessage() {
   const { t } = useTranslation();
   const c = usePalette();
   const d = useDraft();
+  const edit = useEdit();
   const [state, setState] = useState<'edit' | 'saving' | 'saved' | 'failed'>('edit');
   const ready = d.message.trim().length > 0 && d.name.trim().length > 0;
   const app = useMemo(
@@ -44,10 +45,17 @@ export default function NewCheckMessage() {
       total={3}
       title={t('newCheck.messageQ')}
       sub={t('newCheck.messageSub')}
-      cta={t('new.save')}
-      ctaDisabled={!ready || state === 'saving'}
-      onCta={() => void save()}
-      footer={state === 'failed' ? <Text style={[styles.fail, { color: c.warn }]}>{t('new.saveFailed')}</Text> : null}>
+      edit={edit.editing}
+      cta={edit.editing ? edit.cta : t('new.save')}
+      ctaDisabled={!ready || state === 'saving' || edit.saving}
+      onCta={edit.editing ? edit.save : () => void save()}
+      footer={
+        edit.editing ? (
+          edit.footer
+        ) : state === 'failed' ? (
+          <Text style={[styles.fail, { color: c.warn }]}>{t('new.saveFailed')}</Text>
+        ) : null
+      }>
       <View>
         <TextInput
           value={d.message}

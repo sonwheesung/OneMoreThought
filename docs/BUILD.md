@@ -91,7 +91,7 @@ vc1 · 2026-10-09 15:36 · `BUILD SUCCESSFUL in 7m 28s`(R8 포함)
 
 | vc | 버전 | 날짜 | 무엇 | 크기 |
 |---|---|---|---|---|
-| 1 | 0.1.0 | 2026-10-09 | 첫 비공개 테스트 후보(결정 #37 · OTA 포함 #39 · 아이콘은 자리표시) · `D:uilds\OneMoreThought\onemorethought-vc1.aab` · `.apk` | 43.9MB · 61.6MB |
+| 1 | 0.1.0 | 2026-10-09 | 첫 비공개 테스트 후보(결정 #37 · OTA 포함 #39 · 아이콘은 자리표시) · `D:\builds\OneMoreThought\onemorethought-vc1.aab` · `.apk` | 43.9MB · 61.6MB |
 
 버전: 비공개 테스트는 프로모션 코드 테스터뿐이라 `0.x` 를 유지한다. 낯선 사람이 돈을 낼 수 있는 프로덕션 전에 `1.0.0` 으로 올린다(`PRE_LAUNCH_CHECK.md` §4).
 

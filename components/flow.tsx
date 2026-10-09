@@ -1,9 +1,10 @@
-import { router } from 'expo-router';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { saveEdit } from '@/features/draft.ts';
 import { motion, radius, size, spacing, type } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 
@@ -27,10 +28,26 @@ interface FlowProps {
   noScroll?: boolean;
   /** 주 버튼 위 한 줄(경고 · 저장 결과) */
   footer?: ReactNode;
+  /** 고치기(시안 원모어 #18): 진행 칸 대신 머리말 «고치기» · 주 버튼은 부르는 쪽이 [저장]으로 */
+  edit?: boolean;
   children: ReactNode;
 }
 
-export function FlowScreen({ step, total, title, sub, cta, ctaDisabled, onCta, head, noScroll, footer, children }: FlowProps) {
+export function FlowScreen({
+  step,
+  total,
+  title,
+  sub,
+  cta,
+  ctaDisabled,
+  onCta,
+  head,
+  noScroll,
+  footer,
+  edit,
+  children,
+}: FlowProps) {
+  const { t } = useTranslation();
   const c = usePalette();
   const reduced = useReducedMotion();
   // 들어옴: 오른쪽 24px → 0 · 220ms(시안 원모어 #11 · #17). 모션 줄이기면 스택 페이드만
@@ -59,7 +76,11 @@ export function FlowScreen({ step, total, title, sub, cta, ctaDisabled, onCta, h
     <GlowBackground>
       <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
         <View style={styles.bar}>
-          <StepBar step={step} total={total} />
+          {edit ? (
+            <Text style={[styles.editHead, { color: c.text3 }]}>{t('edit.header')}</Text>
+          ) : (
+            <StepBar step={step} total={total} />
+          )}
           <BackButton />
         </View>
         <Animated.View style={[styles.flex, slide]}>
@@ -104,6 +125,31 @@ export function BackButton() {
       <Text style={[styles.backText, { color: c.text2 }]}>{t('common.back')}</Text>
     </Pressable>
   );
+}
+
+/**
+ * 만들기 단계 화면을 고치기로 열었나(`?edit=<id>` · 시안 원모어 #18).
+ * 고치기면 [저장] = saveEdit(saveRule 한 번) → 자세히로 돌아간다. 뒤로가기는 저장하지 않고 돌아간다.
+ */
+export function useEdit() {
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const { t } = useTranslation();
+  const c = usePalette();
+  const [state, setState] = useState<'idle' | 'saving' | 'failed'>('idle');
+  const save = async () => {
+    if (state === 'saving') return;
+    setState('saving');
+    const r = await saveEdit();
+    if (r === 'failed') return setState('failed');
+    router.back();
+  };
+  return {
+    editing: !!edit,
+    saving: state === 'saving',
+    save: () => void save(),
+    cta: t('edit.save'),
+    footer: state === 'failed' ? <Text style={[styles.editFail, { color: c.warn }]}>{t('new.saveFailed')}</Text> : null,
+  };
 }
 
 /** 화면 머리: 제목 왼쪽 · 뒤로가기 오른쪽 한 줄(설정 · 통계 · 2026-10-09 사용자 지시 «설정      <») */
@@ -228,6 +274,8 @@ export const flowStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  editHead: { fontSize: 13, fontWeight: '600' },
+  editFail: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
   flex: { flex: 1 },
   bar: {
     flexDirection: 'row',

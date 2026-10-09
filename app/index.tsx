@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Animated, AppState, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Toast, useToast } from '@/components/controls.tsx';
 import { GlassCard } from '@/components/flow.tsx';
 import { Glyph } from '@/components/Glyph.tsx';
 import { EmptyHome, PermissionRow, RuleRow, ruleLine, SummaryRing } from '@/components/Home.tsx';
 import { GlowBackground, PrimaryButton, useStagger } from '@/components/ui.tsx';
-import { resetDraft } from '@/features/draft.ts';
+import { resetDraft, takeFlash } from '@/features/draft.ts';
 import { cachedRules, reportDevice, saveRule, syncNow } from '@/features/rules';
 import { todayKey } from '@/lib/day.ts';
 import type { Rule } from '@/lib/rules.ts';
@@ -66,6 +67,15 @@ export default function Home() {
   // 만들기 흐름에서 저장하고 돌아오면 캐시를 다시 읽는다
   useFocusEffect(reread);
 
+  // 규칙 자세히에서 지우고 돌아오면 «규칙을 지웠어요»(시안 원모어 #18)
+  const toast = useToast();
+  useFocusEffect(
+    useCallback(() => {
+      if (takeFlash('home') === 'deleted') toast.show(t('rule.deleted'));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
+
   const toggle = (r: Rule, enabled: boolean) => {
     const next = { ...r, enabled, updatedAt: Date.now() };
     setRules((rs) => rs.map((x) => (x.id === r.id ? next : x))); // 화면 먼저
@@ -87,7 +97,12 @@ export default function Home() {
         {list.map((r, i) => (
           <View key={r.id}>
             {i > 0 && <View style={[styles.sep, { backgroundColor: c.line }]} />}
-            <RuleRow rule={r} line={ruleLine(r, apps, t)} onToggle={(on) => toggle(r, on)} />
+            <RuleRow
+              rule={r}
+              line={ruleLine(r, apps, t)}
+              onToggle={(on) => toggle(r, on)}
+              onOpen={() => router.push(`/rules/${r.id}` as Href)}
+            />
           </View>
         ))}
       </View>
@@ -160,6 +175,7 @@ export default function Home() {
             }}
           />
         </View>
+        <Toast t={toast} />
       </SafeAreaView>
     </GlowBackground>
   );

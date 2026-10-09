@@ -27,7 +27,16 @@ export interface Draft {
 /** 메시지 글자 수 상한(가로 확인 화면에서 두 줄 안쪽 · 시안 제안값 · 서버 상한 500 보다 작다) */
 export const MESSAGE_MAX = 40;
 
-const EMPTY: Draft = { targets: [], days: 0, startMin: 9 * 60, endMin: 18 * 60, name: '', message: '', graceMin: GRACE_DEFAULT, nameTouched: false };
+const EMPTY: Draft = {
+  targets: [],
+  days: 0,
+  startMin: 9 * 60,
+  endMin: 18 * 60,
+  name: '',
+  message: '',
+  graceMin: GRACE_DEFAULT,
+  nameTouched: false,
+};
 
 let draft: Draft = EMPTY;
 const listeners = new Set<() => void>();
@@ -52,15 +61,13 @@ export function useDraft(): Draft {
   );
 }
 
-/** 흐름 끝 [저장]. 이 흐름에서 부르는 규칙 함수는 이것 하나다 */
-export async function saveDraft(): Promise<'synced' | 'queued' | 'failed'> {
-  if (!Intervention || !draft.kind) return 'failed';
-  const d = draft;
-  const rule: Rule = {
-    id: Intervention.uuid(),
+/** 초안 → 규칙. 만들기는 새 id · 켜짐, 고치기는 그 규칙의 id · 켜짐 상태를 그대로 쓴다 */
+function toRule(d: Draft, id: string, enabled: boolean): Rule {
+  return {
+    id,
     kind: d.kind!,
     name: d.name.trim(),
-    enabled: true,
+    enabled,
     days: d.days,
     startMin: d.startMin,
     ...(d.kind === 'intercept' ? { endMin: d.endMin, graceMin: d.graceMin } : {}),
@@ -68,7 +75,58 @@ export async function saveDraft(): Promise<'synced' | 'queued' | 'failed'> {
     message: d.message,
     updatedAt: Date.now(),
   };
-  const r = await saveRule(rule);
+}
+
+/** 흐름 끝 [저장]. 이 흐름에서 부르는 규칙 함수는 이것 하나다 */
+export async function saveDraft(): Promise<'synced' | 'queued' | 'failed'> {
+  if (!Intervention || !draft.kind) return 'failed';
+  const r = await saveRule(toRule(draft, Intervention.uuid(), true));
   if (r !== 'failed') resetDraft();
   return r;
+}
+
+// ── 고치기(시안 원모어 #18): 규칙 자세히의 줄을 누르면 초안을 그 규칙 값으로 채우고 만들기의 그 단계 하나만 연다 ──
+let editing: Rule | null = null;
+let flash: { to: 'detail' | 'home'; msg: 'saved' | 'deleted' } | null = null;
+
+/** 초안을 이 규칙 값으로 채운다. 이름은 이미 있으므로 «빠르게 고르기»가 덮지 않게 손댄 것으로 본다 */
+export function loadDraft(rule: Rule) {
+  editing = rule;
+  draft = {
+    kind: rule.kind,
+    targets: rule.targets,
+    days: rule.days,
+    startMin: rule.startMin,
+    endMin: rule.endMin ?? EMPTY.endMin,
+    name: rule.name,
+    message: rule.message,
+    graceMin: rule.graceMin ?? GRACE_DEFAULT,
+    nameTouched: true,
+  };
+  listeners.forEach((l) => l());
+}
+
+/** 고치기 [저장]: saveRule 한 번(id · 켜짐은 원래 값). 자세히 화면이 돌아와서 알약을 띄우게 표시를 남긴다 */
+export async function saveEdit(): Promise<'synced' | 'queued' | 'failed'> {
+  if (!editing || !draft.kind) return 'failed';
+  const r = await saveRule(toRule(draft, editing.id, editing.enabled));
+  if (r !== 'failed') {
+    editing = null;
+    flash = { to: 'detail', msg: 'saved' };
+    resetDraft();
+  }
+  return r;
+}
+
+/** 다음 화면이 띄울 알약 하나(고치기 저장 → 자세히 · 지우기 → 홈) */
+export function setFlash(to: 'detail' | 'home', msg: 'saved' | 'deleted') {
+  flash = { to, msg };
+}
+
+/** 그 화면이 포커스를 받을 때 한 번 꺼내 간다 */
+export function takeFlash(to: 'detail' | 'home'): 'saved' | 'deleted' | null {
+  if (!flash || flash.to !== to) return null;
+  const m = flash.msg;
+  flash = null;
+  return m;
 }

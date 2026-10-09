@@ -122,7 +122,23 @@
     "preview_tag": "미리보기 · 버튼은 눌리지 않아요",
     "preview_hint": "그림이라 눌러도 기록되지 않아요",
     "grace_q": "연 뒤 다시 묻기까지",
-    "grace_min": "{{count}}분"
+    "grace_min": "{{count}}분",
+    "on": "켜져 있어요",
+    "off": "꺼져 있어요",
+    "on_sub": "정한 시간에 확인 화면이 떠요.",
+    "on_sub_check": "정한 시각에 한 번 확인해요.",
+    "off_sub": "끈 동안은 묻지 않아요.",
+    "f_apps": "앱",
+    "f_when": "요일 · 시간",
+    "f_check": "요일 · 확인 시각",
+    "f_message": "메시지",
+    "toggled_on": "‘{{name}}’ 규칙을 켰어요",
+    "toggled_off": "‘{{name}}’ 규칙을 껐어요",
+    "delete": "규칙 지우기",
+    "delete_q": "‘{{name}}’ 규칙을 지울까요?",
+    "delete_body": "이 휴대폰과 서버에서 모두 지워져요. 지금까지의 기록은 남아요.",
+    "delete_do": "지우기",
+    "deleted": "규칙을 지웠어요"
   },
   "confirm": {
     "cancel": "취소",
@@ -201,5 +217,10 @@
     "night": "내일 아침 일찍이잖아.",
     "night_rule": "잠들 시간",
     "night_app": "동영상 앱"
+  },
+  "edit": {
+    "header": "고치기",
+    "save": "저장",
+    "saved": "저장했어요"
   }
 }

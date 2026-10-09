@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Animated, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ConfirmThumb } from '@/components/ConfirmThumb.tsx';
-import { Chip, FlowScreen, flowStyles } from '@/components/flow.tsx';
+import { Chip, FlowScreen, flowStyles, useEdit } from '@/components/flow.tsx';
 import { SaveResult } from '@/components/SaveResult.tsx';
 import { EASE } from '@/components/ui.tsx';
 import { MESSAGE_MAX, saveDraft, setDraft, useDraft } from '@/features/draft.ts';
@@ -23,6 +23,7 @@ export default function NewRuleMessage() {
   const { t } = useTranslation();
   const c = usePalette();
   const d = useDraft();
+  const edit = useEdit();
   const [state, setState] = useState<'edit' | 'saving' | 'saved' | 'failed'>('edit');
   const target = useMemo(() => {
     const first = d.targets[0];
@@ -59,10 +60,17 @@ export default function NewRuleMessage() {
       total={4}
       title={t('rule.message_q')}
       sub={t('rule.message_sub')}
-      cta={t('new.save')}
-      ctaDisabled={!ready || state === 'saving'}
-      onCta={() => void save()}
-      footer={state === 'failed' ? <Text style={[styles.fail, { color: c.warn }]}>{t('new.saveFailed')}</Text> : null}>
+      edit={edit.editing}
+      cta={edit.editing ? edit.cta : t('new.save')}
+      ctaDisabled={!ready || state === 'saving' || edit.saving}
+      onCta={edit.editing ? edit.save : () => void save()}
+      footer={
+        edit.editing ? (
+          edit.footer
+        ) : state === 'failed' ? (
+          <Text style={[styles.fail, { color: c.warn }]}>{t('new.saveFailed')}</Text>
+        ) : null
+      }>
       <View>
         <TextInput
           value={d.message}
@@ -109,7 +117,12 @@ export default function NewRuleMessage() {
         <Text style={[flowStyles.label, { color: c.text2 }]}>{t('rule.grace_q')}</Text>
         <View style={flowStyles.row}>
           {GRACE_CHOICES.map((g) => (
-            <Chip key={g} label={t('rule.grace_min', { count: g })} on={d.graceMin === g} onPress={() => setDraft({ graceMin: g })} />
+            <Chip
+              key={g}
+              label={t('rule.grace_min', { count: g })}
+              on={d.graceMin === g}
+              onPress={() => setDraft({ graceMin: g })}
+            />
           ))}
         </View>
       </View>
@@ -123,7 +136,14 @@ const styles = StyleSheet.create({
   name: { height: 48 },
   count: { fontSize: 12, textAlign: 'right', marginTop: 6, fontVariant: ['tabular-nums'] },
   thumbs: { flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
-  hint: { position: 'absolute', alignSelf: 'center', bottom: spacing.md, borderRadius: radius.chip, paddingHorizontal: 14, paddingVertical: 8 },
+  hint: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: spacing.md,
+    borderRadius: radius.chip,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
   hintText: { fontSize: 13, fontWeight: '600' },
   fail: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
 });
