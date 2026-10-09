@@ -1,14 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import {
-  Animated,
-  Easing,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { Animated, Easing, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { motion, radius, size, type } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
@@ -78,9 +69,9 @@ export function GlassPill({ label, onPress, style, disabled, height = size.btn }
         style={[
           styles.pill,
           { height, backgroundColor: c.confirmBtn, borderColor: c.confirmBtnLine },
-          disabled && { backgroundColor: c.disabled, borderColor: c.disabled },
+          disabled && { borderColor: c.lineStrong }, // 꺼진 알약도 바탕에 묻히지 않게(2026-10-10)
         ]}>
-        <Text style={[type.button, { color: disabled ? c.disabledText : c.text }]}>{label}</Text>
+        <Text style={[type.button, { color: disabled ? c.text3 : c.text }]}>{label}</Text>
       </Pressable>
     </Animated.View>
   );
@@ -104,14 +95,15 @@ export function PrimaryButton({ label, onPress, style, disabled, height = size.b
           styles.noLine,
           { height },
           disabled
-            ? { backgroundColor: c.disabled }
+            ? // 꺼진 주 버튼: 옅은 보라 면 + 보라 글자(2026-10-10 사용자 지시 «비활성이 너무 안 보인다» · 회색 면은 바탕에 묻혔다)
+              { backgroundColor: `${c.accentSolid}47` } // accentSolid 28%
             : {
                 backgroundColor: c.accentSolid,
                 experimental_backgroundImage: `linear-gradient(120deg, ${c.accent}, ${c.accentEnd})`,
                 boxShadow: `0 14px 34px -10px ${c.accentGlow}`,
               },
         ]}>
-        <Text style={[type.button, { color: disabled ? c.disabledText : c.onAccent }]}>{label}</Text>
+        <Text style={[type.button, { color: disabled ? c.accent : c.onAccent }]}>{label}</Text>
       </Pressable>
     </Animated.View>
   );

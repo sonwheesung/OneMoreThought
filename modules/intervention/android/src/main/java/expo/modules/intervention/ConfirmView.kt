@@ -250,28 +250,22 @@ internal class ConfirmView(
 
   /** 메타 줄 앞 앱 점: accentSoft 원 위 accent 점(18dp) */
   private fun appDot(): Drawable {
-    val size = dp(18f)
-    val soft = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(color(R.color.omt_accent_soft)) }
-    val dot = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(color(R.color.omt_accent)) }
-    val inset = size * 3 / 10
-    return LayerDrawable(arrayOf<Drawable>(soft, dot)).apply {
-      setLayerInset(1, inset, inset, inset, inset)
-      setBounds(0, 0, size, size)
+    // 점 하나만(아이콘에 배경을 두지 않는다 · 2026-10-10 사용자 지시)
+    val size = dp(8f)
+    return GradientDrawable().apply {
+      shape = GradientDrawable.OVAL
+      setColor(color(R.color.omt_accent))
+      setSize(size, size) // 글자 옆 그림은 고유 크기로 놓인다
     }
   }
 
-  /** 둥근 표시: 유리 원 + 물결 선(accent). 그림 · 캐릭터 없이 "잠깐"을 말한다 */
+  /** 둥근 표시: 물결 선(accent)만. 그림 · 캐릭터 없이 "잠깐"을 말한다(유리 원 배경은 걷었다 · 2026-10-10 사용자 지시) */
   private fun halo(): View = View(ctx).apply {
-    val glass = GradientDrawable().apply {
-      shape = GradientDrawable.OVAL
-      setColor(color(R.color.omt_surface_glass))
-      setStroke(dp(1f).coerceAtLeast(1), color(R.color.omt_surface_line))
-    }
-    background = LayerDrawable(arrayOf<Drawable>(glass, WaveDrawable(color(R.color.omt_accent), 2f * density)))
+    background = WaveDrawable(color(R.color.omt_accent), 2f * density)
     importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
   }
 
-  /** 물결 두 줄(가운데 · 원 지름의 40%) */
+  /** 물결 두 줄(가운데 · 칸 폭의 40%) */
   private class WaveDrawable(color: Int, stroke: Float) : Drawable() {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
       this.color = color; style = Paint.Style.STROKE; strokeWidth = stroke; strokeCap = Paint.Cap.ROUND

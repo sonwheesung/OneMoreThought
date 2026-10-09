@@ -7,7 +7,7 @@ import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 import { Glyph } from './Glyph.tsx';
 import { EASE, GlowBackground } from './ui.tsx';
 
-/** 저장 체크 · 시안 원모어 #11: accentSoft 원 72 + accent 체크 · 0.9 → 1배 240ms. 축하 · 칭찬 없이 확인만 */
+/** 저장 체크 · 시안 원모어 #11: accent 체크만(아이콘에 배경 없음 · 2026-10-10 사용자 지시) · 0.9 → 1배 240ms. 축하 · 칭찬 없이 확인만 */
 export function SaveResult({ label }: { label: string }) {
   const c = usePalette();
   const reduced = useReducedMotion();
@@ -21,9 +21,9 @@ export function SaveResult({ label }: { label: string }) {
         <Animated.View
           style={[
             styles.circle,
-            { backgroundColor: c.accentSoft, opacity: v, transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }] },
+            { opacity: v, transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }] },
           ]}>
-          <Glyph name="check" color={c.accent} size={34} />
+          <Glyph name="check" color={c.accent} size={48} />
         </Animated.View>
         <Text style={[styles.text, { color: c.text }]}>{label}</Text>
       </View>

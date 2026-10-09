@@ -146,7 +146,10 @@ export function EmptyHome() {
         {EXAMPLES.map((k, j) => (
           <View
             key={k}
-            style={[styles.dotStep, j === i ? { width: 16, backgroundColor: c.accent } : { backgroundColor: c.disabled }]}
+            style={[
+              styles.dotStep,
+              j === i ? { width: 16, backgroundColor: c.accent } : { backgroundColor: `${c.accentSolid}47` },
+            ]}
           />
         ))}
       </View>
