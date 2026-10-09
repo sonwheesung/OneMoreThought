@@ -52,7 +52,7 @@
   },
   "new": {
     "kindQ": "What kind of rule?",
-    "kindSub": "You can make the other kind later, too.",
+    "kindSub": "You can make the other kind too.",
     "intercept": "Ask when I open an app",
     "interceptBody": "When you open an app you chose, we ask once in your words.",
     "interceptExample": "Open a game during work hours → “Back to work?”",
