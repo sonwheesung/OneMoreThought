@@ -185,9 +185,7 @@
     "privacy": "Privacy policy",
     "terms": "Terms of service",
     "licenses": "Open-source licenses",
-    "licenses_lead": "This app includes {{count}} open-source packages. Tap a row to read its license.",
-    "local": "Stays on this device",
-    "local_sub": "You said you're under 14, so your rules and history aren't sent to our server."
+    "licenses_lead": "This app includes {{count}} open-source packages. Tap a row to read its license."
   },
   "home": {
     "title": "Today's rules",
@@ -224,12 +222,5 @@
     "header": "Edit",
     "save": "Save",
     "saved": "Saved"
-  },
-  "age": {
-    "title": "What year were you born?",
-    "sub": "We ask only once. We don't keep the year.",
-    "pick": "Select",
-    "note": "If you're under 14, your rules and history stay on this phone and nothing is sent to our server.",
-    "done": "Next"
   }
 }

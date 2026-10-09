@@ -1,7 +1,5 @@
 import { Intervention } from '@/modules/intervention';
 
-import { serverAllowed } from './age';
-
 /**
  * 서버 두 곳과의 연결(docs/DATABASE.md §4 · 결정 #30 · #31).
  * - 공용 서버: 기기 토큰(로그인 없음 · 가명 · LinkMemo 방식). 앱 코드 `intervene`.
@@ -9,17 +7,10 @@ import { serverAllowed } from './age';
  *
  * 🔴 실패는 던지지 않고 결과로 돌려준다. 서버가 죽어도 확인 화면은 기기 캐시로 돈다(기둥 6).
  * 🔴 토큰 · 기기 id 를 로그 · 진단에 남기지 않는다.
- * 🔴 나이 확인(결정 #41) 전이거나 만 14세 미만이면 `ensureToken` 이 `local` 로 멈춘다. 모든 서버 호출이 여기를 지나므로 막는 자리는 하나다.
  */
 export const APP_CODE = 'intervene';
-export const COMMON_SERVER_URL = (process.env.EXPO_PUBLIC_COMMON_SERVER_URL ?? 'https://common-server.vercel.app').replace(
-  /\/$/,
-  '',
-);
-export const APP_SERVER_URL = (process.env.EXPO_PUBLIC_APP_SERVER_URL ?? 'https://vg-intervene-sync.vercel.app').replace(
-  /\/$/,
-  '',
-);
+export const COMMON_SERVER_URL = (process.env.EXPO_PUBLIC_COMMON_SERVER_URL ?? 'https://common-server.vercel.app').replace(/\/$/, '');
+export const APP_SERVER_URL = (process.env.EXPO_PUBLIC_APP_SERVER_URL ?? 'https://vg-intervene-sync.vercel.app').replace(/\/$/, '');
 
 const KEY_DEVICE = 'cs_device_id';
 const KEY_TOKEN = 'cs_token';
@@ -28,7 +19,7 @@ const KEY_SUBJECT = 'cs_subject';
 const KEY_PREV_SUBJECTS = 'cs_prev_subjects';
 const TIMEOUT_MS = 10_000;
 
-export type Fail = 'local' | 'offline' | 'unauthorized' | 'upstream' | 'invalid' | 'no-native' | 'error';
+export type Fail = 'offline' | 'unauthorized' | 'upstream' | 'invalid' | 'no-native' | 'error';
 export type Result<T> = { ok: true; value: T } | { ok: false; reason: Fail; status?: number };
 
 async function fetchJson(url: string, init: RequestInit): Promise<{ status: number; body: unknown } | null> {
@@ -59,7 +50,6 @@ function deviceId(): string | null {
 /** 기기 토큰. 없으면 공용 서버에 기기를 등록해 받는다(`POST /api/v1/devices`) */
 export async function ensureToken(force = false): Promise<Result<string>> {
   if (!Intervention) return { ok: false, reason: 'no-native' };
-  if (!serverAllowed()) return { ok: false, reason: 'local' };
   const saved = Intervention.kvGet(KEY_TOKEN);
   if (saved && !force) return { ok: true, value: saved };
   const id = deviceId();
@@ -71,8 +61,7 @@ export async function ensureToken(force = false): Promise<Result<string>> {
   });
   if (!r) return { ok: false, reason: 'offline' };
   const b = r.body as { token?: unknown; subject?: { id?: unknown } } | null;
-  if (r.status !== 200 || typeof b?.token !== 'string')
-    return { ok: false, reason: r.status === 401 ? 'unauthorized' : 'upstream', status: r.status };
+  if (r.status !== 200 || typeof b?.token !== 'string') return { ok: false, reason: r.status === 401 ? 'unauthorized' : 'upstream', status: r.status };
   Intervention.kvSet(KEY_TOKEN, b.token);
   if (typeof b.subject?.id === 'string') Intervention.kvSet(KEY_SUBJECT, b.subject.id);
   return { ok: true, value: b.token };
@@ -120,14 +109,7 @@ export async function appCall<T = unknown>(path: string, init: { method?: string
     if (!r) return { ok: false, reason: 'offline' };
     if (r.status === 401 && attempt === 0) continue;
     if (r.status === 200) return { ok: true, value: r.body as T };
-    const reason: Fail =
-      r.status === 401
-        ? 'unauthorized'
-        : r.status === 400 || r.status === 413
-          ? 'invalid'
-          : r.status === 503
-            ? 'upstream'
-            : 'error';
+    const reason: Fail = r.status === 401 ? 'unauthorized' : r.status === 400 || r.status === 413 ? 'invalid' : r.status === 503 ? 'upstream' : 'error';
     return { ok: false, reason, status: r.status };
   }
   return { ok: false, reason: 'unauthorized' };

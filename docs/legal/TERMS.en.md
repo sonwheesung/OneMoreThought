@@ -4,6 +4,7 @@ Management note (not published).
 - 🔴 Paid app: the terms must be live BEFORE the build goes to review (common/PRE_LAUNCH_CHECK.md §2 "유료 상품을 팔면"), closed testing included.
 - Sources: CLAUDE.md pillars 1 · 2 · 5 · decisions #1 #5 #18 #25 #30 #34 · §7 refunds (Play 48 hours · https://support.google.com/googleplay/answer/2479637).
 - {{...}} placeholders are filled in the web copy (public repo — business values are not copied here).
+- 2026-10-09: age check (decision #41) added as 5.4. The reminder is not in the build yet (decision #37), so it is removed from 2.1; put it back when it ships.
 -->
 # {{APP_NAME}} Terms of Service
 
@@ -15,7 +16,7 @@ These terms govern your use of {{APP_NAME}} ("the App"), sold by {{BUSINESS_NAME
 
 ## 2. What the App does
 
-1. When you open an app you chose during the times you set, the App asks you once using a sentence you wrote. If you did not open an app you meant to open by a set time, it reminds you once that day.
+1. When you open an app you chose during the times you set, the App asks you once using a sentence you wrote.
 2. **The App does not block or lock apps.** "Open" on the prompt always works with one tap. You decide.
 3. The App relies on Android's Accessibility and Usage Access permissions. If you turn them off, if your phone's battery optimization stops the App, or if the system restricts them (for example Advanced Protection), prompts and reminders may not appear. The App shows this state on its home screen.
 
@@ -35,6 +36,7 @@ These terms govern your use of {{APP_NAME}} ("the App"), sold by {{BUSINESS_NAME
 1. Your rules and records are stored on our server, with a small copy on the device so the App works offline (see the Privacy Policy).
 2. Messages you write remain yours. We store and process them only to run the App and to improve the service statistically. Please do not write other people's personal or sensitive information in them.
 3. Because there is no login, if you uninstall the App or change phones you cannot recover your rules and records.
+4. On first launch the App asks for your birth year. If you are under 14, the App works on this device only and does not store your rules or records on our server (Privacy Policy, section 7).
 
 ## 6. Prohibited use
 

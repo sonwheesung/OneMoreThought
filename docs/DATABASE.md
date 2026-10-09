@@ -82,8 +82,8 @@
 
 | 파일 | 하는 일 |
 |---|---|
-| `features/server.ts` | 공용 서버 기기 토큰(`POST /api/v1/devices` · 기기 id 는 처음 한 번 만든 UUID) · 앱 서버 호출(401 이면 토큰을 한 번 다시 받는다) · 🔴 나이 확인 전 · 만 14세 미만이면 `ensureToken` 이 `local` 로 멈춰 어떤 서버 호출도 나가지 않는다(결정 #41 · `features/age.ts`) |
-| `features/rules.ts` | `saveRule` · `deleteRule`(캐시 먼저 → 서버 → 실패하면 대기열) · `flushQueue`(200개 묶음 · 200 이면 ack) · `pullRules`(대기열에 규칙 편집이 남아 있으면 덮지 않는다) · `syncNow` · `clearLocal`(결정 #34 · 캐시 · 대기열을 비우고 기기 가명을 새로 받는다 · 나이 확인 답도 지운다 · 서버는 부르지 않는다) · 만 14세 미만이면 `flushQueue` 가 대기열을 보내지 않고 비운다(결정 #41) |
+| `features/server.ts` | 공용 서버 기기 토큰(`POST /api/v1/devices` · 기기 id 는 처음 한 번 만든 UUID) · 앱 서버 호출(401 이면 토큰을 한 번 다시 받는다) |
+| `features/rules.ts` | `saveRule` · `deleteRule`(캐시 먼저 → 서버 → 실패하면 대기열) · `flushQueue`(200개 묶음 · 200 이면 ack) · `pullRules`(대기열에 규칙 편집이 남아 있으면 덮지 않는다) · `syncNow` · `clearLocal`(결정 #34 · 캐시 · 대기열을 비우고 기기 가명을 새로 받는다 · 서버는 부르지 않는다) |
 | `RuleStore.kt` · `EventQueue.kt` | §2.1 · §2.2 |
 
 - 「이 기기에서만 지우기」(결정 #34)는 기기 id · 토큰 · 주체를 지워 새 가명으로 바뀐다. 옛 주체 번호는 `cs_prev_subjects` 에 남겨 문의에 붙인다(서버 기록 삭제 요청을 찾을 길).

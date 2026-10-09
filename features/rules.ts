@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 import type { Rule } from '@/lib/rules.ts';
 import { Intervention } from '@/modules/intervention';
 
-import { ageAnswer, resetAge } from './age';
 import { appCall, resetIdentity, type Result } from './server';
 
 /**
@@ -46,14 +45,11 @@ function writeCache(rules: Rule[], syncedAt?: number): boolean {
 
 /** 만들기 · 고치기. 캐시 → 서버(실패하면 대기열). 반환: 서버까지 갔나 */
 export async function saveRule(rule: Rule): Promise<'synced' | 'queued' | 'failed'> {
-  const next = cachedRules()
-    .filter((r) => r.id !== rule.id)
-    .concat(rule);
+  const next = cachedRules().filter((r) => r.id !== rule.id).concat(rule);
   if (!writeCache(next)) return 'failed';
   const r = await appCall<{ applied: boolean }>(`/api/rules/${rule.id}`, { method: 'PUT', body: rule });
   if (r.ok) return 'synced';
   if (r.reason === 'invalid') return 'failed'; // 서버가 거절한 모양은 다시 보내 봐야 또 거절된다
-  if (r.reason === 'local') return 'queued'; // 만 14세 미만 · 나이 확인 전: 기기에만 둔다(결정 #41)
   Intervention?.queueAppend(JSON.stringify({ type: 'rule_put', rule }));
   return 'queued';
 }
@@ -64,7 +60,6 @@ export async function deleteRule(id: string): Promise<'synced' | 'queued' | 'fai
   const r = await appCall(`/api/rules/${id}`, { method: 'DELETE', body: { deletedAt } });
   if (r.ok) return 'synced';
   if (r.reason === 'invalid') return 'failed';
-  if (r.reason === 'local') return 'queued';
   Intervention?.queueAppend(JSON.stringify({ type: 'rule_delete', ruleId: id, deletedAt }));
   return 'queued';
 }
@@ -72,10 +67,6 @@ export async function deleteRule(id: string): Promise<'synced' | 'queued' | 'fai
 /** 대기열을 묶음으로 올린다. 서버가 200 이면 보낸 묶음을 지운다(틀린 사건은 서버가 건너뛰고 센다) */
 export async function flushQueue(): Promise<Result<{ sent: number; ignored: number }>> {
   if (!Intervention) return { ok: false, reason: 'no-native' };
-  if (ageAnswer() === 'under14') {
-    drainQueue(); // 만 14세 미만: 확인 결과는 보내지 않고 버린다(결정 #41 · 기기 통계 집계는 따로 남는다)
-    return { ok: false, reason: 'local' };
-  }
   let sent = 0;
   let ignored = 0;
   for (let round = 0; round < 50; round++) {
@@ -115,14 +106,7 @@ export function reportDevice() {
   });
 }
 
-export async function putDevice(info: {
-  model?: string;
-  sdkInt?: number;
-  appVersion?: string;
-  locale?: string;
-  tz?: string;
-  advProtection?: string;
-}) {
+export async function putDevice(info: { model?: string; sdkInt?: number; appVersion?: string; locale?: string; tz?: string; advProtection?: string }) {
   return appCall('/api/device', { method: 'PUT', body: info });
 }
 
@@ -132,22 +116,15 @@ export async function putDevice(info: {
  */
 export function clearLocal(): boolean {
   if (!Intervention) return false;
-  drainQueue();
-  resetIdentity();
-  resetAge(); // 나이 확인도 다시 묻는다(결정 #41)
-  Intervention.clearPromptStats(); // 통계 화면의 기기 하루 집계
-  Intervention.clearLog(); // 디버그 기록
-  return writeCache([], 0);
-}
-
-/** 미전송 대기열을 비운다(보내지 않음) */
-function drainQueue() {
-  if (!Intervention) return;
   for (let guard = 0; guard < 10_000; guard++) {
     const batch = JSON.parse(Intervention.queueRead(500)) as { id?: string }[];
     const last = batch[batch.length - 1]?.id;
     if (!last || Intervention.queueAck(last) === 0) break;
   }
+  resetIdentity();
+  Intervention.clearPromptStats(); // 통계 화면의 기기 하루 집계
+  Intervention.clearLog(); // 디버그 기록
+  return writeCache([], 0);
 }
 
 /** 앱을 열 때 · 앞으로 돌아올 때: 올리기 → 받기 */

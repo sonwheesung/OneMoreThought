@@ -1,4 +1,4 @@
-import { Redirect, router, useFocusEffect, type Href } from 'expo-router';
+import { router, useFocusEffect, type Href } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, AppState, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -9,7 +9,6 @@ import { GlassCard } from '@/components/flow.tsx';
 import { Glyph } from '@/components/Glyph.tsx';
 import { EmptyHome, PermissionRow, RuleRow, ruleLine, SummaryRing } from '@/components/Home.tsx';
 import { GlowBackground, PrimaryButton, useStagger } from '@/components/ui.tsx';
-import { ageAnswer } from '@/features/age.ts';
 import { resetDraft, takeFlash } from '@/features/draft.ts';
 import { cachedRules, reportDevice, saveRule, syncNow } from '@/features/rules';
 import { todayKey } from '@/lib/day.ts';
@@ -36,12 +35,7 @@ function todayAsked(): number {
   }
 }
 
-/** 나이 확인(결정 #41)을 아직 안 했으면 먼저 묻는다. 이미 쓰던 설치도 다음 실행에 한 번 묻는다 */
-export default function Index() {
-  return ageAnswer() ? <Home /> : <Redirect href={'/age' as Href} />;
-}
-
-function Home() {
+export default function Home() {
   const { t } = useTranslation();
   const c = usePalette();
   const [rules, setRules] = useState<Rule[]>(() => cachedRules());
