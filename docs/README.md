@@ -10,11 +10,11 @@
 
 ## 1. 문서 목록
 
-`docs/` 바로 아래 **8개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **6개**(세는 법: `ls docs/review/*.md | wc -l`)
+`docs/` 바로 아래 **10개**(세는 법: `ls docs/*.md | wc -l`) · `docs/review/` **6개**(세는 법: `ls docs/review/*.md | wc -l`)
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
-| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · ~~기기 정본 + 서버 사본(결정 #22)~~ → 서버 정본 + 기기 최소 캐시(결정 #30) · 결정 **33건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **1건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
+| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · ~~기기 정본 + 서버 사본(결정 #22)~~ → 서버 정본 + 기기 최소 캐시(결정 #30) · 결정 **36건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **1건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
 | [`PLAN.md`](./PLAN.md) | 착수 순서(리뷰 → Phase 0 스파이크 ~ 8) · 완료 기준 · 막는 미결정 | ✅ 2026-10-06 |
 | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 2026-10-06 · 설계 초안(미결정 다수) |
 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) | 감지(접근성 · 사용 기록) · 오버레이 · 알람 · 앱 목록 · Expo 네이티브 · 권한 온보딩 · 🔴 Play 접근성 정책 · Phase 0 스파이크 | 🔨 2026-10-06 · 정책 원문 직접 대조(§8) · 사례 조사 반영 |
@@ -41,9 +41,12 @@
 | `UI_GUIDE.md` | Phase 2(첫 화면 전) | ❌ |
 | `EDGE_CASES.md` | 첫 버그 · Phase 4 | ❌ |
 | `POLISH_BACKLOG.md` | 첫 "알면서 남겨 둔 것" | ❌ |
-| `OTA_SYSTEM.md` · `BUILD.md` · `OPEN_SOURCE_NOTICE.md` · `STORE_LISTING.md` · `legal/` | Phase 6 ~ 7 | ❌ |
+| `OTA_SYSTEM.md` · `OPEN_SOURCE_NOTICE.md` | Phase 6 ~ 7(OTA 설정은 결정 #39 · 지금은 [`BUILD.md`](./BUILD.md) §3 · 오픈소스 고지는 `check:licenses`) | ❌ |
+| [`BUILD.md`](./BUILD.md) | 업로드 키 위치 · 지문 · 릴리스 AAB 굽는 법 · 게이트(서명 · R8 · 운영 주소) · OTA 설정 · 산출물 보관 | 🔨 2026-10-09 · 첫 AAB |
+| [`release/PLAY_CONSOLE.md`](./release/PLAY_CONSOLE.md) | Play 콘솔 답안지(앱 만들기 · 스토어 등록정보 en/ko · 가격 · 국가 · 앱 액세스 · 콘텐츠 등급 · 대상 연령 · 데이터 보안 · 접근성 신고 · 시연 영상 · 스크린샷 목록) · `STORE_LISTING.md` 자리 | 🔨 2026-10-09 · 초안 |
+| `legal/` | 처리방침 · 약관 초안(en 정본 · ko) · 🔴 게시 전 · 자리표시 `{{…}}` 는 웹 사본에서 채운다(공개 저장소) | 🔨 2026-10-09 · 초안 |
 | ~~`MONETIZATION_SYSTEM.md`~~ | 🚫 결정 #18(유료 앱 · 앱 안 결제 없음)로 따로 둘 내용이 없다. 가격 · 판매 규칙은 CLAUDE §7 이 정본 | ~~광고(#12)~~ → ~~구독(#15)~~ → 유료 앱(#18) |
-| `DISTRIBUTION_POLICY.md` | Phase 6(145개국 · 32개국을 닫은 이유 · 결정 #14 · `PRE_LAUNCH_CHECK.md` §1) | ❌ |
+| [`DISTRIBUTION_POLICY.md`](./DISTRIBUTION_POLICY.md) | 145개국 · 32개국을 닫은 이유(광고 동의가 아니라 데이터 수집의 GDPR 부담 · 결정 #14) · 열 때 순서 | ✅ 2026-10-09 |
 
 ---
 
@@ -87,7 +90,7 @@
 > `test` 스킬이 이 절을 **읽어서** 그대로 돈다. 명령을 스킬에 복사하지 않는다(`common/DOC_SYSTEM.md` §2).
 > 새 가드를 만들면 여기에 명령을 추가하는 것까지가 완료다.
 
-한 방: **`npm run verify`**. 아래 **9개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
+한 방: **`npm run verify`**. 아래 **10개**를 순서대로 돌린다(세는 법: `package.json` 의 `verify` 를 `&&` 로 센다 · `check:docs` 가 대조한다).
 
 | # | 명령 | 무엇 | 정본 |
 |---|---|---|---|
@@ -99,9 +102,11 @@
 | 6 | `npm run check:day` | 하루 경계(자정 · 결정 #26) · 요일(월=0) · 월말 · 윤년 · 서머타임 전환일 날짜 이동 · 없는 날짜 거부 · 시간대 6개(서울 · 뉴욕 · 로드하우 · 키리티마티 · 파고파고 · UTC) · 변이 4종(변이마다 어느 한 시간대에서는 잡힌다) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §2 · mission 승계 |
 | 7 | `npm run check:rules` | 판정 시험표 `tests/rules-cases.json`(시간대 안 · 자정 넘김은 시작한 날 요일 · 통과 유예 · 겹치면 id 정렬 뒤 seed 로 하나 · 실행 확인 알림 · 놓침) · 시간대 4개 · 변이 3종. 🔴 Kotlin 도 같은 표를 통과한다(`check:rules:kt` · 아래) | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) §3 · §4 · CLAUDE §5-8 |
 | 8 | `npm run check:server` | 앱 서버 타입 검사 · 마이그레이션 SQL 의 모든 문장이 `intervene` 스키마 안(변이 9종 거부 · 조각 운영 DB 보호) | [`DATABASE.md`](./DATABASE.md) §5 · mission 승계 |
-| 9 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
+| 9 | `npm run check:licenses` | 오픈소스 고지 `assets/licenses.json` 이 지금 설치본(전이 의존까지)과 바이트로 같은가 · 라이선스를 못 읽은 패키지 0 · 카피레프트 0(SPDX `OR` 는 전부일 때만) · 화면(`app/licenses.tsx`)과 설정의 입구가 있다. 의존성을 바꾸면 `npm run licenses:build` | `common/PRE_LAUNCH_CHECK.md` §2.1 · Idea Repository · Re:Read 승계 |
+| 10 | `npm run check:docs` | 문서의 개수(결정 · 미결정 · 문서 수 · 이 표의 개수) ⇄ 실제 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) §4 |
 
 체인 밖 가드(느려서 `verify` 에 넣지 않는다 · 해당 파일을 고치면 반드시 같이 돌린다):
+- `npm run check:release-url` · `npm run check:signing`: 릴리스 AAB 에 운영 주소가 있고 개발 주소(localhost · 10.0.2.2 · 100.x · 192.168 · :8095 · :3900)가 없나 · 업로드 키(SHA-256 지문 대조)로 서명됐나. **AAB 를 구울 때마다** 돌린다([`BUILD.md`](./BUILD.md)).
 - `npm run check:rules:kt`: Kotlin `RuleJudge.kt` 가 같은 시험표를 시간대 4개에서 통과하나(gradle 단위 시험 · 결과 XML 의 시험 수 · 실패 수를 읽는다 · `android/` 필요). `lib/rules.ts` · `lib/day.ts` · `RuleJudge.kt` · `tests/rules-cases.json` 을 고치면 돌린다. 양성 대조: 자정 넘김 변이 → FAIL(2026-10-08).
 - `npm --prefix server run e2e`: 로컬 서버(`AUTH_STUB=1` · 3900) ⇄ 실제 조각 DB 계약 시험. 서버 · 마이그레이션을 고치면 돌린다.
 

@@ -1,6 +1,7 @@
+import { router, type Href } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Dialog, Switch, Toast, useDialog, useToast } from '@/components/controls.tsx';
@@ -16,7 +17,10 @@ import { usePalette } from '@/theme/useTheme.ts';
  * 🔴 진단 자동 요약은 기본 켬 · 여기서 끈다(결정 #20).
  * 🔴 「이 기기에서만 지우기」(결정 #34): clearLocal 하나만 부른다. 서버 사본은 남고 지우는 길(문의)을 창 안에서 같이 말한다.
  *    지우기 버튼은 호박색(warnBg · warnLine · warn) · 빨강 없음 · 확인창은 한 번만.
+ * 🔴 정보 묶음: 처리방침 · 약관 · 오픈소스 고지(Play 사용자 데이터 정책: 처리방침은 앱 안에서도 보여야 한다 · `common/PRE_LAUNCH_CHECK.md` §2.1).
  */
+const LEGAL_BASE = 'https://vivace-games.com/onemorethought';
+
 export default function Settings() {
   const { t } = useTranslation();
   const c = usePalette();
@@ -72,6 +76,20 @@ export default function Settings() {
                 <Text style={[styles.rowSub, { color: c.text3 }]}>{t('settings.contact_soon')}</Text>
               </View>
             </View>
+          </GlassCard>
+
+          <Text style={[styles.group, { color: c.text3 }]}>{t('settings.groupAbout')}</Text>
+          <GlassCard>
+            {[
+              { label: t('settings.privacy'), go: () => Linking.openURL(`${LEGAL_BASE}/privacy`) },
+              { label: t('settings.terms'), go: () => Linking.openURL(`${LEGAL_BASE}/terms`) },
+              { label: t('settings.licenses'), go: () => router.push('/licenses' as Href) },
+            ].map((r) => (
+              <Pressable key={r.label} onPress={r.go} accessibilityRole="button" style={styles.row}>
+                <Text style={[styles.rowTitle, styles.flex, { color: c.text }]}>{r.label}</Text>
+                <Text style={[styles.chev, { color: c.text3 }]}>›</Text>
+              </Pressable>
+            ))}
           </GlassCard>
         </ScrollView>
 

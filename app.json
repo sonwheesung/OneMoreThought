@@ -18,14 +18,61 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.VIBRATE"
-      ]
+      ],
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/adaptive-fg.png",
+        "backgroundImage": "./assets/brand/adaptive-bg.png",
+        "backgroundColor": "#5F52D3"
+      }
     },
     "plugins": [
       "expo-router",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/brand/splash.png",
+          "imageWidth": 160,
+          "resizeMode": "contain",
+          "backgroundColor": "#F6F5FB",
+          "dark": {
+            "image": "./assets/brand/splash.png",
+            "backgroundColor": "#131231"
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "# R8 keep set - source of truth: common/R8_OBFUSCATION.md section 3. expo.modules.** also covers our local module expo.modules.intervention (AccessibilityService, Activity, Service). Never keep com.facebook.react.** wholesale.\n-keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod\n-keep class expo.modules.** { *; }\n-keep interface expo.modules.** { *; }\n-keep class com.facebook.jni.** { *; }"
+          }
+        }
+      ],
+      "./plugins/with-r8-optimize",
+      "./plugins/with-upload-signing"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "icon": "./assets/brand/icon.png",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "54bde4ef-2e84-4a58-bace-c97ca48afe60"
+      }
+    },
+    "owner": "shs00925",
+    "runtimeVersion": "native-1",
+    "updates": {
+      "url": "https://u.expo.dev/54bde4ef-2e84-4a58-bace-c97ca48afe60",
+      "checkAutomatically": "ON_LOAD",
+      "requestHeaders": {
+        "expo-channel-name": "production"
+      }
     }
   }
 }
