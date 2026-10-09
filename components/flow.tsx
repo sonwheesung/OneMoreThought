@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { motion, radius, size, spacing, type } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 
-import { Glyph } from './Glyph.tsx';
 import { EASE, GlowBackground, PrimaryButton } from './ui.tsx';
 
 /**
@@ -89,7 +88,7 @@ export function FlowScreen({ step, total, title, sub, cta, ctaDisabled, onCta, h
 }
 
 /**
- * 뒤로가기: 오른쪽 위 · 배경 없는 « < » 아이콘(2026-10-09 사용자 지시 · 아이콘에 배경을 두지 않는다).
+ * 뒤로가기: 오른쪽 위 · 글자 «뒤로»(2026-10-10 사용자 지시 · 아이콘 대신 글자 · 배경 없음).
  * 누르는 자리는 40 으로 둔다. 만들기 흐름에서는 답이 초안에 남는다.
  */
 export function BackButton() {
@@ -102,7 +101,7 @@ export function BackButton() {
       hitSlop={8}
       onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       style={styles.back}>
-      <Glyph name="back" color={c.text} size={22} />
+      <Text style={[styles.backText, { color: c.text2 }]}>{t('common.back')}</Text>
     </Pressable>
   );
 }
@@ -237,7 +236,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
   },
-  back: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', marginRight: -8 },
+  back: { minWidth: 40, height: 40, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center' },
+  backText: { fontSize: 15, fontWeight: '600' },
   screenHead: {
     flexDirection: 'row',
     alignItems: 'center',
