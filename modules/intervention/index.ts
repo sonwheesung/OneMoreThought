@@ -44,6 +44,8 @@ export interface InterventionNative {
   promptStats(): string;
   clearPromptStats(): void;
   listLaunchableApps(): LaunchableApp[];
+  /** 앱 아이콘 PNG data URI(한 변 size px). 실패하면 null */
+  appIcon(packageName: string, size: number): Promise<string | null>;
   advancedProtection(): 'on' | 'off' | 'unknown';
   sdkInt(): number;
   /** 진단 버퍼에 한 건(결정 #20). fieldsJson = JSON 객체 문자열 */

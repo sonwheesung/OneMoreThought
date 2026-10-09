@@ -6,6 +6,7 @@ import { Intervention, type LaunchableApp } from '@/modules/intervention';
 import { radius, spacing } from '@/theme/tokens.ts';
 import { usePalette } from '@/theme/useTheme.ts';
 
+import { AppIcon } from './AppIcon.tsx';
 import { CheckCircle, FlowScreen } from './flow.tsx';
 
 /**
@@ -117,10 +118,7 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
               accessibilityState={{ checked: on }}
               accessibilityLabel={item.label}
               style={styles.row}>
-              {/* 앱마다 색을 달리하지 않는다(무지개 금지 · 시안 세션) */}
-              <View style={[styles.icon, { backgroundColor: c.accentSoft }]}>
-                <Text style={[styles.initial, { color: c.accent }]}>{[...item.label][0] ?? ''}</Text>
-              </View>
+              <AppIcon pkg={item.packageName} />
               <Text style={[styles.name, { color: c.text }]} numberOfLines={1}>
                 {item.label}
               </Text>
@@ -171,14 +169,6 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingVertical: spacing.sm,
   },
-  icon: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.row,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  initial: { fontSize: 16, fontWeight: '700' },
   name: { flex: 1, fontSize: 16, fontWeight: '600' },
   empty: { fontSize: 14, textAlign: 'center', paddingVertical: spacing.xl },
 });

@@ -186,6 +186,27 @@ class InterventionModule : Module() {
         .map { mapOf("packageName" to it.first, "label" to it.second) }
     }
 
+    /**
+     * 앱 아이콘(PNG data URI · 한 변 size px). 앱 고르기 목록이 첫 글자 타일 대신 쓴다(2026-10-10 사용자 지시).
+     * 목록에 있는 앱(<queries> MAIN/LAUNCHER)만 읽을 수 있다. 실패하면 null.
+     */
+    AsyncFunction("appIcon") { pkg: String, size: Int ->
+      try {
+        val d = context.packageManager.getApplicationIcon(pkg)
+        val px = size.coerceIn(24, 256)
+        val bmp = android.graphics.Bitmap.createBitmap(px, px, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bmp)
+        d.setBounds(0, 0, px, px)
+        d.draw(canvas)
+        val out = java.io.ByteArrayOutputStream()
+        bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out)
+        bmp.recycle()
+        "data:image/png;base64," + android.util.Base64.encodeToString(out.toByteArray(), android.util.Base64.NO_WRAP)
+      } catch (_: Exception) {
+        null
+      }
+    }
+
     // ── 고급 보호 모드(§8.5 · S7) ──
     /** "on" · "off" · "unknown"(API 없음 · 권한 거부 등). 리플렉션이라 컴파일 SDK 와 무관하다 */
     Function("advancedProtection") {
