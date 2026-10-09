@@ -17,7 +17,7 @@ import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
  * 🔴 판정(lib/rules.ts)은 부르지도 고치지도 않는다. 값만 만든다.
  */
 const PRESETS = [
-  { key: 'work', days: 31, start: 9 * 60, end: 18 * 60 },
+  { key: 'late', days: 127, start: 21 * 60, end: 0 },
   { key: 'night', days: 127, start: 23 * 60, end: 7 * 60 },
   { key: 'weekend', days: 96, start: 10 * 60, end: 22 * 60 },
 ] as const;

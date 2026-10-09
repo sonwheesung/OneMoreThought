@@ -71,8 +71,6 @@
     "whenQ": "언제 물어볼까요?",
     "whenSub": "이 시간에 고른 앱을 열면 물어봐요.",
     "presets": "빠르게 고르기",
-    "preset_work": "업무시간 · 평일 9–18시",
-    "preset_work_name": "업무시간",
     "preset_night": "잠들 시간 · 매일 23–7시",
     "preset_night_name": "잠들 시간",
     "preset_weekend": "주말 · 10–22시",
@@ -90,7 +88,9 @@
     "whenLabel": "{{days}} {{start}} – {{next}}{{end}}",
     "save": "저장",
     "saved": "저장했어요",
-    "saveFailed": "저장하지 못했어요. 다시 눌러 주세요."
+    "saveFailed": "저장하지 못했어요. 다시 눌러 주세요.",
+    "preset_late": "야식 시간 · 매일 21–24시",
+    "preset_late_name": "야식 시간"
   },
   "newCheck": {
     "appQ": "어떤 앱을 열었는지 볼까요?",
@@ -112,10 +112,10 @@
   "rule": {
     "message_q": "뭐라고 물어볼까요?",
     "message_sub": "앱을 열 때 이 문장이 가장 크게 보여요.",
-    "message_ph": "예: 일 해야지?",
+    "message_ph": "예: 정말 시킬 거야?",
     "message_empty": "여기에 쓴 문장이 보여요",
     "name": "규칙 이름",
-    "name_ph": "예: 업무시간",
+    "name_ph": "예: 다이어트",
     "preview_tag": "미리보기 · 버튼은 눌리지 않아요",
     "preview_hint": "그림이라 눌러도 기록되지 않아요",
     "grace_q": "연 뒤 다시 묻기까지",
@@ -181,13 +181,17 @@
     "emptyBody": "고른 앱을 열 때, 내가 쓴 한 문장으로 한 번 물어봐요.",
     "emptyPreview": "예시 · 버튼은 눌리지 않아요",
     "emptyHint": "앱을 안 열었을 때 알려 주는 규칙도 만들 수 있어요.",
-    "exampleRule": "업무시간",
-    "exampleApp": "게임",
     "devSpike": "시험 도구(개발용)"
   },
   "example": {
-    "work": "일 해야지 게임하게?",
-    "money": "돈 벌어야지.",
-    "night": "내일 아침 일찍이잖아."
+    "diet": "정말 시킬 거야?",
+    "diet_rule": "다이어트",
+    "diet_app": "배달 앱",
+    "money": "이번 달은 아껴 쓰기로 했잖아.",
+    "money_rule": "절약",
+    "money_app": "쇼핑 앱",
+    "night": "내일 아침 일찍이잖아.",
+    "night_rule": "잠들 시간",
+    "night_app": "동영상 앱"
   }
 }

@@ -71,8 +71,6 @@
     "whenQ": "When should we ask?",
     "whenSub": "We ask if you open the apps during this time.",
     "presets": "Quick picks",
-    "preset_work": "Work · weekdays 9–18",
-    "preset_work_name": "Work hours",
     "preset_night": "Bedtime · every day 23–7",
     "preset_night_name": "Bedtime",
     "preset_weekend": "Weekend · 10–22",
@@ -90,7 +88,9 @@
     "whenLabel": "{{days}} {{start}} – {{next}}{{end}}",
     "save": "Save",
     "saved": "Saved",
-    "saveFailed": "Couldn't save. Please try again."
+    "saveFailed": "Couldn't save. Please try again.",
+    "preset_late": "Late snack · every day 21–24",
+    "preset_late_name": "Late snack"
   },
   "newCheck": {
     "appQ": "Which app should we check?",
@@ -112,10 +112,10 @@
   "rule": {
     "message_q": "What should we ask?",
     "message_sub": "This line shows biggest when you open the app.",
-    "message_ph": "e.g. Back to work?",
+    "message_ph": "e.g. Really ordering?",
     "message_empty": "Your line shows here",
     "name": "Rule name",
-    "name_ph": "e.g. Work hours",
+    "name_ph": "e.g. Diet",
     "preview_tag": "Preview · buttons don't work",
     "preview_hint": "It's just a picture — nothing is recorded",
     "grace_q": "Ask again after opening",
@@ -181,13 +181,17 @@
     "emptyBody": "When you open an app you chose, we ask once — in your own words.",
     "emptyPreview": "Example · buttons don't work here",
     "emptyHint": "You can also get a reminder when you don't open an app.",
-    "exampleRule": "Work hours",
-    "exampleApp": "Game",
     "devSpike": "Test tools (dev)"
   },
   "example": {
-    "work": "Back to work?",
-    "money": "Gotta earn.",
-    "night": "Early morning tomorrow."
+    "diet": "Really ordering?",
+    "diet_rule": "Diet",
+    "diet_app": "Delivery app",
+    "money": "You said you would save this month.",
+    "money_rule": "Saving",
+    "money_app": "Shopping app",
+    "night": "Early morning tomorrow.",
+    "night_rule": "Bedtime",
+    "night_app": "Video app"
   }
 }

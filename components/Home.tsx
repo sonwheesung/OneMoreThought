@@ -106,7 +106,8 @@ export function PermissionRow({ visible, text, onEnable }: { visible: boolean; t
   );
 }
 
-const EXAMPLES = ['example.work', 'example.money', 'example.night'] as const;
+// 누구나 공감하는 예시(2026-10-10 사용자 지시: 업무 시간 · 게임 예시는 빼고)
+const EXAMPLES = ['diet', 'money', 'night'] as const;
 
 /** 빈 상태(#6): 사실 한 줄 + 확인 화면 그림(예시 문장이 1.2초마다 바뀐다 · 그림이라 눌리지 않는다) */
 export function EmptyHome() {
@@ -135,7 +136,11 @@ export function EmptyHome() {
         importantForAccessibility="no-hide-descendants"
         accessibilityElementsHidden
         style={{ opacity: p, transform: [{ translateY: p.interpolate({ inputRange: [0, 1], outputRange: [6, 0] }) }] }}>
-        <ConfirmThumb message={t(EXAMPLES[i]!)} ruleName={t('home.exampleRule')} targetLabel={t('home.exampleApp')} />
+        <ConfirmThumb
+          message={t(`example.${EXAMPLES[i]!}`)}
+          ruleName={t(`example.${EXAMPLES[i]!}_rule`)}
+          targetLabel={t(`example.${EXAMPLES[i]!}_app`)}
+        />
       </Animated.View>
       <View style={styles.dots}>
         {EXAMPLES.map((k, j) => (
