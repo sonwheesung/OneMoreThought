@@ -58,7 +58,7 @@
     "interceptExample": "다이어트 중인데 배달 앱을 열면 “정말 시킬 거야?”",
     "check": "안 열었을 때 알림",
     "checkBody": "정한 시각까지 그 앱을 안 열었으면 알려 줘요.",
-    "checkExample": "밤 9시까지 일기 앱을 안 열었으면 한 번 알림",
+    "checkExample": "저녁 8시까지 운동 앱을 안 열었으면 한 번 알림",
     "exampleTag": "예:",
     "next": "다음",
     "nextN": "다음 · {{count}}개",

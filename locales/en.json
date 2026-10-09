@@ -58,7 +58,7 @@
     "interceptExample": "Open a delivery app while dieting → “Really ordering?”",
     "check": "Remind me if I don't open it",
     "checkBody": "If you haven't opened the app by a set time, we remind you.",
-    "checkExample": "Haven't opened your journal by 9 PM → one reminder",
+    "checkExample": "Haven't opened your workout app by 8 PM → one reminder",
     "exampleTag": "e.g.",
     "next": "Next",
     "nextN": "Next · {{count}}",
