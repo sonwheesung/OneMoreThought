@@ -17,7 +17,7 @@ import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
  * 끝이 시작보다 이르면 «다음 날»(자정을 넘는다 · 요일은 시작한 날 · 결정 #26 C). 시작 == 끝은 호박색 한 줄 + [다음] 꺼짐.
  * 🔴 판정(lib/rules.ts)은 부르지도 고치지도 않는다. 값만 만든다.
  */
-// 하루 종일 = 00:00 ~ 23:59(끝 23:59 는 24:00 · 결정 #38 · 2026-10-10 사용자 지시)
+// 하루 종일 = 00:00 ~ 23:59(끝 23:59 는 24:00 · 결정 #38 · 2026-10-09 사용자 지시)
 const PRESETS = [
   { key: 'allday', days: 127, start: 0, end: END_OF_DAY },
   { key: 'late', days: 127, start: 21 * 60, end: 0 },
@@ -38,7 +38,7 @@ export default function NewRuleWhen() {
         days: daysLabel(d.days, t),
         start: hhmm(d.startMin),
         next: nextDay ? `${t('new.nextDay')} ` : '',
-        end: hhmm(d.endMin),
+        end: d.endMin === END_OF_DAY ? '24:00' : hhmm(d.endMin), // 하루 종일에서 시작만 옮기면 끝은 자정까지(#38)
       });
 
   return (

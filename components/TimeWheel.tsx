@@ -44,11 +44,6 @@ export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={(e) => step(e.nativeEvent.actionName === 'increment' ? 1 : -1)}>
       <View importantForAccessibility="no-hide-descendants">
-        {/* 라이브러리 띠는 글자 위에 덮인다 → 끄고 같은 자리에 우리 띠를 글자 뒤로 깐다 */}
-        <View
-          pointerEvents="none"
-          style={[styles.band, { top: item * Math.floor(visible / 2), height: item, backgroundColor: c.accentSoft }]}
-        />
         <WheelPicker
           data={data}
           value={idx * stepMin}
@@ -62,7 +57,8 @@ export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 
             styles.text,
             { color: c.text, fontSize: visible === 3 ? 22 : 20, fontWeight: visible === 3 ? '700' : '600' },
           ]}
-          renderOverlay={null}
+          // 가운데 띠: 라이브러리 띠(글자 위에 덮인다)를 옅은 보라로. 띠를 따로 깔면 칸 수에 따라 자리가 어긋났다(3칸에서 실측)
+          overlayItemStyle={[styles.band, { backgroundColor: c.accentSolid }]}
         />
       </View>
     </View>
@@ -70,6 +66,6 @@ export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 
 }
 
 const styles = StyleSheet.create({
-  band: { position: 'absolute', left: 0, right: 0, borderRadius: 14 },
+  band: { borderRadius: 14, opacity: 0.12 },
   text: { textAlign: 'center', fontVariant: ['tabular-nums'] },
 });
