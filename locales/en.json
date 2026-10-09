@@ -90,7 +90,10 @@
     "saved": "Saved",
     "saveFailed": "Couldn't save. Please try again.",
     "preset_late": "Late snack · every day 21–24",
-    "preset_late_name": "Late snack"
+    "preset_late_name": "Late snack",
+    "preset_allday": "All day · every day",
+    "preset_allday_name": "All day",
+    "whenAllDay": "{{days}} · all day"
   },
   "newCheck": {
     "appQ": "Which app should we check?",
@@ -161,7 +164,12 @@
     "cancel": "Cancel",
     "wiped": "Erased from this device",
     "contact": "Contact us",
-    "contact_soon": "Coming soon."
+    "contact_soon": "Coming soon.",
+    "groupAbout": "About",
+    "privacy": "Privacy policy",
+    "terms": "Terms of service",
+    "licenses": "Open-source licenses",
+    "licenses_lead": "This app includes {{count}} open-source packages. Tap a row to read its license."
   },
   "home": {
     "title": "Today's rules",

@@ -21,7 +21,9 @@
     "verify": "npm run typecheck && npm run lint && npm run check:chars && npm run check:manifest && npm run check:strike && npm run check:day && npm run check:rules && npm run check:server && npm run check:docs"
   },
   "dependencies": {
+    "@quidone/react-native-wheel-picker": "^1.7.1",
     "expo": "~54.0.35",
+    "expo-build-properties": "~1.0.10",
     "expo-constants": "~18.0.13",
     "expo-linking": "~8.0.12",
     "expo-localization": "~17.0.9",

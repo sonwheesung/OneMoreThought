@@ -8,6 +8,7 @@ import { Chip, FlowScreen, GlassCard, flowStyles } from '@/components/flow.tsx';
 import { hhmm, TimeWheel } from '@/components/TimeWheel.tsx';
 import { EASE } from '@/components/ui.tsx';
 import { setDraft, useDraft } from '@/features/draft.ts';
+import { END_OF_DAY } from '@/lib/rules.ts';
 import { motion, radius, spacing } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 
@@ -16,7 +17,9 @@ import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
  * 끝이 시작보다 이르면 «다음 날»(자정을 넘는다 · 요일은 시작한 날 · 결정 #26 C). 시작 == 끝은 호박색 한 줄 + [다음] 꺼짐.
  * 🔴 판정(lib/rules.ts)은 부르지도 고치지도 않는다. 값만 만든다.
  */
+// 하루 종일 = 00:00 ~ 23:59(끝 23:59 는 24:00 · 결정 #38 · 2026-10-10 사용자 지시)
 const PRESETS = [
+  { key: 'allday', days: 127, start: 0, end: END_OF_DAY },
   { key: 'late', days: 127, start: 21 * 60, end: 0 },
   { key: 'night', days: 127, start: 23 * 60, end: 7 * 60 },
   { key: 'weekend', days: 96, start: 10 * 60, end: 22 * 60 },
@@ -28,12 +31,15 @@ export default function NewRuleWhen() {
   const d = useDraft();
   const nextDay = d.endMin < d.startMin;
   const same = d.endMin === d.startMin;
-  const summary = t('new.whenLabel', {
-    days: daysLabel(d.days, t),
-    start: hhmm(d.startMin),
-    next: nextDay ? `${t('new.nextDay')} ` : '',
-    end: hhmm(d.endMin),
-  });
+  const allDay = d.startMin === 0 && d.endMin === END_OF_DAY;
+  const summary = allDay
+    ? t('new.whenAllDay', { days: daysLabel(d.days, t) })
+    : t('new.whenLabel', {
+        days: daysLabel(d.days, t),
+        start: hhmm(d.startMin),
+        next: nextDay ? `${t('new.nextDay')} ` : '',
+        end: hhmm(d.endMin),
+      });
 
   return (
     <FlowScreen

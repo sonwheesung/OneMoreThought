@@ -1,13 +1,16 @@
-import { useEffect, useRef } from 'react';
-import { Animated, ScrollView, StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import WheelPicker, { type PickerItem } from '@quidone/react-native-wheel-picker';
+import { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
+import { usePalette } from '@/theme/useTheme.ts';
 
 /**
- * 시각 휠 · 시안 원모어 #9(한 시간 단위 · 칸 36 · 5칸) · #13(30분 단위 · 칸 52 · 3칸).
- * 손가락을 따르는 ScrollView + 칸 단위 맞춤(FlatList 가 아니다: 화면의 세로 ScrollView 안에 들어가 가상 목록 중첩 경고가 났다 · 칸이 최대 144개라 다 그려도 된다). 하루를 3바퀴 이어 붙이고 멈출 때마다 가운데 바퀴로 되돌려 끝없이 도는 느낌을 낸다.
- * 칸 투명도는 거리로 흐리게(그라데이션 마스크 없이) · 가운데 띠는 accentSoft. 잘못 칠 수 없다.
- * 🔴 출렁임 없음 · 휠 안에서만 움직인다. 모션 줄이기면 프로그램 이동도 즉시.
+ * 시각 휠 · 시안 원모어 #9(한 시간 단위 · 5칸) · #13(30분 단위 · 3칸).
+ * 2026-10-09 사용자 «스크롤하는데 시간이 회귀하거나 이상하게 된다» → 손으로 짠 휠(3바퀴 이어 붙이고 가운데로 되돌리기)을 버리고
+ * 검증된 `@quidone/react-native-wheel-picker`(순수 JS · ScrollView 기반이라 화면 ScrollView 안에서도 가상 목록 경고가 없다)로 바꿨다.
+ * 끝없이 돌지 않는다(00:00 ~ 23:00 한 바퀴). 되돌리기 점프가 회귀의 원인이었다.
+ * 값은 휠이 멈추고 손이 떨어진 뒤에만 올린다(onValueChanged). 칸을 누르면 그 시각으로 간다.
+ * 가운데 띠는 accentSoft · 출렁임 없음.
  */
 interface Props {
   /** 분(0 ~ 1439) */
@@ -22,78 +25,46 @@ interface Props {
 const pad = (n: number) => String(n).padStart(2, '0');
 export const hhmm = (min: number) => `${pad(Math.floor(min / 60))}:${pad(min % 60)}`;
 
-export function TimeWheel({ value, onChange, stepMin = 60, item = 36, visible = 5, label }: Props) {
+export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 5, label }: Props) {
   const c = usePalette();
-  const reduced = useReducedMotion();
   const n = (24 * 60) / stepMin;
   const idx = Math.round(value / stepMin) % n;
-  const ref = useRef<ScrollView | null>(null);
-  const y = useRef(new Animated.Value((n + idx) * item)).current;
-  const half = Math.floor(visible / 2);
-  const data = Array.from({ length: n * 3 }, (_, i) => i);
-
-  // 바깥 값이 바뀌면(빠른 칩 등) 맞춰 굴린다
-  const shown = useRef(idx);
-  useEffect(() => {
-    if (shown.current === idx) return;
-    shown.current = idx;
-    ref.current?.scrollTo({ y: (n + idx) * item, animated: !reduced });
-  }, [idx, n, item, reduced]);
-
-  const settle = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const i = Math.round(e.nativeEvent.contentOffset.y / item);
-    const k = ((i % n) + n) % n;
-    if (i < n || i >= 2 * n) ref.current?.scrollTo({ y: (n + k) * item, animated: false });
-    shown.current = k;
-    if (k !== idx) onChange(k * stepMin);
-  };
-
+  const data = useMemo<PickerItem<number>[]>(
+    () => Array.from({ length: n }, (_, i) => ({ value: i * stepMin, label: hhmm(i * stepMin) })),
+    [n, stepMin],
+  );
   const step = (d: 1 | -1) => onChange(((((idx + d) % n) + n) % n) * stepMin);
 
   return (
     <View
-      style={{ height: item * visible }}
       accessible
       accessibilityRole="adjustable"
       accessibilityLabel={label}
       accessibilityValue={{ text: hhmm(idx * stepMin) }}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={(e) => step(e.nativeEvent.actionName === 'increment' ? 1 : -1)}>
-      <View pointerEvents="none" style={[styles.band, { top: item * half, height: item, backgroundColor: c.accentSoft }]} />
-      <Animated.ScrollView
-        ref={ref}
-        contentOffset={{ x: 0, y: (n + idx) * item }}
-        onLayout={() => ref.current?.scrollTo({ y: (n + shown.current) * item, animated: false })}
-        contentContainerStyle={{ paddingVertical: item * half }}
-        snapToInterval={item}
-        decelerationRate="fast"
-        showsVerticalScrollIndicator={false}
-        nestedScrollEnabled
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], { useNativeDriver: true })}
-        onMomentumScrollEnd={settle}
-        importantForAccessibility="no-hide-descendants">
-        {data.map((i) => (
-          <Animated.Text
-            key={i}
-            style={[
-              styles.text,
-              {
-                height: item,
-                lineHeight: item,
-                fontSize: visible === 3 ? 22 : 20,
-                fontWeight: visible === 3 ? '700' : '600',
-                color: c.text,
-                opacity: y.interpolate({
-                  inputRange: [-3, -2, -1, 0, 1, 2, 3].map((d) => (i + d) * item),
-                  outputRange: [0, 0.22, 0.5, 1, 0.5, 0.22, 0],
-                  extrapolate: 'clamp',
-                }),
-              },
-            ]}>
-            {hhmm((i % n) * stepMin)}
-          </Animated.Text>
-        ))}
-      </Animated.ScrollView>
+      <View importantForAccessibility="no-hide-descendants">
+        {/* 라이브러리 띠는 글자 위에 덮인다 → 끄고 같은 자리에 우리 띠를 글자 뒤로 깐다 */}
+        <View
+          pointerEvents="none"
+          style={[styles.band, { top: item * Math.floor(visible / 2), height: item, backgroundColor: c.accentSoft }]}
+        />
+        <WheelPicker
+          data={data}
+          value={idx * stepMin}
+          onValueChanged={({ item: it }) => {
+            if (it.value !== idx * stepMin) onChange(it.value);
+          }}
+          itemHeight={item}
+          visibleItemCount={visible}
+          enableScrollByTapOnItem
+          itemTextStyle={[
+            styles.text,
+            { color: c.text, fontSize: visible === 3 ? 22 : 20, fontWeight: visible === 3 ? '700' : '600' },
+          ]}
+          renderOverlay={null}
+        />
+      </View>
     </View>
   );
 }

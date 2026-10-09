@@ -90,7 +90,10 @@
     "saved": "저장했어요",
     "saveFailed": "저장하지 못했어요. 다시 눌러 주세요.",
     "preset_late": "야식 시간 · 매일 21–24시",
-    "preset_late_name": "야식 시간"
+    "preset_late_name": "야식 시간",
+    "preset_allday": "하루 종일 · 매일",
+    "preset_allday_name": "하루 종일",
+    "whenAllDay": "{{days}} 하루 종일"
   },
   "newCheck": {
     "appQ": "어떤 앱을 열었는지 볼까요?",
@@ -161,7 +164,12 @@
     "cancel": "취소",
     "wiped": "이 기기에서 지웠어요",
     "contact": "문의하기",
-    "contact_soon": "곧 열려요."
+    "contact_soon": "곧 열려요.",
+    "groupAbout": "정보",
+    "privacy": "개인정보 처리방침",
+    "terms": "이용약관",
+    "licenses": "오픈소스 라이선스",
+    "licenses_lead": "이 앱에 들어 있는 오픈소스 {{count}}개예요. 줄을 누르면 라이선스 본문이 보여요."
   },
   "home": {
     "title": "오늘의 규칙",

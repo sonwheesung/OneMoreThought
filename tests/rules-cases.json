@@ -19,7 +19,12 @@
     { "name": "금요일만 20~02 · 금 01:00 은 밖(목요일 밤의 연장)", "rule": { "days": 16, "startMin": 1200, "endMin": 120 }, "at": "2026-10-09T01:00", "want": false },
     { "name": "월~금 22~02 · 토 01:00 은 안(금요일 밤)", "rule": { "days": 31, "startMin": 1320, "endMin": 120 }, "at": "2026-10-10T01:00", "want": true },
     { "name": "월~금 22~02 · 월 01:00 은 밖(일요일 밤)", "rule": { "days": 31, "startMin": 1320, "endMin": 120 }, "at": "2026-10-12T01:00", "want": false },
-    { "name": "시작 == 끝 은 언제나 밖", "rule": { "days": 127, "startMin": 600, "endMin": 600 }, "at": "2026-10-09T10:00", "want": false }
+    { "name": "시작 == 끝 은 언제나 밖", "rule": { "days": 127, "startMin": 600, "endMin": 600 }, "at": "2026-10-09T10:00", "want": false },
+    { "name": "하루 종일 00:00 은 안(#38)", "rule": { "days": 127, "startMin": 0, "endMin": 1439 }, "at": "2026-10-09T00:00", "want": true },
+    { "name": "하루 종일 23:59 도 안(끝 1439 = 24:00 · #38)", "rule": { "days": 127, "startMin": 0, "endMin": 1439 }, "at": "2026-10-09T23:59", "want": true },
+    { "name": "평일 하루 종일 · 토 12:00 은 밖", "rule": { "days": 31, "startMin": 0, "endMin": 1439 }, "at": "2026-10-10T12:00", "want": false },
+    { "name": "금요일만 하루 종일 · 토 00:30 은 밖(자정을 넘지 않는다)", "rule": { "days": 16, "startMin": 0, "endMin": 1439 }, "at": "2026-10-10T00:30", "want": false },
+    { "name": "21:00 ~ 23:59 · 23:59 는 안(끝 = 24:00)", "rule": { "days": 127, "startMin": 1260, "endMin": 1439 }, "at": "2026-10-09T23:59", "want": true }
   ],
   "isPassed": [
     { "name": "통과 없음", "entry": null, "nowMs": 1000000, "graceMin": 1, "want": false },

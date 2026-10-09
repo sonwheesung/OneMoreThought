@@ -35,10 +35,14 @@ export const CHECK_WINDOW_MIN = 10;
 /**
  * 그 시각이 intercept 규칙의 시간대 안인가. 자정을 넘는 시간대는 **시작한 날의 요일**로 본다(결정 #26 C).
  * 시작 == 끝 은 저장하지 않는다(RULE_SYSTEM §1.1). 들어와도 언제나 거짓이다.
+ * 끝 23:59(1439)는 24:00 으로 본다: 0 ~ 1439 가 «하루 종일»이다(결정 #38 · 휠은 정각 · 30분만 만들어 23:59 가 다른 뜻으로 올 일이 없다).
  */
+/** 끝 23:59 = 24:00(결정 #38) */
+export const END_OF_DAY = 1439;
+
 export function inWindow(rule: Pick<Rule, 'days' | 'startMin' | 'endMin'>, at: Date): boolean {
-  const end = rule.endMin;
-  if (end === undefined || end === rule.startMin) return false;
+  if (rule.endMin === undefined || rule.endMin === rule.startMin) return false;
+  const end = rule.endMin === END_OF_DAY ? 24 * 60 : rule.endMin;
   const min = minuteOfDay(at);
   const today = weekdayOf(at);
   if (rule.startMin < end) return hasDay(rule.days, today) && min >= rule.startMin && min < end;

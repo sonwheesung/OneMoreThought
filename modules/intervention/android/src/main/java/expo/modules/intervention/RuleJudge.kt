@@ -41,9 +41,10 @@ object RuleJudge {
 
   fun hasDay(days: Int, wd: Int): Boolean = (days and (1 shl wd)) != 0
 
-  /** 자정을 넘는 시간대는 시작한 날의 요일로 본다(결정 #26 C). 시작 == 끝 은 언제나 거짓 */
-  fun inWindow(days: Int, startMin: Int, endMin: Int?, at: Calendar): Boolean {
-    if (endMin == null || endMin == startMin) return false
+  /** 자정을 넘는 시간대는 시작한 날의 요일로 본다(결정 #26 C). 시작 == 끝 은 언제나 거짓 · 끝 1439 는 24:00(하루 종일 · 결정 #38) */
+  fun inWindow(days: Int, startMin: Int, rawEnd: Int?, at: Calendar): Boolean {
+    if (rawEnd == null || rawEnd == startMin) return false
+    val endMin = if (rawEnd == 1439) 1440 else rawEnd
     val min = minuteOfDay(at)
     val today = weekdayOf(at)
     if (startMin < endMin) return hasDay(days, today) && min >= startMin && min < endMin
