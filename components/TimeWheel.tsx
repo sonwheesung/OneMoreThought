@@ -2,6 +2,7 @@ import WheelPicker, { type PickerItem } from '@quidone/react-native-wheel-picker
 import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { END_OF_DAY } from '@/lib/rules.ts';
 import { usePalette } from '@/theme/useTheme.ts';
 
 /**
@@ -20,35 +21,47 @@ interface Props {
   item?: number;
   visible?: 3 | 5;
   label: string;
+  /** 끝 휠: 00:00 대신 맨 아래 24:00 을 둔다(01:00 ~ 24:00). 24:00 은 END_OF_DAY 로 올린다(#38).
+   *  2026-10-10 실기기: 휠이 돌지 않아 00:00 이 맨 위에 붙으면 그 위가 빈칸으로 보였다(야식 시간 21 ~ 24시) */
+  endOfDay?: boolean;
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
 export const hhmm = (min: number) => `${pad(Math.floor(min / 60))}:${pad(min % 60)}`;
 
-export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 5, label }: Props) {
+export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 5, label, endOfDay }: Props) {
   const c = usePalette();
   const n = (24 * 60) / stepMin;
-  const idx = Math.round(value / stepMin) % n;
+  // 끝 휠은 칸 1 ~ n(01:00 ~ 24:00), 나머지는 0 ~ n-1(00:00 ~ 23:00). 0 · END_OF_DAY 는 끝 휠에서 24:00 칸이다
+  const first = endOfDay ? 1 : 0;
+  const pos = endOfDay
+    ? value === 0 || value === END_OF_DAY
+      ? n
+      : Math.min(n, Math.max(1, Math.round(value / stepMin)))
+    : Math.round(value / stepMin) % n;
+  const label24 = (i: number) => (i === n ? '24:00' : hhmm(i * stepMin));
   const data = useMemo<PickerItem<number>[]>(
-    () => Array.from({ length: n }, (_, i) => ({ value: i * stepMin, label: hhmm(i * stepMin) })),
-    [n, stepMin],
+    () => Array.from({ length: n }, (_, i) => ({ value: (i + first) * stepMin, label: label24(i + first) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [n, stepMin, first],
   );
-  const step = (d: 1 | -1) => onChange(((((idx + d) % n) + n) % n) * stepMin);
+  const emit = (i: number) => onChange(endOfDay && i === n ? END_OF_DAY : i * stepMin);
+  const step = (d: 1 | -1) => emit(endOfDay ? Math.min(n, Math.max(1, pos + d)) : (((pos + d) % n) + n) % n);
 
   return (
     <View
       accessible
       accessibilityRole="adjustable"
       accessibilityLabel={label}
-      accessibilityValue={{ text: hhmm(idx * stepMin) }}
+      accessibilityValue={{ text: label24(pos) }}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={(e) => step(e.nativeEvent.actionName === 'increment' ? 1 : -1)}>
       <View importantForAccessibility="no-hide-descendants">
         <WheelPicker
           data={data}
-          value={idx * stepMin}
+          value={pos * stepMin}
           onValueChanged={({ item: it }) => {
-            if (it.value !== idx * stepMin) onChange(it.value);
+            if (it.value !== pos * stepMin) emit(it.value / stepMin);
           }}
           itemHeight={item}
           visibleItemCount={visible}

@@ -181,7 +181,7 @@ function Home() {
             }}
           />
         </View>
-        <Toast t={toast} />
+        <Toast t={toast} above={64} />
       </SafeAreaView>
     </GlowBackground>
   );

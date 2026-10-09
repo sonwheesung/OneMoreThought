@@ -166,7 +166,7 @@ export function EmptyHome() {
           />
         ))}
       </View>
-      <Text style={[styles.emptyHint, { color: c.text3 }]}>{t('home.emptyHint')}</Text>
+      {/* «안 열었을 때 알려 주는 규칙도 만들 수 있어요» 는 뺐다(2026-10-10): 이 빌드는 알림을 아직 보내지 않는다 · 없는 기능을 약속하지 않는다. Phase 3 알림이 나오면 되살린다 */}
     </View>
   );
 }
@@ -202,5 +202,4 @@ const styles = StyleSheet.create({
   previewTag: { fontSize: 12, marginBottom: spacing.xs },
   dots: { flexDirection: 'row', gap: 6, marginTop: spacing.sm },
   dotStep: { width: 6, height: 6, borderRadius: 3 },
-  emptyHint: { fontSize: 13, lineHeight: 19, textAlign: 'center', marginTop: spacing.sm },
 });

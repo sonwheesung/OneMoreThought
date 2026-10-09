@@ -20,7 +20,7 @@ import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 // 하루 종일 = 00:00 ~ 23:59(끝 23:59 는 24:00 · 결정 #38 · 2026-10-09 사용자 지시)
 const PRESETS = [
   { key: 'allday', days: 127, start: 0, end: END_OF_DAY },
-  { key: 'late', days: 127, start: 21 * 60, end: 0 },
+  { key: 'late', days: 127, start: 21 * 60, end: END_OF_DAY }, // 21 ~ 24시 · 자정을 넘지 않는다(끝 휠의 24:00)
   { key: 'night', days: 127, start: 23 * 60, end: 7 * 60 },
   { key: 'weekend', days: 96, start: 10 * 60, end: 22 * 60 },
 ] as const;
@@ -91,7 +91,7 @@ export default function NewRuleWhen() {
               <Text style={[styles.wheelLabel, { color: c.text2 }]}>{t('new.end')}</Text>
               <NextDayTag on={nextDay} label={t('new.nextDay')} />
             </View>
-            <TimeWheel label={t('new.end')} value={d.endMin} onChange={(endMin) => setDraft({ endMin })} />
+            <TimeWheel endOfDay label={t('new.end')} value={d.endMin} onChange={(endMin) => setDraft({ endMin })} />
           </View>
         </View>
       </GlassCard>
@@ -147,7 +147,10 @@ function NextDayTag({ on, label }: { on: boolean; label: string }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   wheels: { flexDirection: 'row', gap: spacing.lg },
+  // 높이를 «다음 날» 알약(22)과 맞춘다 · 2026-10-10 실기기: 알약이 뜨면 끝 휠만 4 ~ 7px 내려가 두 띠가 어긋났다
   wheelLabel: {
+    height: 22,
+    lineHeight: 22,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: spacing.xs,

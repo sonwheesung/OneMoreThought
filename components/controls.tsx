@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Animated, Modal, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { motion, radius, size, spacing } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
@@ -161,12 +162,18 @@ export function useToast() {
   return { msg, p, show };
 }
 
-export function Toast({ t }: { t: ReturnType<typeof useToast> }) {
+/**
+ * 🔴 absolute 자식은 SafeAreaView 의 padding 을 무시한다 → 아래 여백을 직접 더한다(2026-10-10 실기기: 내비게이션 바에 가렸다).
+ * 🔴 Android 는 elevation 이 있는 형제(그림자 버튼)가 순서와 상관없이 위에 그린다 → 알약도 elevation 을 준다(홈에서 «규칙을 지웠어요»가 버튼 뒤에 숨었다).
+ * `above`: 아래 고정 버튼이 있는 화면에서 그 높이만큼 띄운다.
+ */
+export function Toast({ t, above = 0 }: { t: ReturnType<typeof useToast>; above?: number }) {
   const c = usePalette();
+  const insets = useSafeAreaInsets();
   return (
     <Animated.View
       pointerEvents="none"
-      style={[styles.toast, { backgroundColor: c.text, opacity: t.p }]}
+      style={[styles.toast, { bottom: 40 + above + insets.bottom, backgroundColor: c.text, opacity: t.p }]}
       accessibilityLiveRegion="polite">
       <Text style={[styles.toastText, { color: c.bg }]}>{t.msg}</Text>
     </Animated.View>
@@ -198,8 +205,9 @@ const styles = StyleSheet.create({
   toast: {
     position: 'absolute',
     alignSelf: 'center',
-    bottom: 40,
     borderRadius: radius.chip,
+    elevation: 12,
+    zIndex: 10,
     paddingHorizontal: 18,
     paddingVertical: 10,
   },
