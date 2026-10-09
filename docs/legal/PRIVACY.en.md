@@ -89,8 +89,8 @@ All traffic is encrypted with HTTPS. Only a dedicated database account for this 
 
 - **We do not collect personal information from children under 14.**
 - On first launch the App asks for your birth year. It is used only to decide whether you are 14 or older; the year itself is not stored on the device or sent anywhere. Only the result stays on the device.
-- If you are under 14, the App works **on this device only**: it does not get a device ID and sends no rules, records, device info or diagnostics to our servers.
-- Because there is no login, age is based only on the birth year you enter. If we learn that we have collected personal information from a child under 14, we delete it promptly. A parent or guardian can ask for deletion at support@vivace-games.com.
+- If you are under 14, or have not answered yet, the App works **on this device only**: it does not get a device ID, sends no rules, records, device info or diagnostics to our servers, and discards records it could not send. The App's update check with Expo, Inc. (section 4) still runs at launch for everyone; it carries no rules, records or age information.
+- Because there is no login, age is based only on the birth year you enter. If we learn that we have collected personal information from a child under 14, we delete it promptly. There is no parental consent flow. A parent or guardian can ask for deletion at support@vivace-games.com.
 - The App is not currently distributed in the EEA, the United Kingdom or Switzerland.
 
 ## 8. Changes
