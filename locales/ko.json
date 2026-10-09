@@ -55,7 +55,7 @@
     "kindSub": "다른 종류도 따로 만들 수 있어요.",
     "intercept": "앱을 열 때 묻기",
     "interceptBody": "고른 앱을 열면 내가 쓴 문장으로 한 번 물어봐요.",
-    "interceptExample": "업무 시간에 게임을 열면 “일 해야지?”",
+    "interceptExample": "다이어트 중인데 배달 앱을 열면 “정말 시킬 거야?”",
     "check": "안 열었을 때 알림",
     "checkBody": "정한 시각까지 그 앱을 안 열었으면 알려 줘요.",
     "checkExample": "밤 9시까지 일기 앱을 안 열었으면 한 번 알림",
