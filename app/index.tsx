@@ -101,9 +101,6 @@ export default function Home() {
 
           <View style={styles.head}>
             <View style={styles.flex}>
-              <Text style={[styles.date, { color: c.text3 }]}>
-                {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', weekday: 'long' })}
-              </Text>
               <Text style={[styles.title, { color: c.text }]} accessibilityRole="header">
                 {t('home.title')}
               </Text>
@@ -172,7 +169,6 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md },
   head: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: spacing.xs },
-  date: { fontSize: 13, fontWeight: '500' },
   title: { fontSize: 28, fontWeight: '700', lineHeight: 36 },
   // 아이콘에 배경을 두지 않는다(2026-10-09 사용자 지시) · 누르는 자리만 40
   gearBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', marginRight: -8 },
