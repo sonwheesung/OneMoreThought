@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dialog, Switch, Toast, useDialog, useToast } from '@/components/controls.tsx';
 import { GlassCard, ScreenHeader } from '@/components/flow.tsx';
 import { GlassPill, GlowBackground } from '@/components/ui.tsx';
+import { ageAnswer } from '@/features/age.ts';
 import { clearLocal } from '@/features/rules';
 import { diagSummaryOn, setDiagSummaryOn } from '@/features/settings.ts';
 import { radius, size, spacing } from '@/theme/tokens.ts';
@@ -25,6 +26,7 @@ export default function Settings() {
   const { t } = useTranslation();
   const c = usePalette();
   const [diag, setDiag] = useState(diagSummaryOn);
+  const local = ageAnswer() === 'under14';
   const dialog = useDialog();
   const toast = useToast();
 
@@ -37,7 +39,7 @@ export default function Settings() {
   const wipe = () =>
     dialog.hide(() => {
       clearLocal();
-      toast.show(t('settings.wiped'));
+      router.replace('/age' as Href); // 나이 확인도 지웠으니 다시 묻는다(결정 #41)
     });
 
   return (
@@ -47,13 +49,23 @@ export default function Settings() {
         <ScrollView contentContainerStyle={styles.body}>
           <Text style={[styles.group, { color: c.text3 }]}>{t('settings.groupDiag')}</Text>
           <GlassCard>
-            <View style={styles.row}>
-              <View style={styles.flex}>
-                <Text style={[styles.rowTitle, { color: c.text }]}>{t('settings.diag')}</Text>
-                <Text style={[styles.rowSub, { color: c.text2 }]}>{t('settings.diag_sub')}</Text>
+            {local ? (
+              // 만 14세 미만(결정 #41): 서버로 아무것도 안 가므로 진단 스위치 대신 사실 한 줄
+              <View style={styles.row}>
+                <View style={styles.flex}>
+                  <Text style={[styles.rowTitle, { color: c.text }]}>{t('settings.local')}</Text>
+                  <Text style={[styles.rowSub, { color: c.text2 }]}>{t('settings.local_sub')}</Text>
+                </View>
               </View>
-              <Switch value={diag} onChange={toggleDiag} label={t('settings.diag')} />
-            </View>
+            ) : (
+              <View style={styles.row}>
+                <View style={styles.flex}>
+                  <Text style={[styles.rowTitle, { color: c.text }]}>{t('settings.diag')}</Text>
+                  <Text style={[styles.rowSub, { color: c.text2 }]}>{t('settings.diag_sub')}</Text>
+                </View>
+                <Switch value={diag} onChange={toggleDiag} label={t('settings.diag')} />
+              </View>
+            )}
           </GlassCard>
 
           <Text style={[styles.group, { color: c.text3 }]}>{t('settings.groupData')}</Text>
