@@ -37,7 +37,7 @@ export function RuleRow({ rule, line, onToggle }: { rule: Rule; line: string; on
   const on = rule.enabled;
   return (
     <View style={[styles.row, !on && styles.dim]}>
-      <View style={[styles.icon, { backgroundColor: on ? c.accentSoft : c.disabled }]}>
+      <View style={styles.icon}>
         <Glyph name={rule.kind === 'check' ? 'check' : 'eye'} color={on ? c.accent : c.disabledText} size={18} />
       </View>
       <View style={styles.flex}>
@@ -154,7 +154,8 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 64 },
   dim: { opacity: 0.55 },
-  icon: { width: 42, height: 42, borderRadius: radius.row, alignItems: 'center', justifyContent: 'center' },
+  // 아이콘에 배경을 두지 않는다(2026-10-09 사용자 지시)
+  icon: { width: 24, alignItems: 'center', justifyContent: 'center' },
   name: { fontSize: 16, fontWeight: '600' },
   line: { fontSize: 12.5, lineHeight: 18, marginTop: 2 },
   ring: { width: 58, height: 58, borderRadius: 29, borderWidth: 8, alignItems: 'center', justifyContent: 'center' },

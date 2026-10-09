@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
  * 작은 선 아이콘(새 의존성 없이 View 로 그린다 · 아이콘 라이브러리는 스택 표에서 아직 ❌).
  * 🔴 색은 부르는 쪽이 토큰으로 준다. 의미 없는 장식이라 접근성에서 숨긴다.
  */
-export type GlyphName = 'eye' | 'eyeOff' | 'send' | 'check' | 'gear';
+export type GlyphName = 'eye' | 'eyeOff' | 'send' | 'check' | 'gear' | 'back';
 
 export function Glyph({
   name,
@@ -35,6 +35,25 @@ export function Glyph({
             borderBottomWidth: line,
             borderColor: color,
             transform: [{ translateX: s * 0.08 }, { rotate: '45deg' }],
+          }}
+        />
+      </View>
+    );
+  }
+  if (name === 'back') {
+    // 뒤로 « < »: 두 변만 그린 사각형을 45° 돌린다
+    return (
+      <View style={[styles.center, { width: s, height: s }]} importantForAccessibility="no-hide-descendants">
+        <View
+          style={{
+            width: s * 0.46,
+            height: s * 0.46,
+            borderLeftWidth: 2,
+            borderBottomWidth: 2,
+            borderColor: color,
+            borderBottomLeftRadius: 1,
+            marginLeft: s * 0.16,
+            transform: [{ rotate: '45deg' }],
           }}
         />
       </View>

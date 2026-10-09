@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Animated, AppState, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { BackButton, GlassCard } from '@/components/flow.tsx';
+import { GlassCard, ScreenHeader } from '@/components/flow.tsx';
 import { Glyph } from '@/components/Glyph.tsx';
 import { hhmm } from '@/components/TimeWheel.tsx';
 import { EASE, GlowBackground } from '@/components/ui.tsx';
@@ -65,14 +65,8 @@ export default function Stats() {
   return (
     <GlowBackground>
       <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
-        <View style={styles.bar}>
-          <BackButton />
-        </View>
+        <ScreenHeader title={t('stats.title')} />
         <ScrollView contentContainerStyle={styles.body}>
-          <Text style={[styles.title, { color: c.text }]} accessibilityRole="header">
-            {t('stats.title')}
-          </Text>
-
           <GlassCard style={styles.gap}>
             <Text style={[styles.cardTitle, { color: c.text }]}>{t('stats.promptTitle')}</Text>
             <Text style={[styles.note, { color: c.text2 }]}>{t('stats.promptNote')}</Text>
@@ -247,7 +241,6 @@ function DayCell({ on, name, delay, c, a11y }: { on: boolean; name: string; dela
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  bar: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
   body: {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
@@ -255,12 +248,6 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   // 홈보다 낮은 위계: 제목 22(홈 · 만들기 26)
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    lineHeight: 30,
-    marginBottom: spacing.xs,
-  },
   gap: { gap: spacing.md },
   cardTitle: { fontSize: 16, fontWeight: '600' },
   note: { fontSize: 13, lineHeight: 19 },

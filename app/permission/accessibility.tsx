@@ -62,7 +62,7 @@ export default function AccessibilityDisclosure() {
 
   const block = (i: number, icon: GlyphName, tone: 'accent' | 'mint', title: string, body: string) => (
     <Animated.View style={[styles.block, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }, lines.style(i)]}>
-      <View style={[styles.iconBox, { backgroundColor: tone === 'accent' ? c.accentSoft : c.mintSoft }]}>
+      <View style={styles.iconBox}>
         <Glyph name={icon} color={tone === 'accent' ? c.accent : c.mintText} />
       </View>
       <View style={styles.flex}>
@@ -76,10 +76,12 @@ export default function AccessibilityDisclosure() {
     <GlowBackground>
       <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Animated.View style={[styles.halo, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }, lines.style(0)]}>
+          <Animated.View style={[styles.halo, lines.style(0)]}>
             <Glyph name="eye" color={c.accent} size={24} />
           </Animated.View>
-          <Animated.Text style={[type.title, styles.title, { color: c.text }, lines.style(1)]}>{t('disclosure.title')}</Animated.Text>
+          <Animated.Text style={[type.title, styles.title, { color: c.text }, lines.style(1)]}>
+            {t('disclosure.title')}
+          </Animated.Text>
           <Animated.Text style={[styles.desc, { color: c.text2 }, lines.style(2)]}>{t('disclosure.why')}</Animated.Text>
 
           {block(3, 'eye', 'accent', t('disclosure.seesTitle'), t('disclosure.sees'))}
@@ -133,15 +135,8 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   wide: { flex: 1.35 },
   scroll: { paddingHorizontal: spacing.xl, paddingTop: spacing.xxl, paddingBottom: spacing.lg, gap: spacing.md },
-  halo: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
-  },
+  // 아이콘에 배경을 두지 않는다(2026-10-09 사용자 지시)
+  halo: { width: 32, height: 32, justifyContent: 'center', marginBottom: spacing.sm },
   title: { fontSize: 25, lineHeight: 33 },
   desc: { fontSize: 14, lineHeight: 21, marginBottom: spacing.sm },
   block: {
@@ -151,7 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     borderWidth: 1,
   },
-  iconBox: { width: 40, height: 40, borderRadius: radius.row, alignItems: 'center', justifyContent: 'center' },
+  iconBox: { width: 24, paddingTop: 1, alignItems: 'center' },
   blockTitle: { fontSize: 15, fontWeight: '600', lineHeight: 21, marginBottom: 2 },
   blockBody: { fontSize: 13, lineHeight: 19 },
   path: { fontSize: 13, lineHeight: 18, marginTop: spacing.xs },
@@ -165,5 +160,11 @@ const styles = StyleSheet.create({
   },
   statusText: { fontSize: 15, fontWeight: '600' },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  actions: { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, paddingTop: spacing.sm },
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
+    paddingTop: spacing.sm,
+  },
 });

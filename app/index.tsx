@@ -113,8 +113,8 @@ export default function Home() {
               accessibilityRole="button"
               accessibilityLabel={t('settings.title')}
               hitSlop={8}
-              style={[styles.gearBtn, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }]}>
-              <Glyph name="gear" color={c.text2} size={18} hole={c.bg} />
+              style={styles.gearBtn}>
+              <Glyph name="gear" color={c.text2} size={22} hole={c.bg} />
             </Pressable>
           </View>
 
@@ -174,14 +174,15 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: spacing.xs },
   date: { fontSize: 13, fontWeight: '500' },
   title: { fontSize: 28, fontWeight: '700', lineHeight: 36 },
-  gearBtn: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  // 아이콘에 배경을 두지 않는다(2026-10-09 사용자 지시) · 누르는 자리만 40
+  gearBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', marginRight: -8 },
   summary: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   summaryText: { fontSize: 16, fontWeight: '600' },
   summarySub: { fontSize: 13, marginTop: 2 },
   list: { paddingVertical: spacing.sm },
   group: { gap: 2 },
   groupTitle: { fontSize: 12.5, fontWeight: '600', marginTop: spacing.sm, marginBottom: 2 },
-  sep: { height: StyleSheet.hairlineWidth, marginLeft: 54 },
+  sep: { height: StyleSheet.hairlineWidth, marginLeft: 36 },
   groupSep: { height: StyleSheet.hairlineWidth, marginVertical: spacing.sm },
   foot: { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, paddingTop: spacing.sm },
   dev: { alignSelf: 'center', paddingVertical: spacing.md },

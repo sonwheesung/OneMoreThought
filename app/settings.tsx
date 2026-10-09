@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Dialog, Switch, Toast, useDialog, useToast } from '@/components/controls.tsx';
-import { BackButton, GlassCard } from '@/components/flow.tsx';
+import { GlassCard, ScreenHeader } from '@/components/flow.tsx';
 import { GlassPill, GlowBackground } from '@/components/ui.tsx';
 import { clearLocal } from '@/features/rules';
 import { diagSummaryOn, setDiagSummaryOn } from '@/features/settings.ts';
@@ -39,14 +39,8 @@ export default function Settings() {
   return (
     <GlowBackground>
       <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
-        <View style={styles.bar}>
-          <BackButton />
-        </View>
+        <ScreenHeader title={t('settings.title')} />
         <ScrollView contentContainerStyle={styles.body}>
-          <Text style={[styles.title, { color: c.text }]} accessibilityRole="header">
-            {t('settings.title')}
-          </Text>
-
           <Text style={[styles.group, { color: c.text3 }]}>{t('settings.groupDiag')}</Text>
           <GlassCard>
             <View style={styles.row}>
@@ -105,18 +99,11 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  bar: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
   body: {
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xxl,
     gap: spacing.sm,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    lineHeight: 30,
-    marginBottom: spacing.sm,
   },
   group: {
     fontSize: 13,

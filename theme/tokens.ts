@@ -65,7 +65,8 @@ export const dark: Palette = {
 
 /** 반경(calm_tokens §4 숫자) */
 export const radius = {
-  card: 28,
+  /** 2026-10-09 사용자 지시 «카드 radius 가 너무 크다» · 시안 28 → 20 */
+  card: 20,
   /** 입력 · 확인 화면 미리보기 */
   input: 24,
   /** 아이콘 칸 · 목록 행 */

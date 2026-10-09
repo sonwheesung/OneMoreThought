@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { motion, radius, size, spacing, type } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
 
+import { Glyph } from './Glyph.tsx';
 import { EASE, GlowBackground, PrimaryButton } from './ui.tsx';
 
 /**
@@ -59,9 +60,8 @@ export function FlowScreen({ step, total, title, sub, cta, ctaDisabled, onCta, h
     <GlowBackground>
       <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
         <View style={styles.bar}>
-          <BackButton />
           <StepBar step={step} total={total} />
-          <View style={styles.barSide} />
+          <BackButton />
         </View>
         <Animated.View style={[styles.flex, slide]}>
           <View style={styles.head}>
@@ -88,7 +88,10 @@ export function FlowScreen({ step, total, title, sub, cta, ctaDisabled, onCta, h
   );
 }
 
-/** 왼쪽 위 40 유리 원 뒤로가기. 답은 초안에 남는다 */
+/**
+ * 뒤로가기: 오른쪽 위 · 배경 없는 « < » 아이콘(2026-10-09 사용자 지시 · 아이콘에 배경을 두지 않는다).
+ * 누르는 자리는 40 으로 둔다. 만들기 흐름에서는 답이 초안에 남는다.
+ */
 export function BackButton() {
   const c = usePalette();
   const { t } = useTranslation();
@@ -98,9 +101,22 @@ export function BackButton() {
       accessibilityLabel={t('common.back')}
       hitSlop={8}
       onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-      style={[styles.back, { backgroundColor: c.surfaceGlass, borderColor: c.surfaceLine }]}>
-      <Text style={[styles.backText, { color: c.text }]}>‹</Text>
+      style={styles.back}>
+      <Glyph name="back" color={c.text} size={22} />
     </Pressable>
+  );
+}
+
+/** 화면 머리: 제목 왼쪽 · 뒤로가기 오른쪽 한 줄(설정 · 통계 · 2026-10-09 사용자 지시 «설정      <») */
+export function ScreenHeader({ title }: { title: string }) {
+  const c = usePalette();
+  return (
+    <View style={styles.screenHead}>
+      <Text style={[styles.screenTitle, { color: c.text }]} accessibilityRole="header" numberOfLines={1}>
+        {title}
+      </Text>
+      <BackButton />
+    </View>
   );
 }
 
@@ -221,16 +237,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
   },
-  barSide: { width: 40 },
-  back: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
+  back: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', marginRight: -8 },
+  screenHead: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: spacing.xl,
+    paddingRight: spacing.lg,
+    paddingTop: spacing.md,
   },
-  backText: { fontSize: 26, lineHeight: 30, marginTop: -3 },
+  screenTitle: { flex: 1, fontSize: 22, fontWeight: '700', lineHeight: 30 },
   steps: { flexDirection: 'row', gap: 6 },
   stepCell: { width: 18, height: 4, borderRadius: 2 },
   head: {
