@@ -68,7 +68,22 @@ npm run check:signing       # 업로드 키 지문과 같은가(디버그 키여
 
 ### 4.1 실측 값
 
-(첫 AAB 를 구운 뒤 이 표를 채운다 — 아래 §5.)
+vc1 · 2026-10-09 15:36 · `BUILD SUCCESSFUL in 7m 28s`(R8 포함)
+
+| 항목 | 값 |
+|---|---|
+| AAB · APK | 43,871,148 B · 61,615,671 B |
+| 패키지 · 버전 | `com.vivacegames.onemorethought` · vc1 · 0.1.0 |
+| targetSdk · compileSdk | 36 · 36 |
+| 권한(APK `aapt2 dump badging`) | `INTERNET` · `PACKAGE_USAGE_STATS` · `QUERY_ADVANCED_PROTECTION_MODE` · 자체 `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` 뿐 · 🚫 `AD_ID` 없음 · 금지 5종 없음 |
+| 접근성 설정 xml | `canRetrieveWindowContent=false` · `isAccessibilityTool=false` |
+| 64비트 .so 16KB 정렬 | arm64-v8a · x86_64 전부 `p_align ≥ 16384`(LOAD 세그먼트 · node 로 ELF 헤더를 읽음) |
+| 서명 | AAB `keytool -printcert` · APK `apksigner --print-certs` 둘 다 `CN=Vivace Games` · SHA-256 §1 과 같다 |
+| OTA | 매니페스트 `EXPO_UPDATE_URL` · `expo-channel-name: production` · `EXPO_RUNTIME_VERSION` 있음 |
+| 운영 주소 | `check:release-url` OK(운영 2 · 개발 0) |
+
+⚠ 이 vc1 의 JS 는 2026-10-09 15:29 작업 트리(메인 세션 UI 수정 진행 중)다. **업로드 직전에 다시 굽는다**(versionCode 는 1 그대로 · 아직 안 올렸다).
+
 
 ## 5. 산출물
 
@@ -76,7 +91,7 @@ npm run check:signing       # 업로드 키 지문과 같은가(디버그 키여
 
 | vc | 버전 | 날짜 | 무엇 | 크기 |
 |---|---|---|---|---|
-| 1 | 0.1.0 | 2026-10-09 | 첫 비공개 테스트 후보(결정 #37 · OTA 포함 #39 · 아이콘은 자리표시) | (§4.1) |
+| 1 | 0.1.0 | 2026-10-09 | 첫 비공개 테스트 후보(결정 #37 · OTA 포함 #39 · 아이콘은 자리표시) · `D:uilds\OneMoreThought\onemorethought-vc1.aab` · `.apk` | 43.9MB · 61.6MB |
 
 버전: 비공개 테스트는 프로모션 코드 테스터뿐이라 `0.x` 를 유지한다. 낯선 사람이 돈을 낼 수 있는 프로덕션 전에 `1.0.0` 으로 올린다(`PRE_LAUNCH_CHECK.md` §4).
 
