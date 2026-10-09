@@ -528,13 +528,13 @@ OneMoreThought/
 | ~~AdMob 앱 등록 · 광고 단위 · `app-ads.txt`~~ | 🚫 결정 #16 | 광고 없음 |
 | Play 유료 앱 가격 설정 · 결제 프로필 확인 | ❌ Phase 7 | 결정 #18 · 가격은 미결정 S |
 | 비공개 테스터 프로모션 코드 | ❌ Phase 7 | 비공개 트랙은 테스터도 사야 한다(§7) |
-| 이용약관 URL | ❌ Phase 6 | 유료 앱이라 둔다(결정 #18 · §7.1) · 조각 · My Word 약관을 고쳐 쓴다 |
+| 이용약관 URL | ✅ 2026-10-09 `https://vivace-games.com/onemorethought/terms` 200 · volleyball `309749a` | 유료 앱이라 둔다(결정 #18 · §7.1) · 조각 · My Word 약관을 고쳐 쓴다 |
 | 조각 DB `intervene` 스키마 · 역할 `intervene_app` | ✅ 2026-10-08 | 결정 #31 · 0001 적용 · 조각 `public` 앞뒤 같음 · `db:check` 29항목 · 로컬 서버 e2e 통과. 조각 세션은 떠 있지 않아 통지는 이 행과 `docs/DATABASE.md` §0 · 사용자 보고로 남겼다(mission 선례) |
 | 공용 서버 `app_code` `intervene` | ✅ 2026-10-08 | 공용 서버 세션이 그쪽 사용자 승인으로 등록 · bootstrap 200 실측(그쪽). `x-app-code` 헤더는 안 보고 토큰 클레임을 본다. 실제 기기 토큰 → `/auth/me` 는 앱이 처음 붙을 때 실측 △ |
 | Vercel `vg-intervene-sync` | ✅ 2026-10-08 | `https://vg-intervene-sync.vercel.app` · 팀 sonws · env 2개(값은 stdin 으로만) · health `db: up` · 가짜 토큰 401 |
 | common_server 진단 경로 · 문의 첨부 필드 · 디스코드 기준 알림(결정 #20 · #21) | ✅ 2026-10-08 진단 수집 · 문의 첨부 운영 배포(계약은 `docs/DIAGNOSTICS_SYSTEM.md` §4 · 요약 16KB · 첨부 512KB) · 디스코드 진단 알림 ✅ 2026-10-08 구현 · 전용 채널 연결 · 배포(그쪽 사용자가 웹훅을 그쪽에 직접 줌 · 결정 #32 그대로 · 중복은 그쪽 표 PK 로 막음) · 문의 알림 채널은 미설정(지금 필요 없음) · 이전 경과: 그쪽 사용자 승인 ✅(앱별 스위치 · 요약 90일 · 첨부 1년 · 기본 켬) · 그쪽 설계 중 · 이쪽은 필드 초안 · 크기 추정 회신(실측은 Phase 5) | ~~`common-93` 에 보냄~~(잘못 보냄 · 연출 사전 세션) → common_server 담당 세션에 다시 보냈다. 그쪽 답: 접수 · 승인 전엔 안 만든다 · 방향 제안(별도 테이블 · 앱별 스위치 · 보관 기간 분리 · 거부 사유 명시). 패키지 이름 항목은 그쪽이 사용자에게 따로 묻는다 |
 | 통신판매업 신고 | ✅ | 정본 `common/BUSINESS_INFO.md` §1(2026-10-07 확인 · 번호는 옮겨 적지 않는다) |
-| 처리방침 URL | ❌ Phase 6 | 서버가 없어도 필요하다(접근성 공개 · 데이터 보안). 게시처 미정(`vivace-games.com/<앱>/` 선례) |
+| 처리방침 URL | ✅ 2026-10-09 `https://vivace-games.com/onemorethought/privacy` 200 · volleyball `309749a` · 원문 정본은 `docs/legal/` · 고치면 volleyball 세션에 다시 게시를 부탁한다 | 서버가 없어도 필요하다(접근성 공개 · 데이터 보안). 게시처 미정(`vivace-games.com/<앱>/` 선례) |
 | Play 앱 생성 · 패키지 이름 | ❌ Phase 7 | 🔴 되돌릴 수 없다. 서비스명(미결정 N)이 먼저다 |
 | 업로드 키스토어 | ❌ Phase 7 | `C:\project\secrets\` · config plugin 으로 서명 |
 | 비공개 테스트 12명 × 14일 | ❌ Phase 7 | `common/CLOSED_TESTING.md` |
