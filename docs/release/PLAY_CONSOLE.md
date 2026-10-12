@@ -103,7 +103,7 @@ One-time purchase. All future updates included.
 | 태그 | 디지털 웰빙 · 습관(콘솔이 주는 목록에서 고른다) |
 | 이메일 | support@vivace-games.com |
 | 웹사이트 | (비움 · 또는 https://vivace-games.com) |
-| 전화 | ⚠ 사용자 결정 대기(판매자 전화 공개 여부) |
+| 전화 | **비움**(2026-10-12 사용자 선택 "비워 둠 (Recommended)" · 형제 앱과 같다 · 판매자 정보는 Google 결제 프로필이 따로 표시) |
 | 처리방침 URL | https://vivace-games.com/onemorethought/privacy |
 
 ## 3. 그래픽
@@ -130,7 +130,7 @@ One-time purchase. All future updates included.
 |---|---|
 | 가격 | 기본 **₩3,300**(대한민국) · **US$1.99**(미국) · 나머지는 Play 자동 환산(결정 #25) |
 | 국가 | **145개국** — EEA 30 · 영국 · 스위스(32개국)를 뺀 전체(결정 #14 · [`../DISTRIBUTION_POLICY.md`](../DISTRIBUTION_POLICY.md)) |
-| 비공개 트랙 국가 | 위와 같다 |
+| 비공개 트랙 국가 | ✅ 2026-10-12 비공개 테스트 - Alpha 에 저장: **141개국 타겟팅**. 콘솔 목록 178 중 고를 수 없는 5(수단 · 이란 · 중국 · 쿠바 · 기타 국가)와 닫는 32개국을 뺀 수다("145"는 가격 화면 177개 기준 옛 계산 · 실제 열린 나라는 이 141). 스크립트로 32개 전부 꺼짐 · 다른 나라 안 꺼짐을 확인함 |
 
 ⚠ 유료 앱 비공개 트랙은 **테스터도 산다** → 100% 할인 프로모션 코드. ~~doply 테스터와 유료 앱의 조합은 ⚠ 사용자 결정 대기~~ → 2026-10-09 **0원 할인(판매)으로 간다**(CLAUDE §7). 콘솔 [판매] 탭은 앱 게시 전이라 아직 잠겨 있다 → 비공개 트랙 첫 게시 뒤 판매를 만든다(1 ~ 14일 · 다음 판매까지 30일 간격 · 14일 테스트를 덮으려면 시작일을 맞춘다). 막히면 프로모션 코드.
 ✅ 2026-10-09 콘솔 가격 저장: 전 국가 US$1.99 기준 자동 환산(177개 국가 · 배포 국가는 트랙에서 145개로 고른다) · 대한민국만 ₩3,300 으로 고침.
@@ -212,7 +212,10 @@ No login is needed. To see the core feature:
 The app lets users create their own rules: "When I open <app I chose> during <days/hours I chose>, show me <a sentence I wrote> once." The accessibility service listens only for window-state changes to learn the package name of the app that comes to the foreground (canRetrieveWindowContent=false). When it matches a user-defined rule, the app shows a full-screen confirm screen with [Cancel] and [Open]; Open always works with one tap. This is deterministic, rule-based behavior defined by the user. The service never reads screen content or text input, never performs actions in other apps, and never blocks the user from disabling or uninstalling any app (the app itself, the launcher, system Settings and the phone app cannot be targets). The package names of the user's target apps and the prompt results are sent to our server for app functionality and analytics, as disclosed in the in-app prominent disclosure and the privacy policy.
 ```
 
-### 5.7 시연 영상 촬영 목록 (YouTube 일부 공개 링크 · 30~90초)
+### 5.7 시연 영상 촬영 목록
+
+> 2026-10-12 사용자 선택 **"영상 없이 먼저 제출"**(추천은 adb 녹화 + 사용자 업로드). 접근성 신고의 영상 칸을 비우고 낸다. 거절되면 아래 목록대로 `adb screenrecord` 로 찍고 사용자가 YouTube 일부 공개로 올린다(심사를 다시 기다리는 며칠은 감수).
+ (YouTube 일부 공개 링크 · 30~90초)
 
 순서는 정책 원문 그대로(`ANDROID_PLATFORM.md` §8.1): **앱 열기 → 공개 문구 → 동의 → 거절 흐름 → 핵심 기능**.
 
