@@ -69,7 +69,7 @@ npm run check:signing       # 업로드 키 지문과 같은가(디버그 키여
 ### 4.1 실측 값
 
 🔁 **vc1 다시 구움 · 2026-10-12 11:43 · 코드 `0412087`**(결정 #41 나이 확인 · #42 알림 규칙 숨김 · 2026-10-10 실기기 수정 4건 포함 · `BUILD SUCCESSFUL in 6m 11s`). AAB 45,652,652 B · APK 63,174,098 B · `check:release-url` · `check:signing` 통과. 2026-10-09 vc1 은 올린 적이 없어 버전 번호를 그대로 쓴다(옛 파일은 `D:\builds\OneMoreThought\superseded\`).
-🔴 함정(같은 날 실측): 중간에 끊긴 굽기의 `app/build` 가 남은 채로 다시 구우면 `stripReleaseDebugSymbols` 가 *"Unable to strip …"* 을 내고 armeabi-v7a · x86 · x86_64 의 `.so` 를 통째로 넣는다(AAB 132 MB · APK 437 MB). `app/build` · `app/.cxx` 를 지우고 다시 구우면 정상. 지울 때 `rm -rf` 가 *"Device or resource busy"* 를 내면 파일 이름의 `..jar` 때문이다 → PowerShell `Remove-Item -LiteralPath '\?\C:\…ndroidppuild' -Recurse -Force`. 굽고 나면 `grep -c "Unable to strip" build.log` 가 0 인지 본다.
+🔴 함정(같은 날 실측): 중간에 끊긴 굽기의 `app/build` 가 남은 채로 다시 구우면 `stripReleaseDebugSymbols` 가 *"Unable to strip …"* 을 내고 armeabi-v7a · x86 · x86_64 의 `.so` 를 통째로 넣는다(AAB 132 MB · APK 437 MB). `app/build` · `app/.cxx` 를 지우고 다시 구우면 정상. 지울 때 `rm -rf` 가 *"Device or resource busy"* 를 내면 파일 이름의 `..jar` 때문이다 → PowerShell `Remove-Item -LiteralPath '\?\C:\…\android\app\build' -Recurse -Force`. 굽고 나면 `grep -c "Unable to strip" build.log` 가 0 인지 본다.
 
 vc1 · 2026-10-09 15:36 · `BUILD SUCCESSFUL in 7m 28s`(R8 포함)
 
