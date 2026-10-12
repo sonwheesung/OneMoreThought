@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { Rule } from '@/lib/rules.ts';
+import { END_OF_DAY, type Rule } from '@/lib/rules.ts';
 import type { LaunchableApp } from '@/modules/intervention';
 import { radius, spacing } from '@/theme/tokens.ts';
 import { usePalette, useReducedMotion } from '@/theme/useTheme.ts';
@@ -11,7 +11,7 @@ import { ConfirmThumb } from './ConfirmThumb.tsx';
 import { Switch } from './controls.tsx';
 import { daysLabel } from './DayPicker.tsx';
 import { Glyph } from './Glyph.tsx';
-import { hhmm } from './TimeWheel.tsx';
+import { endLabel, hhmm } from './TimeWheel.tsx';
 import { EASE } from './ui.tsx';
 
 /**
@@ -28,7 +28,11 @@ export function ruleLine(r: Rule, apps: LaunchableApp[], t: (k: string, o?: Reco
   const days = daysLabel(r.days, t);
   if (r.kind === 'check') return [`${days} ${t('stats.by', { time: hhmm(r.startMin) })}`, who].filter(Boolean).join(' · ');
   const end = r.endMin ?? r.startMin;
-  const when = `${days} ${hhmm(r.startMin)} – ${end < r.startMin ? `${t('new.nextDay')} ` : ''}${hhmm(end)}`;
+  // 2026-10-12 릴리스 실기기: 끝 24:00 이 «23:59» 로 보였다 → endLabel · 하루 종일은 요약 줄과 같은 말
+  const when =
+    r.startMin === 0 && end === END_OF_DAY
+      ? t('new.whenAllDay', { days })
+      : `${days} ${hhmm(r.startMin)} – ${end < r.startMin ? `${t('new.nextDay')} ` : ''}${endLabel(end)}`;
   return [when, who].filter(Boolean).join(' · ');
 }
 

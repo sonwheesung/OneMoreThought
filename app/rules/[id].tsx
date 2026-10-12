@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dialog, Switch, Toast, useDialog, useToast } from '@/components/controls.tsx';
 import { daysLabel } from '@/components/DayPicker.tsx';
 import { BackButton, GlassCard } from '@/components/flow.tsx';
-import { hhmm } from '@/components/TimeWheel.tsx';
+import { endLabel, hhmm } from '@/components/TimeWheel.tsx';
 import { GlassPill, GlowBackground } from '@/components/ui.tsx';
 import { loadDraft, setFlash, takeFlash } from '@/features/draft.ts';
 import { cachedRules, deleteRule, saveRule } from '@/features/rules.ts';
@@ -64,7 +64,7 @@ export default function RuleDetail() {
     ? `${days} ${t('stats.by', { time: hhmm(rule.startMin) })}`
     : rule.startMin === 0 && end === END_OF_DAY
       ? t('new.whenAllDay', { days })
-      : `${days} ${hhmm(rule.startMin)} – ${end < rule.startMin ? `${t('new.nextDay')} ` : ''}${end === END_OF_DAY ? '24:00' : hhmm(end)}`;
+      : `${days} ${hhmm(rule.startMin)} – ${end < rule.startMin ? `${t('new.nextDay')} ` : ''}${endLabel(end)}`;
 
   const toggle = (enabled: boolean) => {
     const next = { ...rule, enabled, updatedAt: Date.now() };

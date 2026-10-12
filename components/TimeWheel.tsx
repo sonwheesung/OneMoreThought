@@ -28,6 +28,8 @@ interface Props {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 export const hhmm = (min: number) => `${pad(Math.floor(min / 60))}:${pad(min % 60)}`;
+/** 끝 시각 글자: 저장값 END_OF_DAY(23:59)는 사람에게 24:00 으로 보인다(#38) · 모든 화면이 이것을 쓴다 */
+export const endLabel = (min: number) => (min === END_OF_DAY ? '24:00' : hhmm(min));
 
 export function TimeWheel({ value, onChange, stepMin = 60, item = 44, visible = 5, label, endOfDay }: Props) {
   const c = usePalette();

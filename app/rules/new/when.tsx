@@ -5,7 +5,7 @@ import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import { daysLabel, DayPicker } from '@/components/DayPicker.tsx';
 import { Chip, FlowScreen, GlassCard, flowStyles, useEdit } from '@/components/flow.tsx';
-import { hhmm, TimeWheel } from '@/components/TimeWheel.tsx';
+import { endLabel, hhmm, TimeWheel } from '@/components/TimeWheel.tsx';
 import { EASE } from '@/components/ui.tsx';
 import { interceptStep, setDraft, useDraft } from '@/features/draft.ts';
 import { END_OF_DAY } from '@/lib/rules.ts';
@@ -39,7 +39,7 @@ export default function NewRuleWhen() {
         days: daysLabel(d.days, t),
         start: hhmm(d.startMin),
         next: nextDay ? `${t('new.nextDay')} ` : '',
-        end: d.endMin === END_OF_DAY ? '24:00' : hhmm(d.endMin), // 하루 종일에서 시작만 옮기면 끝은 자정까지(#38)
+        end: endLabel(d.endMin), // 하루 종일에서 시작만 옮기면 끝은 자정까지(#38)
       });
 
   return (
