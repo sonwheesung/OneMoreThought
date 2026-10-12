@@ -544,7 +544,7 @@ OneMoreThought/
 | 처리방침 URL | ✅ 2026-10-09 `https://vivace-games.com/onemorethought/privacy` 200 · volleyball `309749a` · 원문 정본은 `docs/legal/` · 고치면 volleyball 세션에 다시 게시를 부탁한다 | 서버가 없어도 필요하다(접근성 공개 · 데이터 보안). 게시처 미정(`vivace-games.com/<앱>/` 선례) |
 | Play 앱 생성 · 패키지 이름 | ✅ 2026-10-09 앱 ID `4973289933019418964` · `com.vivacegames.onemorethought`(결정 #36) | 🔴 되돌릴 수 없다 |
 | 업로드 키스토어 | ✅ 2026-10-09 `docs/BUILD.md` §1 | `C:\project\secrets\` · config plugin 으로 서명 |
-| 비공개 테스트 12명 × 14일 | 🟡 2026-10-12 검토 전송(Alpha vc1 `0.1.0` · 141개국 · doply 41 + 사장님 검증 전용 2 · 접근성 시연 영상 `Q_5leAOlYiA`) · 게시 뒤 0원 할인 → doply 링크 전달 | `common/CLOSED_TESTING.md` |
+| 비공개 테스트 12명 × 14일 | ✅ 2026-10-12 게시(검토 당일 통과) · 0원 할인 10-13 ~ 10-26 예약 · 할인 시작 뒤 doply 에 `https://play.google.com/apps/testing/com.vivacegames.onemorethought` 전달(사용자) · 🟡 2026-10-12 검토 전송(Alpha vc1 `0.1.0` · 141개국 · doply 41 + 사장님 검증 전용 2 · 접근성 시연 영상 `Q_5leAOlYiA`) · 게시 뒤 0원 할인 → doply 링크 전달 | `common/CLOSED_TESTING.md` |
 | 서비스명 상표 확인 | ❌ | 미결정 N 이후 |
 | 수정사항 시트 탭 | ❓ 확인 안 됨 | `common/FIX_REQUESTS.md` · 탭이 생기면 `check` 스킬을 이식한다 |
 
