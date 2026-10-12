@@ -214,6 +214,7 @@ The app lets users create their own rules: "When I open <app I chose> during <da
 
 ### 5.7 시연 영상 촬영 목록
 
+> ✅ **최종 2026-10-12**: 한 번에 찍은 75.6초 영상(사적 화면만 가림) · YouTube **일부 공개** `https://www.youtube.com/watch?v=Q_5leAOlYiA`(사용자 개인 채널 · 사용자 지시로 업로드) · 접근성 신고 저장(용도 앱 기능 + 애널리틱스 · 민감 정보 예 · 앱 상호작용 · 설치된 앱) → 출시 화면 오류 0 · 남은 것은 "테스터 미지정" 경고 하나.
 > 🔁 같은 날 뒤집힘: 콘솔 접근성 신고는 **영상 링크가 비면 [저장]이 켜지지 않는다**(실측) → 사용자 *"1번 하자"* → `adb screenrecord` 두 토막(공개 문구 · 거절 · 동의 · 설정 / 사용 중 · 확인 화면 · [취소] · [열기]) + ffmpeg 이어 붙임 = `D:\builds\OneMoreThought\onemorethought-accessibility-demo.mp4`(96초 · 4.3 MB · 릴리스 APK vc1). 서비스 켜기는 사용자 손. YouTube 일부 공개 업로드는 사용자.
 > ~~2026-10-12 사용자 선택 **"영상 없이 먼저 제출"**(추천은 adb 녹화 + 사용자 업로드). 접근성 신고의 영상 칸을 비우고 낸다. 거절되면 아래 목록대로 `adb screenrecord` 로 찍고 사용자가 YouTube 일부 공개로 올린다(심사를 다시 기다리는 며칠은 감수).~~
  (YouTube 일부 공개 링크 · 30~90초)
