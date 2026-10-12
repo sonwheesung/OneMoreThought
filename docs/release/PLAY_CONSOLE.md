@@ -132,7 +132,7 @@ One-time purchase. All future updates included.
 | 국가 | **145개국** — EEA 30 · 영국 · 스위스(32개국)를 뺀 전체(결정 #14 · [`../DISTRIBUTION_POLICY.md`](../DISTRIBUTION_POLICY.md)) |
 | 비공개 트랙 국가 | ✅ 2026-10-12 비공개 테스트 - Alpha 에 저장: **141개국 타겟팅**. 콘솔 목록 178 중 고를 수 없는 5(수단 · 이란 · 중국 · 쿠바 · 기타 국가)와 닫는 32개국을 뺀 수다("145"는 가격 화면 177개 기준 옛 계산 · 실제 열린 나라는 이 141). 스크립트로 32개 전부 꺼짐 · 다른 나라 안 꺼짐을 확인함 |
 
-✅ 2026-10-12 게시 · [판매] 탭 열림 · **0원 할인 `closed-test-free-14d` 2026-10-13 ~ 10-26 예약**(고정 가격 0 · 174개 지역 · 비율 100% 는 거부됨 · 시작일은 내일부터만). 참여 링크(할인 시작 뒤 doply 에): 웹 `https://play.google.com/apps/testing/com.vivacegames.onemorethought` · Android `https://play.google.com/store/apps/details?id=com.vivacegames.onemorethought`.
+✅ 2026-10-12 게시 · [판매] 탭 열림 · **0원 할인 `closed-test-free-14d` 2026-10-13 ~ 10-26 예약**(00:00 ~ 23:59 GMT = 한국 10-13 09:00 ~ 10-27 08:59)(고정 가격 0 · 174개 지역 · 비율 100% 는 거부됨 · 시작일은 내일부터만). 참여 링크(할인 시작 뒤 doply 에): 웹 `https://play.google.com/apps/testing/com.vivacegames.onemorethought` · Android `https://play.google.com/store/apps/details?id=com.vivacegames.onemorethought`.
 ⚠ 유료 앱 비공개 트랙은 **테스터도 산다** → 100% 할인 프로모션 코드. ~~doply 테스터와 유료 앱의 조합은 ⚠ 사용자 결정 대기~~ → 2026-10-09 **0원 할인(판매)으로 간다**(CLAUDE §7). 콘솔 [판매] 탭은 앱 게시 전이라 아직 잠겨 있다 → 비공개 트랙 첫 게시 뒤 판매를 만든다(1 ~ 14일 · 다음 판매까지 30일 간격 · 14일 테스트를 덮으려면 시작일을 맞춘다). 막히면 프로모션 코드.
 ✅ 2026-10-09 콘솔 가격 저장: 전 국가 US$1.99 기준 자동 환산(177개 국가 · 배포 국가는 트랙에서 145개로 고른다) · 대한민국만 ₩3,300 으로 고침.
 
