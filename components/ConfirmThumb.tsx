@@ -8,7 +8,7 @@ import { usePalette } from '@/theme/useTheme.ts';
 /**
  * 확인 화면 미리보기(그림) · 시안 원모어 #10.
  * 🔴 Pressable 이 없다. 버튼은 점선 lineStrong + text3 로 비활성임을 보이고, 눌러도 아무것도 부르지 않는다(기록이 남지 않는다).
- * 🔴 첫 줄은 쓴 그대로(다듬기 · 추천 · 자동 완성 없음 · 기둥 4). [취소][열기]는 같은 크기 · 누를 수 없는 그림이라 둘 다 점선(실제 확인 화면은 [열기]가 보라 · 결정 #43).
+ * 🔴 첫 줄은 쓴 그대로(다듬기 · 추천 · 자동 완성 없음 · 기둥 4). [열기][취소] 순서 · 같은 크기 · 누를 수 없는 그림이라 둘 다 점선(실제 확인 화면은 [취소]가 보라 · 결정 #43).
  * 실제 화면은 Kotlin `ConfirmView.kt` 다. 그림은 그 배치를 줄여 그린 것이다.
  */
 interface Props {
@@ -26,7 +26,7 @@ export function ConfirmThumb({ message, ruleName, targetLabel, landscape }: Prop
   const dashed = { borderColor: c.lineStrong };
   const pills = (
     <View style={landscape ? styles.pillsCol : styles.pillsRow}>
-      {[t('confirm.cancel'), t('confirm.open')].map((l) => (
+      {[t('confirm.open'), t('confirm.cancel')].map((l) => (
         <View key={l} style={[styles.pill, dashed, landscape ? styles.pillL : styles.flex]}>
           <Text style={[styles.pillText, { color: c.text3 }]}>{l}</Text>
         </View>

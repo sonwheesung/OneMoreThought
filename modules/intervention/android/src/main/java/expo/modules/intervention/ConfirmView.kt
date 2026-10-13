@@ -80,9 +80,10 @@ internal class ConfirmView(
     }
     setMessage(message, ruleName)
 
-    val cancel = pill(ctx.getString(R.string.intervention_cancel), onCancel)
-    val open = pill(ctx.getString(R.string.intervention_open), onOpen, primary = true)
-    if (landscape) buildLandscape(cancel, open) else buildPortrait(cancel, open)
+    // 결정 #43(2026-10-13): [열기] 먼저(왼쪽 · 위) 흰 알약 · [취소] 나중(오른쪽 · 아래) 보라 주 버튼
+    val cancel = pill(ctx.getString(R.string.intervention_cancel), onCancel, primary = true)
+    val open = pill(ctx.getString(R.string.intervention_open), onOpen)
+    if (landscape) buildLandscape(open, cancel) else buildPortrait(open, cancel)
     root.addView(content, FrameLayout.LayoutParams(-1, -1))
 
     // 시스템 막대 · 노치 안쪽 + 시안 여백(세로 위 28 · 좌우 24 · 아래 34 / 가로 위아래 20 · 좌우 28)
@@ -102,7 +103,7 @@ internal class ConfirmView(
   }
 
   /** 세로(#1): 맨 위 메타 줄 · 가운데 둥근 표시 + 메시지 + 둘째 줄 · 엄지 자리에 같은 알약 둘 */
-  private fun buildPortrait(cancel: View, open: View) {
+  private fun buildPortrait(first: View, second: View) {
     val col = MaxWidth(ctx, dp(520f)).apply { orientation = LinearLayout.VERTICAL }
     meta.gravity = Gravity.CENTER
     msg.gravity = Gravity.CENTER
@@ -116,8 +117,8 @@ internal class ConfirmView(
     }
     val row = LinearLayout(ctx).apply {
       orientation = LinearLayout.HORIZONTAL
-      addView(cancel, LinearLayout.LayoutParams(0, dp(58f), 1f))
-      addView(open, LinearLayout.LayoutParams(0, dp(58f), 1f).apply { marginStart = dp(12f) })
+      addView(first, LinearLayout.LayoutParams(0, dp(58f), 1f))
+      addView(second, LinearLayout.LayoutParams(0, dp(58f), 1f).apply { marginStart = dp(12f) })
     }
     col.addView(meta, LinearLayout.LayoutParams(-1, -2))
     col.addView(textBlock, LinearLayout.LayoutParams(-1, 0, 1f))
@@ -128,7 +129,7 @@ internal class ConfirmView(
   }
 
   /** 가로(#2): 왼쪽 글자 블록(왼쪽 정렬) | 오른쪽 알약 둘(196dp · 위아래) · 카드 최대 520dp · 안전 영역 가운데 */
-  private fun buildLandscape(cancel: View, open: View) {
+  private fun buildLandscape(first: View, second: View) {
     val card = MaxWidth(ctx, dp(520f)).apply {
       orientation = LinearLayout.HORIZONTAL
       gravity = Gravity.CENTER_VERTICAL
@@ -144,8 +145,8 @@ internal class ConfirmView(
     }
     val right = LinearLayout(ctx).apply {
       orientation = LinearLayout.VERTICAL
-      addView(cancel, LinearLayout.LayoutParams(-1, dp(54f)))
-      addView(open, LinearLayout.LayoutParams(-1, dp(54f)).apply { topMargin = dp(12f) })
+      addView(first, LinearLayout.LayoutParams(-1, dp(54f)))
+      addView(second, LinearLayout.LayoutParams(-1, dp(54f)).apply { topMargin = dp(12f) })
     }
     card.addView(left, LinearLayout.LayoutParams(0, -2, 1f).apply { marginEnd = dp(36f) })
     card.addView(right, LinearLayout.LayoutParams(dp(196f), -2))
@@ -200,7 +201,7 @@ internal class ConfirmView(
     else if (weight >= 600) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
 
   /**
-   * [취소] 유리 알약 · [열기] 보라 주 버튼(primary · 결정 #43 · 크기는 같다) — Button 대신(기기 테마 · 대문자 · 그림자를 피한다)
+   * [열기] 유리 알약 · [취소] 보라 주 버튼(primary · 결정 #43 · 크기는 같다) — Button 대신(기기 테마 · 대문자 · 그림자를 피한다)
    * 눌림 .97 · 120ms · 스프링 없음
    */
   private fun pill(label: String, onClick: () -> Unit, primary: Boolean = false) = TextView(ctx).apply {
