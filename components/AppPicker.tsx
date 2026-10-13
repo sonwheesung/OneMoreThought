@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -35,6 +35,13 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
     [],
   );
   const [q, setQ] = useState('');
+  // 새로 고른 칩은 줄 끝에 붙는다 → 늘었을 때만 끝으로 민다(뺄 때는 보던 자리 그대로)
+  const chipsRef = useRef<ScrollView>(null);
+  const prevCount = useRef(value.length);
+  useEffect(() => {
+    if (value.length > prevCount.current) setTimeout(() => chipsRef.current?.scrollToEnd({ animated: true }), 0);
+    prevCount.current = value.length;
+  }, [value.length]);
   const shown = useMemo(() => {
     const k = q.trim().toLocaleLowerCase();
     return k ? apps.filter((a) => a.label.toLocaleLowerCase().includes(k)) : apps;
@@ -64,11 +71,13 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
         ]}
       />
       {!single && (
-        // 고른 앱이 많으면 칩이 목록을 밀어낸다 → 두 줄 반까지만 보이고 안에서 굴린다(반 줄이 "더 있다"를 알린다)
+        // 고른 앱이 많아도 목록을 밀지 않게 한 줄로 두고 옆으로 굴린다(2026-10-13 사용자 · 여러 줄은 별로)
         <ScrollView
+          ref={chipsRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
           style={styles.chipsBox}
           contentContainerStyle={styles.chips}
-          nestedScrollEnabled
           keyboardShouldPersistTaps="handled">
           {value.length === 0 ? (
             <Text style={[styles.none, { color: c.text3 }]}>{t('new.appNone')}</Text>
@@ -149,13 +158,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     fontSize: 16,
   },
-  // 칩 34 × 2 + 사이 8 × 2 + 반 줄 17 ≈ 101
-  chipsBox: { flexGrow: 0, maxHeight: 101 },
+  // 화면 좌우 여백(spacing.xl)까지 칩이 흘러가게 바깥으로 넓힌다
+  chipsBox: { flexGrow: 0, marginHorizontal: -spacing.xl },
   chips: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: spacing.sm,
     minHeight: 34,
+    paddingHorizontal: spacing.xl,
   },
   none: { fontSize: 13, lineHeight: 34 },
   chip: {
