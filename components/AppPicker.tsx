@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Intervention, type LaunchableApp } from '@/modules/intervention';
 import { radius, spacing } from '@/theme/tokens.ts';
@@ -64,7 +64,12 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
         ]}
       />
       {!single && (
-        <View style={styles.chips}>
+        // 고른 앱이 많으면 칩이 목록을 밀어낸다 → 두 줄 반까지만 보이고 안에서 굴린다(반 줄이 "더 있다"를 알린다)
+        <ScrollView
+          style={styles.chipsBox}
+          contentContainerStyle={styles.chips}
+          nestedScrollEnabled
+          keyboardShouldPersistTaps="handled">
           {value.length === 0 ? (
             <Text style={[styles.none, { color: c.text3 }]}>{t('new.appNone')}</Text>
           ) : (
@@ -88,7 +93,7 @@ export function AppPicker({ step, total, title, sub, single, value, onChange, on
               </Pressable>
             ))
           )}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -144,6 +149,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     fontSize: 16,
   },
+  // 칩 34 × 2 + 사이 8 × 2 + 반 줄 17 ≈ 101
+  chipsBox: { flexGrow: 0, maxHeight: 101 },
   chips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
