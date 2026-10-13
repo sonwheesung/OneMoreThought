@@ -81,7 +81,7 @@ internal class ConfirmView(
     setMessage(message, ruleName)
 
     val cancel = pill(ctx.getString(R.string.intervention_cancel), onCancel)
-    val open = pill(ctx.getString(R.string.intervention_open), onOpen)
+    val open = pill(ctx.getString(R.string.intervention_open), onOpen, primary = true)
     if (landscape) buildLandscape(cancel, open) else buildPortrait(cancel, open)
     root.addView(content, FrameLayout.LayoutParams(-1, -1))
 
@@ -199,19 +199,28 @@ internal class ConfirmView(
     if (Build.VERSION.SDK_INT >= 28) Typeface.create(Typeface.DEFAULT, weight, false)
     else if (weight >= 600) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
 
-  /** [취소][열기] 같은 유리 알약 — Button 대신(기기 테마 · 대문자 · 그림자를 피한다) · 눌림 .97 · 120ms · 스프링 없음 */
-  private fun pill(label: String, onClick: () -> Unit) = TextView(ctx).apply {
+  /**
+   * [취소] 유리 알약 · [열기] 보라 주 버튼(primary · 결정 #43 · 크기는 같다) — Button 대신(기기 테마 · 대문자 · 그림자를 피한다)
+   * 눌림 .97 · 120ms · 스프링 없음
+   */
+  private fun pill(label: String, onClick: () -> Unit, primary: Boolean = false) = TextView(ctx).apply {
     text = label
     isAllCaps = false
     gravity = Gravity.CENTER
     setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
     typeface = weighted(600)
     letterSpacing = -0.01f
-    setTextColor(color(R.color.omt_text))
-    background = GradientDrawable().apply {
-      cornerRadius = 999f * density
-      setColor(color(R.color.omt_confirm_btn))
-      setStroke(dp(1f).coerceAtLeast(1), color(R.color.omt_confirm_btn_line))
+    setTextColor(color(if (primary) R.color.omt_on_accent else R.color.omt_text))
+    background = if (primary) {
+      GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, intArrayOf(color(R.color.omt_accent), color(R.color.omt_accent_end))).apply {
+        cornerRadius = 999f * density
+      }
+    } else {
+      GradientDrawable().apply {
+        cornerRadius = 999f * density
+        setColor(color(R.color.omt_confirm_btn))
+        setStroke(dp(1f).coerceAtLeast(1), color(R.color.omt_confirm_btn_line))
+      }
     }
     isClickable = true
     isFocusable = true
