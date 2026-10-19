@@ -81,13 +81,14 @@ export default function Settings() {
 
           <Text style={[styles.group, { color: c.text3 }]}>{t('settings.groupHelp')}</Text>
           <GlassCard>
-            {/* 문의 양식(공용 서버 · 진단 첨부 미리보기 · 옛 주체 번호 표시)은 Phase 5. 그 전엔 눌리지 않는다고 밝힌다 */}
-            <View style={styles.row} accessible accessibilityState={{ disabled: true }}>
+            {/* 문의 양식(공용 서버 · 진단 첨부 미리보기 · 옛 주체 번호 · DIAGNOSTICS_SYSTEM §5 · 결정 #35) */}
+            <Pressable onPress={() => router.push('/contact' as Href)} accessibilityRole="button" style={styles.row}>
               <View style={styles.flex}>
-                <Text style={[styles.rowTitle, { color: c.disabledText }]}>{t('settings.contact')}</Text>
-                <Text style={[styles.rowSub, { color: c.text3 }]}>{t('settings.contact_soon')}</Text>
+                <Text style={[styles.rowTitle, { color: c.text }]}>{t('settings.contact')}</Text>
+                <Text style={[styles.rowSub, { color: c.text2 }]}>{t('settings.contact_sub')}</Text>
               </View>
-            </View>
+              <Text style={[styles.chev, { color: c.text3 }]}>›</Text>
+            </Pressable>
           </GlassCard>
 
           <Text style={[styles.group, { color: c.text3 }]}>{t('settings.groupAbout')}</Text>

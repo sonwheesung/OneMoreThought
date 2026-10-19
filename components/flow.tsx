@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { saveEdit } from '@/features/draft.ts';
@@ -75,6 +75,8 @@ export function FlowScreen({
   return (
     <GlowBackground>
       <SafeAreaView style={styles.flex} edges={['top', 'bottom', 'left', 'right']}>
+        {/* edge-to-edge 라 adjustResize 가 듣지 않는다 → 키보드가 주 버튼을 덮었다(2026-10-13 실기기) · 키보드만큼 아래를 띄운다 */}
+        <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <View style={styles.bar}>
           {edit ? (
             <Text style={[styles.editHead, { color: c.text3 }]}>{t('edit.header')}</Text>
@@ -103,6 +105,7 @@ export function FlowScreen({
           {footer}
           <PrimaryButton label={cta} onPress={onCta} disabled={ctaDisabled} />
         </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </GlowBackground>
   );

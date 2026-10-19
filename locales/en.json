@@ -180,7 +180,7 @@
     "cancel": "Cancel",
     "wiped": "Erased from this device",
     "contact": "Contact us",
-    "contact_soon": "Coming soon.",
+    "contact_sub": "Send a bug report, idea or question.",
     "groupAbout": "About",
     "privacy": "Privacy policy",
     "terms": "Terms of service",
@@ -230,5 +230,21 @@
     "pick": "Select",
     "note": "If you're under 14, your rules and history stay on this phone and nothing is sent to our server.",
     "done": "Next"
+  },
+  "contact": {
+    "kind": "What is it about?",
+    "cat_bug": "Bug",
+    "cat_suggestion": "Suggestion",
+    "cat_question": "Question",
+    "cat_etc": "Other",
+    "ph": "Tell us what happened. When and in which app helps us find it.",
+    "attachNote": "Diagnostic info is sent along to help us fix things: device info, error log, rule names and messages, and target apps.",
+    "preview": "See what will be sent",
+    "previewHide": "Hide what will be sent",
+    "send": "Send",
+    "sent": "Sent",
+    "fail": "Couldn't send. Try again in a moment or email us.",
+    "failBusy": "Too many messages right now. Please try again later.",
+    "localLead": "You answered that you're under 14, so the app doesn't send messages to our server. Please email us."
   }
 }
