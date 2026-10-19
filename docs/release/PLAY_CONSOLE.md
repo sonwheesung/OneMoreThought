@@ -250,4 +250,5 @@ The app lets users create their own rules: "When I open <app I chose> during <da
 - 🔴 결정 #37: 14일 동안 문의 화면 · 실행 확인 알림 발송 · 규칙 수정 · 삭제를 새 AAB 로 채운다. 🔴 **14일 동안 OTA 는 쓰지 않는다**(결정 #39 · 고칠 것은 새 AAB 로).
 - ⚠ 함정: 새 AAB 를 올릴 때 **다른 트랙에 남은 옛 AAB** 가 활성이면 경고 · 거부가 난다 — 트랙마다 확인(`common/PLAY_RELEASE_AUTOMATION.md` §5).
 - 서비스 계정을 쓰게 되면 권한은 **"테스트 트랙에 출시"만** 준다.
+- 🔁 2026-10-19 vc2: Alpha 에 새 버전 임시 저장(출시명 `2 (0.1.0)` · 출시 노트 en-US `Added in-app contact (send a bug report, suggestion or question). Fixed the keyboard covering the Save button.` / ko-KR `앱 안에서 문의를 보낼 수 있어요. 키보드가 [저장] 버튼을 가리던 문제를 고쳤어요.`). AAB 업로드 · 검토 전송은 사용자가 한다(파일 45MB 라 브라우저 도구로 못 올린다). ⚠ 콘솔은 크롬 두 번째 로그인(`/u/1/` · 개발자 계정 «Vivace Games Studio»)에 있다. `/u/0/` 의 «Vivace Games» 계정에는 앱이 없다.
 - 버전: `0.1.0` · versionCode 1. 프로모션 코드로 받는 테스터뿐이라 0.x 를 유지한다(`PRE_LAUNCH_CHECK.md` §4 "낯선 사람이 돈을 낼 수 있으면 1.0" — 프로덕션 전에 1.0 으로).

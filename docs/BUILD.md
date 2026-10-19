@@ -28,7 +28,7 @@ npx expo prebuild --platform android --no-install
 # ② 게이트(실물을 본다 · R8_OBFUSCATION §2-C)
 grep -q '^android.enableMinifyInReleaseBuilds=true' android/gradle.properties || echo "R8 꺼짐"
 grep -q 'signingConfigs.upload' android/app/build.gradle || echo "서명 블록 없음"
-grep -q 'versionCode 1' android/app/build.gradle       # app.json android.versionCode 와 같은가
+grep -q 'versionCode 2' android/app/build.gradle       # app.json android.versionCode 와 같은가
 
 # ③ 굽기(🔴 gradlew clean 금지 · 필요하면 rm -rf android/app/build android/app/.cxx android/build android/.gradle)
 #    android/local.properties: sdk.dir=C:/Users/user/AppData/Local/Android/Sdk (🔴 역슬래시를 쓰면 \u 로 읽혀 깨진다)
@@ -68,6 +68,7 @@ npm run check:signing       # 업로드 키 지문과 같은가(디버그 키여
 
 ### 4.1 실측 값
 
+🔁 **vc2 · 2026-10-19 16:05 · 코드 `d0284e7`**(앱 안 문의 화면 · 규칙 편집 키보드 고침 · 확인 화면 버튼 결정 #43 · AAB 45,658,378 B · APK 63,183,570 B · `check:release-url` · `check:signing` 통과 · `Unable to strip` 0) ← 올릴 파일. 실기기(S24) 릴리스 APK 로 문의 · 키보드 · 규칙 만들기를 확인했다. 🔴 adb 로 덮어 깔았더니 접근성 전체 스위치(`accessibility_enabled`)가 0 이 됐다(서비스 목록은 남음) → Play 업데이트에서도 그런지 사용자가 확인한다.
 🔁 **vc1 최종 · 2026-10-12 11:48 · 코드 `cba0954`**(홈 줄 24:00 고침 · AAB 45,652,935 B · APK 63,174,250 B · 같은 두 검사 통과) ← 올릴 파일.
 🔁 **vc1 다시 구움 · 2026-10-12 11:43 · 코드 `0412087`**(결정 #41 나이 확인 · #42 알림 규칙 숨김 · 2026-10-10 실기기 수정 4건 포함 · `BUILD SUCCESSFUL in 6m 11s`). AAB 45,652,652 B · APK 63,174,098 B · `check:release-url` · `check:signing` 통과. 2026-10-09 vc1 은 올린 적이 없어 버전 번호를 그대로 쓴다(옛 파일은 `D:\builds\OneMoreThought\superseded\`).
 🔴 함정(같은 날 실측): 중간에 끊긴 굽기의 `app/build` 가 남은 채로 다시 구우면 `stripReleaseDebugSymbols` 가 *"Unable to strip …"* 을 내고 armeabi-v7a · x86 · x86_64 의 `.so` 를 통째로 넣는다(AAB 132 MB · APK 437 MB). `app/build` · `app/.cxx` 를 지우고 다시 구우면 정상. 지울 때 `rm -rf` 가 *"Device or resource busy"* 를 내면 파일 이름의 `..jar` 때문이다 → PowerShell `Remove-Item -LiteralPath '\?\C:\…\android\app\build' -Recurse -Force`. 굽고 나면 `grep -c "Unable to strip" build.log` 가 0 인지 본다.
@@ -96,6 +97,7 @@ vc1 · 2026-10-09 15:36 · `BUILD SUCCESSFUL in 7m 28s`(R8 포함)
 | vc | 버전 | 날짜 | 무엇 | 크기 |
 |---|---|---|---|---|
 | 1 | 0.1.0 | 2026-10-09 | 첫 비공개 테스트 후보(결정 #37 · OTA 포함 #39 · 아이콘은 자리표시) · `D:\builds\OneMoreThought\onemorethought-vc1.aab` · `.apk` | 43.9MB · 61.6MB |
+| 2 | 0.1.0 | 2026-10-19 | 앱 안 문의(결정 #35) · 키보드가 [저장]을 가리던 것 · 확인 화면 [열기] 흰 · [취소] 보라(결정 #43) · `D:uilds\OneMoreThought\onemorethought-vc2.aab` · `.apk` | 45.7MB · 63.2MB |
 
 버전: 비공개 테스트는 프로모션 코드 테스터뿐이라 `0.x` 를 유지한다. 낯선 사람이 돈을 낼 수 있는 프로덕션 전에 `1.0.0` 으로 올린다(`PRE_LAUNCH_CHECK.md` §4).
 
