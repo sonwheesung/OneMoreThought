@@ -13,12 +13,14 @@ import { usePalette } from '@/theme/useTheme.ts';
 
 /**
  * 나이 확인 · 결정 #41. 첫 실행(또는 「이 기기에서만 지우기」 뒤)에 홈보다 먼저 한 번 묻는다.
- * 🔴 휠은 «선택»에서 시작한다(어른 연도를 미리 골라 두지 않는다 · 그냥 눌러 넘기지 못하게).
+ * 🔴 휠은 «선택»에서 시작한다(어른 연도를 미리 골라 두지 않는다 · 그냥 눌러 넘기지 못하게). «선택» 칸은 목록 가운데(PICK_AT)에 있다(vc3).
  * 🔴 출생연도는 화면 밖으로 나가지 않는다. 결과(ok · under14)만 기기에 남긴다(features/age.ts).
  * 만 14세 미만이어도 앱은 그대로 쓴다. 다만 서버로 아무것도 보내지 않는다.
  * 뒤로가기 없음: 이 화면이 첫 화면이다.
  */
 const NONE = 0;
+/** «선택» 칸을 이 나이 옆에 둔다. 위로 굴리면 젊은 연도, 아래로 굴리면 나이 든 연도(맨 위에 두면 어른 연도까지 수십 칸) */
+const PICK_AT = 30;
 
 export default function AgeGate() {
   const { t } = useTranslation();
@@ -26,10 +28,8 @@ export default function AgeGate() {
   const [year, setYear] = useState(NONE);
   const data = useMemo<PickerItem<number>[]>(() => {
     const now = new Date().getFullYear();
-    return [
-      { value: NONE, label: t('age.pick') },
-      ...Array.from({ length: 101 }, (_, i) => ({ value: now - i, label: String(now - i) })),
-    ];
+    const years = Array.from({ length: 101 }, (_, i) => ({ value: now - i, label: String(now - i) }));
+    return [...years.slice(0, PICK_AT), { value: NONE, label: t('age.pick') }, ...years.slice(PICK_AT)];
   }, [t]);
 
   const done = () => {

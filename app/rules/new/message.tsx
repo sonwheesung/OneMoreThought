@@ -48,7 +48,12 @@ export default function NewRuleMessage() {
       return;
     }
     setState('saved');
-    setTimeout(() => router.dismissTo('/'), 900);
+    // 서비스가 꺼져 있으면 홈 위에 접근성 안내를 띄운다. 안 그러면 저장하고도 확인 화면이 안 뜬다([나중에] = 홈)
+    const needService = !(Intervention?.isServiceEnabled() ?? true);
+    setTimeout(() => {
+      router.dismissTo('/');
+      if (needService) router.push('/permission/accessibility');
+    }, 900);
   };
 
   if (state === 'saved') return <SaveResult label={t('new.saved')} />;
