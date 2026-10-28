@@ -477,7 +477,7 @@ OneMoreThought/
 
 **#40 서버의 규칙 · 기록 · 메시지 보관 기간 = 마지막 접속 후 1년 (2026-10-09)** 선택 "마지막 접속 후 1년 (Recommended)"(메인 세션이 물음). `docs/DATABASE.md` §3 의 "보관 기간은 Phase 6 처리방침에서 정한다"를 닫는다.
 - 처리방침 초안(`docs/legal/PRIVACY.*.md`)에 그대로 쓴다. 진단 요약 90일 · 문의 첨부 1년 · 문의 본문 3년은 공용 서버 쪽 값 그대로다(`DIAGNOSTICS_SYSTEM.md` §4.3).
-- ⚠ 서버 정리 작업(마지막 접속 후 1년 지난 `subject_id` 의 행 삭제)은 **아직 없다**. 프로덕션 전에 만든다.
+- ~~⚠ 서버 정리 작업(마지막 접속 후 1년 지난 `subject_id` 의 행 삭제)은 **아직 없다**. 프로덕션 전에 만든다.~~ → ✅ 2026-10-28 `server/app/api/cron/purge` · Vercel cron 매일(`docs/DATABASE.md` §3).
 - 대가: 1년 넘게 안 쓴 사람의 기록은 분석에서 빠진다. 다시 오면 새로 시작한다(로그인이 없어 원래도 되찾을 길이 없다).
 
 **#41 첫 실행에 출생연도를 묻는다 · 만 14세 미만이면 서버로 아무것도 보내지 않는다 (2026-10-09)** 선택 "첫 실행에 출생연도 확인"(추천안 아님 · 추천은 "만 14세 이상 · 확인 화면 없음"). §4 의 "연령 확인 없음" 추천을 뒤집는다. 질문은 *"유료 앱이어도 개인정보보호법상 만 14세 미만의 정보를 모으려면 법정대리인 동의가 필요합니다"*.
@@ -551,7 +551,7 @@ OneMoreThought/
 | 처리방침 URL | ✅ 2026-10-09 `https://vivace-games.com/onemorethought/privacy` 200 · volleyball `309749a` · 원문 정본은 `docs/legal/` · 고치면 volleyball 세션에 다시 게시를 부탁한다 · ✅ 2026-10-26 게시본 두 페이지 사업장 주소(경주) · 통신판매업 번호 갱신 · volleyball `2b88c44f` · 라이브에서 옛 값 0 확인(원문은 자리 표시자라 이 저장소는 고칠 곳 없음 · 값은 `common/BUSINESS_INFO.md` §1) | 서버가 없어도 필요하다(접근성 공개 · 데이터 보안). 게시처 미정(`vivace-games.com/<앱>/` 선례) |
 | Play 앱 생성 · 패키지 이름 | ✅ 2026-10-09 앱 ID `4973289933019418964` · `com.vivacegames.onemorethought`(결정 #36) | 🔴 되돌릴 수 없다 |
 | 업로드 키스토어 | ✅ 2026-10-09 `docs/BUILD.md` §1 | `C:\project\secrets\` · config plugin 으로 서명 |
-| 비공개 테스트 12명 × 14일 | 🟡 2026-10-23 vc3(첫 저장 → 접근성 안내 · 나이 휠) 구움 · S24 확인 · Alpha **검토 전송**(AAB 업로드는 사용자) · vc2 는 10-19 16:54 게시됨 · 🟡 2026-10-19 vc2(문의 화면 · 키보드 · 결정 #43) Alpha **검토 전송**(AAB 업로드는 사용자 · 관리형 게시 꺼짐 → 통과 즉시 게시)(`docs/release/PLAY_CONSOLE.md` §6) · 콘솔 대시보드 «현재 6일 동안 참여를 선택한 테스터 12명» · ✅ 2026-10-12 게시(검토 당일 통과) · 0원 할인 10-13 ~ 10-26 예약 · 할인 시작 뒤 doply 에 `https://play.google.com/apps/testing/com.vivacegames.onemorethought` 전달(사용자) · 🟡 2026-10-12 검토 전송(Alpha vc1 `0.1.0` · 141개국 · doply 41 + 사장님 검증 전용 2 · 접근성 시연 영상 `Q_5leAOlYiA`) · 게시 뒤 0원 할인 → doply 링크 전달 | `common/CLOSED_TESTING.md` |
+| 비공개 테스트 12명 × 14일 | ✅ 2026-10-28 대시보드 «앱에 Google Play 프로덕션 액세스 권한이 부여되었습니다» 확인(프로덕션 트랙은 아직 버전 없음) · 🟡 2026-10-23 vc3(첫 저장 → 접근성 안내 · 나이 휠) 구움 · S24 확인 · Alpha **검토 전송**(AAB 업로드는 사용자) · vc2 는 10-19 16:54 게시됨 · 🟡 2026-10-19 vc2(문의 화면 · 키보드 · 결정 #43) Alpha **검토 전송**(AAB 업로드는 사용자 · 관리형 게시 꺼짐 → 통과 즉시 게시)(`docs/release/PLAY_CONSOLE.md` §6) · 콘솔 대시보드 «현재 6일 동안 참여를 선택한 테스터 12명» · ✅ 2026-10-12 게시(검토 당일 통과) · 0원 할인 10-13 ~ 10-26 예약 · 할인 시작 뒤 doply 에 `https://play.google.com/apps/testing/com.vivacegames.onemorethought` 전달(사용자) · 🟡 2026-10-12 검토 전송(Alpha vc1 `0.1.0` · 141개국 · doply 41 + 사장님 검증 전용 2 · 접근성 시연 영상 `Q_5leAOlYiA`) · 게시 뒤 0원 할인 → doply 링크 전달 | `common/CLOSED_TESTING.md` |
 | 서비스명 상표 확인 | ❌ | 미결정 N 이후 |
 | 수정사항 시트 탭 | ❓ 확인 안 됨 | `common/FIX_REQUESTS.md` · 탭이 생기면 `check` 스킬을 이식한다 |
 
