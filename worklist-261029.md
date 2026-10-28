@@ -22,7 +22,7 @@
 | 유저 피해 | vc5 = **1.0.0** · versionCode 5 · `reportDevice` 버전 고정값(`'0.1.0'`) 수정. 작업 트리에 준비됨(`app.json` · `features/rules.ts` · `app/dev/spike.tsx` · `docs/BUILD.md` 게이트) · 커밋 안 함(실기 확인 전) | 메모리 `production-version-1-0-0` · `docs/BUILD.md` §2 | 서버 `devices.app_version` 이 전부 0.1.0 으로 찍힌다 |
 | 유저 피해 | 실행 확인 알림(Phase 3) → `CHECK_RULES_ENABLED` true | 결정 #42 | MVP 절반 |
 | 보안 · 수익 | ₩100 판매 14일(11월 하순 · 지난 판매 10-26 끝 + 30일) | 결정 #44 | 데이터 모으기 |
-| 보안 · 수익 | 처리방침이 실제보다 넓게 말한다: 문의 «회신받을 이메일»(앱에 칸 없음) · 요약 «대상 앱별 통계 · 실행 확인 결과»(vc4 는 패키지별 규칙 수만). 좁혀 다시 게시할지 🙋 | `docs/legal/PRIVACY.*.md` §2 · `DIAGNOSTICS_SYSTEM.md` §3 | 공개 문구 = 실제 수집(기둥 6) |
+| 보안 · 수익 | 처리방침이 실제보다 넓게 말한다: 문의 «회신받을 이메일»(앱에 칸 없음) · 요약 «대상 앱별 통계 · 실행 확인 결과»(vc4 는 패키지별 규칙 수만). 좁혀 다시 게시할지 → 2026-10-28 사용자 «그대로 둔다» · Phase 3 알림 · 통계를 넣을 때 실제와 함께 다시 맞춘다 | `docs/legal/PRIVACY.*.md` §2 · `DIAGNOSTICS_SYSTEM.md` §3 | 공개 문구 = 실제 수집(기둥 6) |
 | 보안 · 수익 | 데이터 보안 «이메일» 다시 신고는 필요 없다고 봄(문의 화면에 이메일 칸 없음) 🙋 확인 | `release/PLAY_CONSOLE.md` §5 | — |
 | 코드 결함(2026-10-28 감사) | 「이 기기에서만 지우기」가 진단 버퍼 `diag.jsonl` 을 안 지운다(옛 대상 앱 이름이 다음 문의에 붙는다) | `docs/DATABASE.md` §2 저장 키 표 | 결정 #34 «지웠다» 와 어긋남 |
 | 코드 결함 | 하루 요약에 `advProtection` 없음 → 결정 #32 `advanced_protection_on` 알림이 못 뜬다(그 신호를 남기는 코드도 없음) | `DIAGNOSTICS_SYSTEM.md` §4.1 | — |
@@ -34,4 +34,4 @@
 | 문서 | 축 ⑧ 남은 중복(낮은 위험): 포트 함정(CLAUDE §11 ↔ README §3) · 유예 값(#28 ↔ RULE_SYSTEM) · 하루 종일(#38 ↔ RULE_SYSTEM) | doc-consistency 2026-10-28 | — |
 | 문서 | 서비스명 상표 조사(KIPRIS) 안 함 | CLAUDE §15 | — |
 
-🙋 사용자 결정이 필요한 것: 처리방침을 좁혀 다시 게시할지(volleyball 세션) · 데이터 보안 이메일 신고 판단 확인.
+🙋 사용자 결정이 필요한 것: 데이터 보안 이메일 신고 판단 확인.
