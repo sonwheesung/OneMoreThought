@@ -34,7 +34,7 @@
 
 ### 2.1 영어 (en-US · 기본)
 
-- **App name**: `OneMoreThought`
+- **App name**: ~~`OneMoreThought`~~ → `OneMoreThought: Digital Detox`(결정 #45 · 2026-10-28)
 - **Short description** (≤80자): `Asks you once, in your own words, before you open the apps you chose.`
 - **Full description**:
 
@@ -64,7 +64,7 @@ One-time purchase. All future updates included.
 
 ### 2.2 한국어 (ko-KR)
 
-- **앱 이름**: `OneMoreThought`
+- **앱 이름**: ~~`OneMoreThought`~~ → `OneMoreThought - 디지털 디톡스`(결정 #45 · 2026-10-28)
 - **간단한 설명**(80자 이하): `고른 앱을 열 때, 내가 쓴 한 문장으로 한 번 더 생각하게 해 줘요.`
 - **자세한 설명**:
 
@@ -128,7 +128,7 @@ One-time purchase. All future updates included.
 
 | 칸 | 답 |
 |---|---|
-| 가격 | 기본 **₩3,300**(대한민국) · **US$1.99**(미국) · 나머지는 Play 자동 환산(결정 #25) |
+| 가격 | ~~기본 ₩3,300(대한민국) · US$1.99(미국)(결정 #25)~~ → **₩1,500**(대한민국) · **US$0.99**(미국) · 나머지는 Play 자동 환산(결정 #44 · 2026-10-28) · 출시 직후 14일 ₩100 판매(11월 하순 이후 · 30일 간격) |
 | 국가 | **145개국** — EEA 30 · 영국 · 스위스(32개국)를 뺀 전체(결정 #14 · [`../DISTRIBUTION_POLICY.md`](../DISTRIBUTION_POLICY.md)) |
 | 비공개 트랙 국가 | ✅ 2026-10-12 비공개 테스트 - Alpha 에 저장: **141개국 타겟팅**. 콘솔 목록 178 중 고를 수 없는 5(수단 · 이란 · 중국 · 쿠바 · 기타 국가)와 닫는 32개국을 뺀 수다("145"는 가격 화면 177개 기준 옛 계산 · 실제 열린 나라는 이 141). 스크립트로 32개 전부 꺼짐 · 다른 나라 안 꺼짐을 확인함 |
 
@@ -253,3 +253,44 @@ The app lets users create their own rules: "When I open <app I chose> during <da
 - 🔁 2026-10-19 vc2: Alpha 에 새 버전 임시 저장(출시명 `2 (0.1.0)` · 출시 노트 en-US `Added in-app contact (send a bug report, suggestion or question). Fixed the keyboard covering the Save button.` / ko-KR `앱 안에서 문의를 보낼 수 있어요. 키보드가 [저장] 버튼을 가리던 문제를 고쳤어요.`). AAB 업로드는 사용자(파일 45MB 라 브라우저 도구로 못 올린다) · 같은 날 **검토 전송**(지원 기기 변화 0 · 신규 설치 10.5MB · 업데이트 2.99MB · 관리형 게시 꺼짐이라 통과하면 바로 테스터에게 간다). ⚠ 콘솔은 크롬 두 번째 로그인(`/u/1/` · 개발자 계정 «Vivace Games Studio»)에 있다. `/u/0/` 의 «Vivace Games» 계정에는 앱이 없다.
 - 🔁 2026-10-23 vc3: vc2 는 2026-10-19 16:54 게시됨(검토 당일 통과). Alpha 새 버전 출시명 `3 (0.1.0)` · 출시 노트 en-US `If accessibility is off when you save your first rule, we now guide you to turn it on. Picking your birth year is quicker.` / ko-KR `규칙을 처음 저장할 때 접근성 권한이 꺼져 있으면 바로 안내해요. 태어난 해를 더 빨리 고를 수 있어요.` AAB 업로드는 사용자(브라우저 도구 한도 10MB) · 같은 날 **검토 전송**(지원 기기 변화 0 · 신규 설치 10.6MB · 업데이트 2.78MB · 관리형 게시 꺼짐).
 - 버전: `0.1.0` · versionCode 1. 프로모션 코드로 받는 테스터뿐이라 0.x 를 유지한다(`PRE_LAUNCH_CHECK.md` §4 "낯선 사람이 돈을 낼 수 있으면 1.0" — 프로덕션 전에 1.0 으로).
+
+## 7. 프로덕션 첫 출시 (2026-10-28 · vc4)
+
+프로덕션 액세스 부여 확인(2026-10-28 대시보드). 출시 버전은 vc4(`D:\builds\OneMoreThought\onemorethought-vc4.aab` · `docs/BUILD.md`). AAB 업로드는 사용자 · 나머지(버전 만들기 · 노트 · 국가 · 검토 전송)는 세션.
+국가는 비공개 트랙과 같은 141개국(EEA · 영국 · 스위스 32개국 닫음 · 결정 #14). 가격은 결정 #44.
+
+### 7.1 출시 노트(500자 이하 · 무엇이 있고 무엇을 위해 쓰나)
+
+en-US:
+```
+First release.
+
+• Ask before opening: pick the apps you want to cut back on and write one sentence to yourself. When you open one of them on the days and hours you chose, your sentence appears once. Choose Cancel or Open — Open always works with one tap.
+• Your week: how often you were asked, cancelled, or opened anyway. No scores, no blame.
+• Contact us from inside the app to report a problem or suggest an idea.
+
+It doesn't block anything. It gives you one more moment to decide.
+```
+
+ko-KR:
+```
+첫 출시예요.
+
+• 열기 전에 묻기: 줄이고 싶은 앱을 고르고 나에게 하는 한 문장을 적어요. 정한 요일과 시간에 그 앱을 열면 그 문장이 한 번 떠요. [취소]와 [열기] 중에 고르면 되고, [열기]는 언제나 한 번에 눌려요.
+• 지난 7일 기록: 몇 번 묻고, 취소하고, 그래도 열었는지 보여 줘요. 점수나 꾸중은 없어요.
+• 문의하기: 앱 안에서 오류를 알리거나 제안을 보낼 수 있어요.
+
+막는 앱이 아니에요. 열기 전에 한 번 더 생각할 틈을 줘요.
+```
+
+⚠ 한국어 노트 · 이름은 ChatGPT 검수 전이다(CLAUDE §10).
+
+### 7.2 콘솔 진행 (2026-10-28)
+
+- ✅ 기본 등록정보 en-US 앱 이름 `OneMoreThought: Digital Detox` 저장.
+- ✅ ko-KR 번역 등록정보 추가: 이름 `OneMoreThought - 디지털 디톡스` · 간단한 설명 · 자세한 설명(§2.2 그대로). 그래픽은 기본(en-US) 것을 쓴다.
+- ✅ 앱 가격: 전 국가 US$0.99 기준 자동 환산 → 대한민국만 ₩1,500(자동 환산값은 ₩1,300 이었다).
+- ✅ 프로덕션 국가 141개(전체 선택 뒤 32개국 해제 · 스크립트로 «닫는 나라 체크 0 · 그 밖 미선택은 고를 수 없는 5개뿐» 확인). 🔴 Material 체크박스는 `click()` 만으로 안 바뀐다 — `mousedown` · `mouseup` 뒤 첫 자식 `click()` 이어야 바뀐다.
+- ✅ 프로덕션 새 버전 `4 (0.1.0)` 임시 저장 · 출시 노트 2개 언어(en 484자 · ko 255자).
+- ⏳ 사용자: vc4 AAB 업로드 → 세션: 다음 → 저장 → 게시 개요 → 검토 전송.
+- ⏳ ₩100 판매 14일: 11월 하순 이후(결정 #44).
