@@ -1,4 +1,4 @@
-# OneMoreThought(가칭) — 문서 색인
+# OneMoreThought — 문서 색인
 
 > 🔴 **이 파일이 문서 색인이자 구현 현황의 정본이다.** 새 `*_SYSTEM.md` 를 추가하면 반드시 아래 목록과
 > 구현 현황표에 함께 등록한다([`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) 부록).
@@ -14,15 +14,15 @@
 
 | 문서 | 범위 | 상태 |
 |---|---|---|
-| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · ~~기기 정본 + 서버 사본(결정 #22)~~ → 서버 정본 + 기기 최소 캐시(결정 #30) · 결정 **40건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **0건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-06 |
+| [`../CLAUDE.md`](../CLAUDE.md) | 설계 정본. 기둥 7개 · MVP 범위 · 계정 없음 · ~~기기 정본 + 서버 사본(결정 #22)~~ → 서버 정본 + 기기 최소 캐시(결정 #30) · 결정 **40건**(세는 법: `grep -c "^\*\*#" CLAUDE.md`) · 미결정 **0건**(세는 법: `grep -c "^| [A-Z] |" CLAUDE.md`) | ✅ 2026-10-28 · §16 현재 상태 갱신 |
 | [`PLAN.md`](./PLAN.md) | 착수 순서(리뷰 → Phase 0 스파이크 ~ 8) · 완료 기준 · 막는 미결정 | ✅ 2026-10-06 |
-| [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 2026-10-06 · 설계 초안(미결정 다수) |
+| [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) | 규칙 두 종류 · 판정 · 하루 · 통과 상태 · 하루 1회 알림 · 기록 · 통계 · 엣지 출발 목록 | 🔨 실행 전 확인 ✅(vc1 ~) · 실행 확인 알림은 Phase 3(결정 #42) |
 | [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) | 감지(접근성 · 사용 기록) · 오버레이 · 알람 · 앱 목록 · Expo 네이티브 · 권한 온보딩 · 🔴 Play 접근성 정책 · Phase 0 스파이크 | 🔨 2026-10-06 · 정책 원문 직접 대조(§8) · 사례 조사 반영 |
-| [`DATABASE.md`](./DATABASE.md) | 서버 스키마(조각 Supabase 이 앱 스키마) · 기기 캐시(`rules.json`) · 기록 대기열(`queue.jsonl`) · 누가 쓰고 누가 읽나 · API · 보안(결정 #30) | 🔨 2026-10-08 · 초안 · 스키마 이름 등 §6 대기 |
-| [`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md) | 진단 링 버퍼 · 미처리 예외 · 종료 이유 · 신호 목록 · 하루 요약 / 문의 첨부에 무엇이 가나(결정 #20 · #21 · #24) | 🔨 2026-10-08 · 기기 쪽 ✅ · 보내기 Phase 5 |
+| [`DATABASE.md`](./DATABASE.md) | 서버 스키마(조각 Supabase 이 앱 스키마) · 기기 캐시(`rules.json`) · 기록 대기열(`queue.jsonl`) · 누가 쓰고 누가 읽나 · API · 보안(결정 #30) | ✅ 2026-10-08 스키마 적용 · 2026-10-28 1년 정리 cron |
+| [`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md) | 진단 링 버퍼 · 미처리 예외 · 종료 이유 · 신호 목록 · 하루 요약 / 문의 첨부에 무엇이 가나(결정 #20 · #21 · #24) | ✅ 기기 쪽 2026-10-08 · 문의 첨부 vc2 · 하루 요약 보내기 vc4(2026-10-28) |
 | [`DOC_DISCIPLINE.md`](./DOC_DISCIPLINE.md) | 문서 작업법(`common/DOC_SYSTEM.md` 의 프로젝트판 · mission 승계) | ✅ 2026-10-06 |
 | [`ORIGINAL_BRIEF.md`](./ORIGINAL_BRIEF.md) | 🔴 **원본 기획서 원문. 정본이 아니다** | ✅ 2026-10-06 |
-| [`README.md`](./README.md) | 이 색인 | ✅ 2026-10-06 |
+| [`README.md`](./README.md) | 이 색인 | ✅ 2026-10-28 감사 |
 | [`review/2026-10-06-decisions.md`](./review/2026-10-06-decisions.md) | 사용자 결정 원문 기록(#10 · 읽은 범위). 정본은 CLAUDE §14 | ✅ 2026-10-06 |
 | [`review/2026-10-09-ui-direction.md`](./review/2026-10-09-ui-direction.md) | UI 방향 초안: 만들 화면 9개 · 레퍼런스에서 본 것 · 제안 방향 · UI 세션 · 사용자에게 물을 것. 정본 아님 | 🔨 2026-10-09 |
 | [`review/2026-10-08-diagnostics-plan.md`](./review/2026-10-08-diagnostics-plan.md) | 진단 · 오류 보고 플랜(3층 · 실패 신호 10종 · 배구명가 선례 · 공용 서버 영향). 🔴 사용자 결정 전 · 정본 아님 | 🔨 2026-10-08 |
@@ -36,53 +36,67 @@
 | 문서 | 언제 | 상태 |
 |---|---|---|
 | `review/<날짜>-gap-hunt-brief.md` · `-devils-advocate-brief.md` · `-decisions.md` | Phase 리뷰 | ❌ |
-| `DATABASE.md` | Phase 1(규칙 · 기록 스키마 · 네이티브와 공유 방식) | ❌ |
-| `I18N_SYSTEM.md` | Phase 0(미결정 H 이후) | ❌ |
+| `I18N_SYSTEM.md` | 언어를 더 열 때(지금은 `lib/i18n.ts` · `locales/{en,ko}.json` 뿐 · 결정 #14) | ❌ |
 | `UI_GUIDE.md` | Phase 2(첫 화면 전) | ❌ |
 | `EDGE_CASES.md` | 첫 버그 · Phase 4 | ❌ |
 | `POLISH_BACKLOG.md` | 첫 "알면서 남겨 둔 것" | ❌ |
 | `OTA_SYSTEM.md` · `OPEN_SOURCE_NOTICE.md` | Phase 6 ~ 7(OTA 설정은 결정 #39 · 지금은 [`BUILD.md`](./BUILD.md) §3 · 오픈소스 고지는 `check:licenses`) | ❌ |
-| [`BUILD.md`](./BUILD.md) | 업로드 키 위치 · 지문 · 릴리스 AAB 굽는 법 · 게이트(서명 · R8 · 운영 주소) · OTA 설정 · 산출물 보관 | 🔨 2026-10-09 · 첫 AAB |
-| [`release/PLAY_CONSOLE.md`](./release/PLAY_CONSOLE.md) | Play 콘솔 답안지(앱 만들기 · 스토어 등록정보 en/ko · 가격 · 국가 · 앱 액세스 · 콘텐츠 등급 · 대상 연령 · 데이터 보안 · 접근성 신고 · 시연 영상 · 스크린샷 목록) · `STORE_LISTING.md` 자리 | 🔨 2026-10-09 · 초안 |
-| `legal/` | 처리방침 · 약관 초안(en 정본 · ko) · 🔴 게시 전 · 자리표시 `{{…}}` 는 웹 사본에서 채운다(공개 저장소) | 🔨 2026-10-09 · 초안 |
+| [`BUILD.md`](./BUILD.md) | 업로드 키 위치 · 지문 · 릴리스 AAB 굽는 법 · 게이트(서명 · R8 · 운영 주소) · OTA 설정 · 산출물 보관 | ✅ vc1 ~ vc4 기록 |
+| [`release/PLAY_CONSOLE.md`](./release/PLAY_CONSOLE.md) | Play 콘솔 답안지(앱 만들기 · 스토어 등록정보 en/ko · 가격 · 국가 · 앱 액세스 · 콘텐츠 등급 · 대상 연령 · 데이터 보안 · 접근성 신고 · 시연 영상 · 스크린샷 목록) · `STORE_LISTING.md` 자리 · 프로덕션(§7) | ✅ 비공개 vc1 ~ vc3 게시 · 프로덕션 vc4 검토 전송(2026-10-28) |
+| `legal/` | 처리방침 · 약관 원문(en 정본 · ko) · 자리표시 `{{…}}` 는 웹 사본에서 채운다(공개 저장소) | ✅ 2026-10-09 게시(`vivace-games.com/onemorethought/*` · volleyball 세션) |
 | ~~`MONETIZATION_SYSTEM.md`~~ | 🚫 결정 #18(유료 앱 · 앱 안 결제 없음)로 따로 둘 내용이 없다. 가격 · 판매 규칙은 CLAUDE §7 이 정본 | ~~광고(#12)~~ → ~~구독(#15)~~ → 유료 앱(#18) |
-| [`DISTRIBUTION_POLICY.md`](./DISTRIBUTION_POLICY.md) | 145개국 · 32개국을 닫은 이유(광고 동의가 아니라 데이터 수집의 GDPR 부담 · 결정 #14) · 열 때 순서 | ✅ 2026-10-09 |
+| [`DISTRIBUTION_POLICY.md`](./DISTRIBUTION_POLICY.md) | 141개국(옛 계산 145) · 32개국을 닫은 이유(광고 동의가 아니라 데이터 수집의 GDPR 부담 · 결정 #14) · 열 때 순서 | ✅ 2026-10-09 |
 
 ---
 
 ## 2. 구현 현황
 
-**2026-10-08 기준. Phase 0 스파이크(S24 실측) · Phase 1 판정 순수 모듈까지.** Phase 정의는 [`PLAN.md`](./PLAN.md).
+**2026-10-28 기준. 비공개 테스트 vc1 ~ vc3 게시 · 프로덕션 vc4(0.1.0) 검토 전송.** Phase 정의는 [`PLAN.md`](./PLAN.md). 외부 · 서버 등록 상태의 정본은 [`../CLAUDE.md`](../CLAUDE.md) §15 다(여기 베끼지 않는다).
 
 ### 앱
 
 | 영역 | 상태 | 비고 |
 |---|---|---|
-| Expo 부트(SDK 54 · expo-router · TS strict · Metro **8095**) | ✅ 2026-10-08 | Phase 0 · `verify` 9단계(§3) |
-| 네이티브 모듈 골격 · 개발 빌드 | 🔨 2026-10-08 | Phase 0 · `modules/intervention`(접근성 서비스 · 오버레이 · 사용 기록 · 앱 목록 · 고급 보호 모드) · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §6 |
-| 감지 · 오버레이 스파이크 S1 ~ S7 | 🔨 2026-10-08 · S24 한 대 실측(삼성 외 기기 · 절전은 남음) | Phase 0 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
-| 하루 경계 `lib/day.ts` · 판정 순수 모듈 `lib/rules.ts` | ✅ 2026-10-08(TS) | Phase 1 · `check:day` · `check:rules` · 시험표 `tests/rules-cases.json` |
-| 판정 Kotlin(같은 시험표) | ✅ 2026-10-08 | `RuleJudge.kt` · `check:rules:kt` |
-| 기기 규칙 캐시 · 기록 대기열 · 서버 연결 | 🔨 2026-10-08 코드 ✅ · 실기기 ⏳ | Phase 1 · [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) · ~~로컬 DB~~ → 결정 #30 |
-| 실행 전 확인(홈 · 만들기 · 확인 화면 · 권한 온보딩) | ❌ | Phase 2 |
-| 실행 확인(알람 · 알림 · 오늘 ✓) | ❌ | Phase 3 |
-| 나이 확인(결정 #41 · 첫 실행 출생연도 · 만 14세 미만은 서버로 보내지 않음) | 🔨 2026-10-09 코드 ✅ · 실기기 ⏳ | `app/age.tsx` · `features/age.ts` · 막는 자리 `features/server.ts` `ensureToken` |
+| Expo 부트(SDK 54 · expo-router · TS strict · Metro **8095**) | ✅ 2026-10-08 | `verify` 10단계(§3) |
+| 네이티브 모듈 `modules/intervention` | ✅ vc1 ~ | 파일 · 역할은 [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §6 |
+| 감지 · 확인 화면 | ✅ vc1 ~ · S24 한 대 실측 | 삼성 외 기기 · 절전은 진단으로 본다 · [`ANDROID_PLATFORM.md`](./ANDROID_PLATFORM.md) §9 |
+| 하루 경계 `lib/day.ts` · 판정 `lib/rules.ts` · Kotlin `RuleJudge.kt` | ✅ 2026-10-08 | `check:day` · `check:rules` · `check:rules:kt` · 시험표 `tests/rules-cases.json` |
+| 기기 규칙 캐시 · 기록 대기열 · 서버 연결 | ✅ vc1 ~ | [`DATABASE.md`](./DATABASE.md) §1 ~ §2 |
+| 실행 전 확인(홈 · 만들기 · 확인 화면 · 권한 온보딩) | ✅ vc1 ~ · 첫 저장 → 접근성 안내 vc3 | [`RULE_SYSTEM.md`](./RULE_SYSTEM.md) |
+| 실행 확인(알람 · 알림 · 오늘 ✓) | ❌ Phase 3 · 만들기 숨김(결정 #42) | 만들기 화면(`rules/new/check-*`)은 있다 |
+| 나이 확인(결정 #41) | ✅ vc1 최종(`cba0954`)부터 · 휠 «선택» 위치 vc3 | `app/age.tsx` · `features/age.ts` · 막는 자리 `features/server.ts` `ensureToken` |
+| 통계 화면(결정 #28) | ✅ vc1 ~ | `app/stats.tsx` |
+| 문의(결정 #35) | ✅ vc2 | `app/contact.tsx` · [`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md) §5 |
+| 진단 하루 요약 보내기 | ✅ vc4 | `features/diagSummary.ts` · [`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md) §0 |
+
+### 화면 (expo-router · `app/`)
+
+| 파일 | 화면 |
+|---|---|
+| `_layout.tsx` | 라우터 · 테마 · 언어 |
+| `index.tsx` | 홈(나이 답 전이면 `age` 로) |
+| `age.tsx` | 태어난 해(결정 #41) |
+| `rules/new/index.tsx` | 규칙 종류 고르기(결정 #42 로 지금은 건너뛴다) |
+| `rules/new/apps.tsx` · `when.tsx` · `message.tsx` | 실행 전 확인 만들기 3단계 |
+| `rules/new/check-app.tsx` · `check-time.tsx` · `check-message.tsx` | 실행 확인 만들기(숨김 · 결정 #42) |
+| `rules/[id].tsx` | 규칙 자세히 · 수정 · 삭제 |
+| `permission/accessibility.tsx` | 접근성 공개 문구 · 동의 |
+| `stats.tsx` | 통계 |
+| `settings.tsx` | 설정 |
+| `contact.tsx` | 문의 |
+| `licenses.tsx` | 오픈소스 라이선스 |
+| `dev/spike.tsx` | 개발 빌드 전용 시험 도구(`__DEV__`) |
 
 ### 서버
 
 | 영역 | 상태 | 비고 |
 |---|---|---|
-| 앱 서버 | ~~🚫 결정 #5~~ → ✅ 2026-10-08 `vg-intervene-sync.vercel.app` 배포 · 스키마 · e2e | 결정 #30 · 조각 Supabase 이 앱 스키마 · mission 승계(스키마 생성은 그날 사용자 확인) |
-| common_server | ⏳ | 결정 #20 · 진단 · 문의 첨부는 공용 서버 세션 합의 대기 |
+| 앱 서버 `vg-intervene-sync` | ✅ 2026-10-08 배포 · 2026-10-28 1년 정리 cron | [`DATABASE.md`](./DATABASE.md) §4 |
+| common_server(기기 토큰 · 문의 · 진단 요약) | ✅ 2026-10-08 운영 배포(그쪽 세션) | 계약은 [`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md) §4 |
 
 ### 외부
 
-| 영역 | 상태 | 비고 |
-|---|---|---|
-| `DEV_ALLOCATION.md` 행 | ✅ 2026-10-06 | Metro 8095 · AVD `onemorethought` 5590 |
-| AVD `onemorethought` | ❌ | Phase 0 |
-| Play 접근성 선언 · 영상 | ❌ | Phase 6 · 🔴 출시 차단 |
-| Play 앱 · 패키지 이름 | ❌ | Phase 7 · 서비스명(미결정 N) 먼저 |
+→ CLAUDE §15(Play 앱 · 접근성 신고 · 처리방침 · 테스트 트랙 · 상표).
 
 ---
 
@@ -125,8 +139,8 @@
 
 ## 4. 아키텍처 원칙 (요약)
 
-- ~~서버 없음. 모든 데이터는 기기에만~~ → **기기가 정본 · 서버는 사본이자 분석 창고**(CLAUDE 기둥 6 · §6 · 결정 #21 · #22). 로그인 없음 · 기기 토큰(가명).
+- ~~서버 없음. 모든 데이터는 기기에만~~ → ~~기기가 정본 · 서버는 사본이자 분석 창고(결정 #22)~~ → **서버가 정본 · 기기는 최소 캐시**(CLAUDE 기둥 6 · §6 · 결정 #30). 로그인 없음 · 기기 토큰(가명).
 - **네이티브(Kotlin)가 감지 · 확인 화면 · 알람을 맡고, JS 는 규칙 편집 · 홈을 맡는다.** 이 경계가 되돌리기 비싸다.
 - 판정은 순수 함수. TS 와 Kotlin 이 같은 시험표로 묶인다.
 - 앱이 열렸는지만 본다. 앱 안은 보지 않는다(기둥 5). 접근성 서비스는 창 내용을 읽지 않는다.
-- 의존 방향 `app/` → `features/` → `db/`·`lib/`·`modules/`·`theme/`.
+- 의존 방향 `app/` → `features/` → `lib/`·`modules/`·`theme/`.

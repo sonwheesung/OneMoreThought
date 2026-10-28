@@ -3,7 +3,7 @@
 > 정본 규칙: [`../CLAUDE.md`](../CLAUDE.md) §6(서버 경계) · 결정 #22 · #23 · #24 · #30. 판정 규칙은 [`RULE_SYSTEM.md`](./RULE_SYSTEM.md).
 > 작성 2026-10-08(Phase 1). 승계: mission `docs/SYNC_SYSTEM.md`(조각 DB 스키마 · 전용 역할 · 손 SQL · postgres.js). 다른 점은 **서버가 정본**이라는 것이다(mission 은 기기가 정본).
 >
-> 이름(결정 #31): 스키마 **`intervene`** · DB 역할 **`intervene_app`** · Vercel **`vg-intervene-sync`** · 공용 서버 `app_code` **`intervene`**(요청 중). 서비스명(미결정 N)을 박지 않는다.
+> 이름(결정 #31): 스키마 **`intervene`** · DB 역할 **`intervene_app`** · Vercel **`vg-intervene-sync`** · 공용 서버 `app_code` **`intervene`**(✅ 2026-10-08 등록). 서비스명은 결정 #45(OneMoreThought)로 정했지만 서버 · 스키마 이름은 `intervene` 그대로다(결정 #31).
 
 ## 0. 구현 현황
 
@@ -12,9 +12,9 @@
 | 설계(이 문서) | ✅ 2026-10-08 | §6 이름은 결정 #31 |
 | 기기 규칙 캐시(`rules.json`) | ✅ 2026-10-08(코드) | `RuleStore.kt` · 접근성 서비스가 `RuleJudge` 로 판정 · 스파이크 `SpikeStore` 의 규칙 저장을 대체 · ⏳ 실기기 |
 | 기록 대기열(`queue.jsonl`) | ✅ 2026-10-08(코드) | `EventQueue.kt`(덧붙이기 · 읽기 · ack · 1MB 상한) · `features/rules.ts` 가 올린다 · ⏳ 실기기 |
-| `server/` 골격 · API 7개 | ✅ 2026-10-08 | mission 승계 · 로컬 e2e 통과(AUTH_STUB · 실제 조각 DB) |
+| `server/` 골격 · API 8개(2026-10-28 `cron/purge` 추가) | ✅ 2026-10-08 | mission 승계 · 로컬 e2e 통과(AUTH_STUB · 실제 조각 DB) |
 | 조각 DB `intervene` 스키마 · 전용 역할 | ✅ 2026-10-08 | 결정 #31 그날 확인 · 0001 · 조각 `public` 앞뒤 같음 · `db:check` 29항목. 🔴 조각 세션이 떠 있지 않아 통지는 이 행 · CLAUDE §15 · 사용자 보고로 남겼다 |
-| Vercel 배포 | ✅ 2026-10-08 | `https://vg-intervene-sync.vercel.app`(팀 sonws · `icn1`) · env 2개(`DATABASE_URL` 은 6543 · 값은 stdin 으로만) · health `db: up` · 토큰 없음 · 가짜 토큰 · 인증 우회 시도 전부 401 |
+| Vercel 배포 | ✅ 2026-10-08 | `https://vg-intervene-sync.vercel.app`(팀 sonws · `icn1`) · env 3개(`DATABASE_URL` 은 6543 · `COMMON_SERVER_URL` · 2026-10-28 `CRON_SECRET` · 값은 stdin 으로만) · health `db: up` · 토큰 없음 · 가짜 토큰 · 인증 우회 시도 전부 401 |
 | 공용 서버 `app_code` | ✅ 2026-10-08 | 그쪽 등록. ✅ 2026-10-08 14:49 실기기(갤럭시 S24): 기기 토큰 발급 → 앱 서버 `/api/rules` 가 그 토큰을 받아 동기화 `↑0 · ↓0` · 주체 번호 표시 |
 
 ## 1. 구조
@@ -48,7 +48,7 @@
 | `queue.jsonl` | Kotlin(확인 화면 결과 · 실행 확인 결과를 한 줄씩 덧붙인다) | JS(올리고 서버가 받은 id 까지 지운다) | 사건은 네이티브에서 난다. 올리기는 네트워크 · 토큰이 있는 JS 가 한다 |
 | `diag.jsonl` | Kotlin · JS(`logDiag`) | JS(요약 · 문의 첨부) | 이미 있다([`DIAGNOSTICS_SYSTEM.md`](./DIAGNOSTICS_SYSTEM.md)) |
 
-- 🔴 대기열을 지우는 일만 JS 가 한다. Kotlin 이 덧붙이는 중에 JS 가 지우면 줄이 사라질 수 있으므로 **지우기는 네이티브 함수(`ackQueue(lastId)`)로 내려 보내 Kotlin 이 같은 잠금 안에서 한다.**
+- 🔴 대기열을 지우는 일만 JS 가 한다. Kotlin 이 덧붙이는 중에 JS 가 지우면 줄이 사라질 수 있으므로 **지우기는 네이티브 함수(`queueAck(lastId)`)로 내려 보내 Kotlin 이 같은 잠금 안에서 한다.**
 - SQLite 를 쓰지 않는다(결정 #30). 파일은 앱 전용 저장소(`filesDir`)에 있고 백업 대상에서 뺀다.
 
 ## 2. 기기 캐시 형식
@@ -88,6 +88,22 @@
 
 - 「이 기기에서만 지우기」(결정 #34)는 기기 id · 토큰 · 주체를 지워 새 가명으로 바뀐다. 옛 주체 번호는 `cs_prev_subjects` 에 남겨 문의에 붙인다(서버 기록 삭제 요청을 찾을 길).
 - 기기 id · 토큰은 앱 전용 SharedPreferences(`intervene_kv`)에 둔다. 다른 앱은 못 읽는다. 로그 · 진단에 남기지 않는다.
+
+#### 기기 저장 키 (2026-10-28 코드에서 뽑음)
+
+| 키 · 파일 | 무엇 | 코드 | 「이 기기에서만 지우기」 |
+|---|---|---|---|
+| `intervene_kv` · `cs_device_id` · `cs_token` · `cs_subject` | 기기 가명(공용 서버) | `features/server.ts` | 지운다(새 가명 · 결정 #34) |
+| `intervene_kv` · `cs_prev_subjects` | 지우기 전 주체 번호들 | `features/server.ts` | 남긴다(오히려 덧붙인다) |
+| `intervene_kv` · `age_gate` | 나이 확인 결과 `ok` · `under14`(출생연도는 없다) | `features/age.ts` | 지운다(다시 묻는다 · 결정 #41) |
+| `intervene_kv` · `diag_summary_on` | 진단 요약 스위치 | `features/settings.ts` | 남긴다 |
+| `intervene_kv` · `diag_summary_sent_day` · `diag_summary_limit` | 요약 보낸 날 · 서버 상한 | `features/diagSummary.ts` | 남긴다 |
+| `intervene_kv` · `diag_service_lost_day` | `service_lost` 를 남긴 날 | `app/index.tsx` | 남긴다 |
+| 파일 `rules.json` | 규칙 캐시 | `RuleStore.kt` | 비운다 |
+| 파일 `queue.jsonl` | 미전송 기록 대기열 | `EventQueue.kt` | 보내지 않고 비운다 |
+| prefs `intervene_stats` · `prompt_days` | 통계 화면의 하루 집계(14일) | `PromptStats.kt` | 지운다 |
+| prefs `intervention_spike` | 디버그 기록(50줄) | `SpikeStore.kt` | 지운다 |
+| 파일 `diag.jsonl` · prefs `intervention_diag` | 진단 링 버퍼 · 지난 종료 시각 | `DiagLog.kt` | ⚠ **남긴다**(지우는 코드 없음 · 2026-10-28 감사에서 찾음 · 별도 작업) |
 - 결정 #27 L(제외 앱): 앱 고르기 목록에서 이 앱 · 홈 런처 · 시스템 설정 · 기본 전화 앱을 뺀다. 접근성 서비스도 홈 런처 · 설정을 판정 전에 거른다(이 앱 · 전화는 이미 "떠남 아님"으로 거른다).
 
 ## 3. 서버 표(`intervene`)
@@ -106,7 +122,7 @@
 - 충돌: 규칙은 `updated_at` 이 큰 쪽이 이긴다. 기기는 하나뿐이라(계정 없음 · 기기 토큰) 실제로 겹칠 일은 오프라인 편집 뒤 늦게 올리는 경우뿐이다.
 - `check_days` 는 하루 한 줄이다. 같은 날 사건이 여럿 오면 칸을 채워 나간다(`notified_at` 은 처음 값을 지킨다 · 하루 1회 · 결정 #4).
 - 🔴 사용자의 모든 앱 사용을 올리지 않는다. `pkg` 는 그 사용자가 규칙에 넣은 대상 앱뿐이다(CLAUDE §5-9 · 기둥 5).
-- 보관 기간: ~~⚠ Phase 6 처리방침에서 정한다~~ → **마지막 접속 후 1년**(결정 #40) · ✅ 2026-10-28 정리 작업 `GET /api/cron/purge`(Vercel cron 매일 18:30 UTC = 03:30 KST · `CRON_SECRET` 없으면 401). 마지막 접속 = 그 subject 의 `devices.last_seen_at` · 각 표 `received_at` 중 가장 늦은 값. 지우는 표 · 순서는 `DELETE /api/me` 와 같다. 첫 수동 실행 `subjects: 0, deleted: 0`(읽기 전용 사전 집계도 0 · 전체 24). 삭제: 계정이 없으므로 앱 설정의 "이 기기의 데이터 지우기"가 서버의 `subject_id` 행을 전부 지운다(API §4 `DELETE /api/me`).
+- 보관 기간: ~~⚠ Phase 6 처리방침에서 정한다~~ → **마지막 접속 후 1년**(결정 #40) · ✅ 2026-10-28 정리 작업 `GET /api/cron/purge`(Vercel cron 매일 18:30 UTC = 03:30 KST · `CRON_SECRET` 없으면 401). 마지막 접속 = 그 subject 의 `devices.last_seen_at` · 각 표 `received_at` 중 가장 늦은 값. 지우는 표 · 순서는 `DELETE /api/me` 와 같다. 첫 수동 실행 `subjects: 0, deleted: 0`(읽기 전용 사전 집계도 0 · 전체 24). 삭제: ~~계정이 없으므로 앱 설정의 "이 기기의 데이터 지우기"가 서버의 `subject_id` 행을 전부 지운다~~ → 결정 #34: 「이 기기에서만 지우기」는 서버를 부르지 않는다. 서버 기록 삭제는 문의로 받고, 처리할 때 그 주체로 `DELETE /api/me` 를 쓴다(API §4).
 
 ## 4. API(앱 서버)
 
@@ -118,7 +134,8 @@
 | `DELETE /api/rules/:id` | tombstone |
 | `POST /api/events` | 대기열 묶음 올리기 · 받은 마지막 `id` 를 돌려준다 |
 | `PUT /api/device` | 기기 정보 |
-| `DELETE /api/me` | 이 기기(subject)의 행 전부 지우기 |
+| `DELETE /api/me` | 이 기기(subject)의 행 전부 지우기(앱은 부르지 않는다 · 문의로 받은 삭제 요청 처리용 · 결정 #34) |
+| `GET /api/cron/purge` | 마지막 접속 후 1년 지난 subject 의 행 삭제(Vercel cron 매일 · `Authorization: Bearer <CRON_SECRET>` · 결정 #40 · §3) |
 
 - 신원: `Authorization: Bearer <기기 토큰>` → 공용 서버 `GET /api/v1/auth/me` 로 `subject.id` 를 받는다. ~~`x-app-code` 헤더~~ 는 공용 서버가 보지 않는다. 앱 코드는 토큰 클레임에서 읽고 주체의 app_code 와 둘 다 맞아야 한다(2026-10-08 공용 서버 세션 답). 60초 기억. 🔴 공용 서버가 응답하지 않으면 503 이지 401 이 아니다(mission §1.1 승계). △ 기기 토큰으로 `/auth/me` 가 같은 모양을 주는지는 실측 전이다.
 - 운영에서 인증 우회 플래그는 무시한다(mission 승계).
@@ -129,7 +146,7 @@
 - 관리자 접속값은 마이그레이션 스크립트만 쓰고, 실행할 때 조각 저장소의 env 파일에서 읽는다. 이 저장소로 복사하지 않는다(`common/SECRET_HANDLING.md` · 🔴 공개 저장소).
 - 🔴 `drizzle-kit push` 를 쓰지 않는다. 마이그레이션은 손 SQL(`server/db/migrations/NNNN_*.sql`)이고 러너는 `intervene.` 밖을 건드리는 문장이 있으면 실행 전에 죽는다.
 - 모든 표 RLS 켬 · `anon` · `authenticated` 권한 없음 · PostgREST 노출 목록에 넣지 않는다(`common/DRIZZLE_RLS_TRAP.md`).
-- 적용 뒤 `npm run db:check`(server): RLS · 익명 권한 · `intervene_app` 이 `public` 을 못 읽는 것을 **실제로 읽어 보고** 잰다. 조각 `public` 표 수 · 행 수가 적용 앞뒤로 같은지 본다.
+- 적용: `npm --prefix server run db:migrate`(러너 `server/scripts/migrate.mjs`). 적용 뒤 `npm run db:check`(server): RLS · 익명 권한 · `intervene_app` 이 `public` 을 못 읽는 것을 **실제로 읽어 보고** 잰다. 조각 `public` 표 수 · 행 수가 적용 앞뒤로 같은지 본다.
 
 ## 6. ~~정할 것~~ → 결정 #31 로 닫혔다(2026-10-08)
 
@@ -140,8 +157,8 @@
 | Vercel 프로젝트 이름 | URL 이 앱 빌드에 들어간다 | 바꾸면 이전 빌드가 옛 URL 을 부른다 |
 | 공용 서버 `app_code` 등록 | 기기 토큰 · `/auth/me` 의 전제 | 공용 서버 세션이 등록한다(그쪽 사용자 승인) |
 
-## 7. 가드(예정)
+## 7. 가드
 
-- `check:queue`(앱): 대기열 덧붙이기 · 지우기 · 상한 · 멱등 id · 메시지가 사건에 섞이지 않음.
-- `db:check`(server): §5.
-- 서버 e2e: 같은 사건 두 번 → 한 줄 · tombstone 뒤 기록의 `rule_id` 가 남는다 · `DELETE /api/me` 뒤 0행 · 공용 서버 죽음 → 503.
+- ❌ 예정 `check:queue`(앱): 대기열 덧붙이기 · 지우기 · 상한 · 멱등 id · 메시지가 사건에 섞이지 않음.
+- ✅ `db:check`(server · `npm --prefix server run db:check`): §5.
+- ✅ 서버 e2e(`npm --prefix server run e2e`): 같은 사건 두 번 → 한 줄 · tombstone 뒤 기록의 `rule_id` 가 남는다 · `DELETE /api/me` 뒤 0행 · 공용 서버 죽음 → 503.

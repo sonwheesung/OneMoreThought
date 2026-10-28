@@ -4,7 +4,7 @@ Management note (not published).
 - Planned URL: https://vivace-games.com/onemorethought/privacy. The web copy lives in the volleyball repo (server/app/<path>/privacy/page.tsx), as for siblings mission and Re:Read. This session does not edit that repo.
 - {{APP_NAME}} = store listing name (open decision N). {{BUSINESS_*}} placeholders are filled in the web copy from common/BUSINESS_INFO.md (§1.3 passport spelling for the representative; business address only). This repo is public, so the values are not copied here.
 - Must say the same thing as the in-app accessibility disclosure (locales disclosure.*), Play Data safety and docs/release/PLAY_CONSOLE.md.
-- Retention = 1 year after last access (decision #40, 2026-10-09). TODO: the server purge job does not exist yet — build it before production.
+- Retention = 1 year after last access (decision #40, 2026-10-09). Done 2026-10-28: the server purge job (`GET /api/cron/purge`, daily, `docs/DATABASE.md` §3).
 - Age = birth-year check on first launch; under 14 the App sends nothing to any server (decision #41, 2026-10-09). The year is never stored or sent; only the pass/under-14 result stays on the device.
 - Sensitive info in messages (decision #24 trade-off): ask users not to write it, no intent to collect, no inference, deletion on request (§1 "What you write in messages"). Closed with a default on 2026-10-09.
 - The "remind if not opened" notification is not in the build yet (decision #37). The intro and the Usage Access line only say "if you use that rule". Put it back in the intro when it ships.

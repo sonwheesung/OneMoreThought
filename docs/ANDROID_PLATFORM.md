@@ -15,13 +15,13 @@
 | 영역 | 상태 | 비고 |
 |---|---|---|
 | 감지 방식 확정(§2) | ✅ 2026-10-06 결정 #10 | 🔴 실기기 확인은 Phase 0 스파이크(§9) · 막히면 다시 연다 |
-| 네이티브 모듈 골격(§6) | ❌ | Phase 0 · SnoreLess `modules/alarm-tone` 선례 |
-| 확인 화면 띄우기(§3) | ❌ | Phase 2 |
-| 실행 확인 알람 · 재부팅(§4) | ❌ | Phase 3 |
-| 설치 앱 목록(§5) | ❌ | Phase 1 |
-| 권한 온보딩 · 접근성 공개 문구(§7) | ❌ | Phase 2 · 🔴 Play 심사 대상 |
+| 네이티브 모듈 골격(§6) | ✅ 2026-10-08 `modules/intervention` | 파일 · 역할 표는 §6 |
+| 확인 화면 띄우기(§3) | ✅ vc1 ~ · S24 실측 | 액티비티 우선 · 오버레이 대체(`prompt_fallback`) |
+| 실행 확인 알람 · 재부팅(§4) | ❌ | Phase 3 · 만들기 숨김(결정 #42) |
+| 설치 앱 목록(§5) | ✅ vc1 ~ | `listLaunchableApps` · `<queries>` MAIN/LAUNCHER |
+| 권한 온보딩 · 접근성 공개 문구(§7) | ✅ vc1 ~ · 첫 저장 → 안내 vc3 | `app/permission/accessibility.tsx` |
 | 정책 원문 대조 · 실제 사례 조사(§8 · `review/`) | ✅ 2026-10-06 | 추천안 유지 · 정정 1건(규칙 기반 예외의 출처) |
-| Play 접근성 선언 · 시연 영상(§8) | ❌ | Phase 6 · 🔴 출시 차단 |
+| Play 접근성 선언 · 시연 영상(§8) | ✅ 2026-10-12(CLAUDE §15) | 영상 YouTube 일부 공개 |
 
 ---
 
@@ -38,7 +38,7 @@
 **2026-10-06 정책 점검 결과**([`review/2026-10-06-play-policy.md`](./review/2026-10-06-play-policy.md)): 추천안을 유지한다.
 - 같은 용도(사용자가 고른 앱을 감지해 개입)의 앱이 접근성으로 여럿 게시돼 있다(one sec 등록정보 문장이 기능 A 와 거의 같다).
 - 찾은 반려는 전부 **공개 문구 절차**였다(§7.1 로 처음부터 피한다).
-- 남는 위험: Android 17 고급 보호 모드에서 강제로 꺼진다(§8.5) · 정책이 더 조여질 가능성. 사용 기록 폴링을 대체 경로로 MVP 에 넣을지는 **미결정 P**(추천: MVP 는 접근성만).
+- 남는 위험: Android 17 고급 보호 모드에서 강제로 꺼진다(§8.5) · 정책이 더 조여질 가능성. 사용 기록 폴링을 대체 경로로 MVP 에 넣을지는 ~~**미결정 P**~~ → 결정 #28: MVP 는 접근성만.
 
 ---
 
@@ -69,7 +69,7 @@
 - 안드로이드 14 · 15 의 바인딩 · PendingIntent 변경은 시스템이 바인딩한 접근성 서비스에는 영향이 없을 것으로 본다 △ (https://developer.android.com/about/versions/15/behavior-changes-15 ✔ 변경 내용 자체)
 - **추천**: 접근성 서비스가 `TYPE_ACCESSIBILITY_OVERLAY` 창을 그린다. `SYSTEM_ALERT_WINDOW` 도 Activity 시작도 필요 없다 △. 대안은 서비스에서 우리 Activity 를 여는 것 △.
 - 확인 화면은 **JS(React Native) 없이 네이티브로** 그린다. 접근성 서비스는 RN 런타임 밖에서 돈다 △(§6). 지연이 그대로 사용자 눈에 보이는 자리라 RN 을 깨우지 않는다.
-- [취소] = 홈으로(⚠ 미결정 E · `GLOBAL_ACTION_HOME`) · [열기] = 오버레이를 닫고 통과 상태를 만든다(`RULE_SYSTEM.md` §3.3).
+- [취소] = 홈으로(~~⚠ 미결정 E~~ → 결정 #27 · `GLOBAL_ACTION_HOME`) · [열기] = 오버레이를 닫고 통과 상태를 만든다(`RULE_SYSTEM.md` §3.3).
 
 ---
 
@@ -120,9 +120,23 @@
 - 🔴 접근성 서비스 · 알람 수신기는 **RN JS 런타임 없이** 돈다 △. 그래서:
   - 판정 순수 로직(`RULE_SYSTEM.md` §3.1 · §4.1)은 **Kotlin 쪽에도 있어야 한다.** TS 와 Kotlin 이 같은 규칙을 두 번 구현하면 갈라진다.
     → 대응: **같은 시험표(JSON 케이스)** 를 TS 가드와 Kotlin 단위 시험이 함께 읽어 같은 답을 내는지 잰다(Phase 1 · 가드 `check:rules`).
-  - 규칙 · 기록 저장소는 네이티브와 JS 가 **같은 SQLite 파일**을 읽는다(또는 규칙만 네이티브로 내려 보낸다). Phase 1 에서 `docs/DATABASE.md` 로 정한다.
+  - ~~규칙 · 기록 저장소는 네이티브와 JS 가 **같은 SQLite 파일**을 읽는다(또는 규칙만 네이티브로 내려 보낸다). Phase 1 에서 `docs/DATABASE.md` 로 정한다.~~ → 결정 #30 · `DATABASE.md` §1.1(SQLite 없음 · JS 가 `rules.json` 을 쓰고 Kotlin 이 읽는다).
 - 선례: SnoreLess `modules/alarm-tone`(Android 네이티브 · prebuild 없이 자동 연결 · `snoreLess/CLAUDE.md`).
 - `android/` 는 CNG 산출물이라 커밋하지 않는다(형제 공통).
+
+### 6.1 `modules/intervention` 파일 (2026-10-28 코드에서 뽑음)
+
+| 파일 | 하는 일 |
+|---|---|
+| `InterventionModule.kt` | JS 와의 경계(`Intervention.*` 함수 전부 · kv `intervene_kv` · 앱 목록 · 권한 상태 · 설정 열기) |
+| `InterventionService.kt` | 접근성 서비스: 앞에 나온 패키지 → 판정 → 확인 화면 · 통과 상태 · 떠남 판정 |
+| `InterventionActivity.kt` · `ConfirmView.kt` | 확인 화면(액티비티 · 같은 뷰를 오버레이 대체에도 쓴다) |
+| `RuleJudge.kt` | 판정 순수 함수(TS `lib/rules.ts` 와 같은 시험표 · `check:rules:kt`) |
+| `RuleStore.kt` | 규칙 캐시 `rules.json` 읽기 · 쓰기(`DATABASE.md` §2.1) |
+| `EventQueue.kt` | 미전송 기록 대기열 `queue.jsonl`(`DATABASE.md` §2.2) |
+| `PromptStats.kt` | 통계 화면용 하루 집계(14일) |
+| `DiagLog.kt` | 진단 링 버퍼 · 미처리 예외 · 종료 이유(`DIAGNOSTICS_SYSTEM.md`) |
+| `SpikeStore.kt` | 디버그 기록(50줄 · 개발 시험 도구 · 진단 신호로 거울) |
 
 ---
 

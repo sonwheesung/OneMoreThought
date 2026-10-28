@@ -3,6 +3,8 @@ name: reload-docs
 description: Re-read a project's entire docs/ knowledge base to restore full context — use after a /compact (the summary drops detail), when starting a fresh session that needs the design source-of-truth, or when the user says "문서 다시 읽어" / "reload docs" / "컴팩트 후 문서". Reloads the docs source-of-truth in one pass.
 ---
 
+> 원본: `C:\project\common\.claude\skills\reload-docs\SKILL.md` · 여기서 고치지 말고 원본을 고친 뒤 다시 복사한다(doc-consistency 축 ⑧). 마지막 확인 2026-10-28(본문 같음).
+
 # Reload Docs — 컴팩트 후 문서 전체 재적재 (범용)
 
 `/compact`는 대화를 요약하며 **문서의 세부(수치·계약·구현 위치)를 잃는다**. 프로젝트의 `docs/`(또는 그에 준하는 문서 디렉토리)가 단일 진실 원천이면, 요약 직후·새 세션 작업 전에 **문서 전체를 한 번에 다시 읽어** 맥락을 복원한다.

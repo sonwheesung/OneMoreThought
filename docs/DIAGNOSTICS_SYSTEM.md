@@ -1,7 +1,7 @@
 # DIAGNOSTICS_SYSTEM — 진단 기록 · 하루 요약 · 문의 첨부
 
 > 정본 관계: 원칙과 결정은 [`../CLAUDE.md`](../CLAUDE.md) §14 #20 · #21 · #24(2026-10-08). 플랜과 근거(배구명가 선례 · 실패 신호를 고른 이유)는 [`review/2026-10-08-diagnostics-plan.md`](./review/2026-10-08-diagnostics-plan.md)(정본 아님).
-> 받는 곳은 공용 서버(common_server · 결정 #20). 🔴 그쪽 설계는 **공용 서버 세션 · 사용자 승인**으로 정해진다(2026-10-08 요청 · 별도 테이블 · 앱별 스위치 방향 제안을 받음 · 확정 아님).
+> 받는 곳은 공용 서버(common_server · 결정 #20). 🔴 그쪽 설계는 **공용 서버 세션 · 사용자 승인**으로 정해진다(~~2026-10-08 요청 · 별도 테이블 · 앱별 스위치 방향 제안을 받음 · 확정 아님~~ → 같은 날 그쪽 사용자 승인 · 운영 배포 · 계약은 §4).
 
 ---
 
@@ -15,7 +15,7 @@
 | JS 전역 크래시 핸들러(`lib/diag.ts`) | ✅ 2026-10-08 | 원래 핸들러 보존(배구명가 승계) · ⏳ 실기 미확인 |
 | 스파이크 기록 → 진단 신호 거울 | ✅ 2026-10-08 | `SpikeStore.appendLog` 가 신호 이름으로 같이 쓴다 |
 | 하루 요약 본문(`features/diagSummary.ts` `buildSummary`) | 🔨 2026-10-28 vc4 | 그날 신호 종류별 개수(버퍼 줄의 `at` 으로 그날만) · 기기 · 그날 확인 결과(`promptStats`) · 켜진 규칙 수 · `targets` = 대상 앱 패키지별 **켜진 규칙 수**. ⚠ 패키지별 확인 · 취소 · 열기 횟수는 기기에 집계가 없어 싣지 않는다(같은 값이 앱 서버 기록에 패키지별로 있다 · 결정 #30) |
-| 하루 1회 보내기 | 🔨 2026-10-28 vc4 | 홈을 열 때 **어제** 하루치를 한 번(`sendDailySummary` · 보낸 날은 kv `diag_summary_sent_day`). 200 · 404 · 429 → 그날은 끝 · 401 → 토큰 다시 받아 한 번 · 413 → `targets` 를 비워 한 번 · 오프라인 → 다음에 다시. 서버가 준 `limit` 은 kv `diag_summary_limit` 에 기억한다. 처리방침 «하루 한 번 자동 전송»이 이걸로 실제와 맞는다(그 전 빌드 vc1 ~ vc3 은 보내지 않았다) |
+| 하루 1회 보내기 | 🔨 2026-10-28 vc4 | 홈을 열 때 **어제** 하루치를 한 번(`sendDailySummary` · 보낸 날은 kv `diag_summary_sent_day`). 200 · 404 · 429 · 그 밖의 상태(5xx · 두 번째 401 · 413 포함) → 그날은 끝 · 첫 401 → 토큰 다시 받아 한 번 · 첫 413 → `targets` 를 비워 한 번 · 오프라인 · 토큰 실패 → 다음에 다시. ⚠ 어제 신호 · 확인 결과에 **오늘** 켜진 규칙 수 · `targets` 를 붙인다(규칙 이력이 기기에 없다 · 2026-10-28 감사). 서버가 준 `limit` 은 kv `diag_summary_limit` 에 기억한다. 처리방침 «하루 한 번 자동 전송»이 이걸로 실제와 맞는다(그 전 빌드 vc1 ~ vc3 은 보내지 않았다) |
 | 문의 화면 + 진단 첨부 + 미리보기 | 🔨 2026-10-19 vc2 | `app/contact.tsx` · `features/contact.ts` · §5 · 결정 #20 · #24 · #34 · #35 · 🔴 「이 기기에서만 지우기」 전 주체 번호(`previousSubjects()`)를 첨부에 붙이고 양식 안에서 보여 준다 |
 | 설정에서 자동 요약 끄기 | 🔨 | 2026-10-09 `app/settings.tsx` 스위치(기본 켬) · 값은 기기 kv `diag_summary_on`(`features/settings.ts`). 하루 1회 보내기가 이 값을 읽는다(2026-10-28 vc4) · 결정 #20 |
 
@@ -38,6 +38,8 @@
 | `prompt_error` | 확인 화면 띄우기 예외 | 서비스 |
 | `fg_while_prompt` | 확인 화면 중 앞에 나온 패키지(끼어든 창 진단) | 서비스 |
 | `settings_route` · `settings_details_denied` | 설정으로 데려간 길 · 상세 직행 거부(📱 갤럭시 S24 실측 `SecurityException`) | 모듈 |
+| `queue_trim` | 대기열이 상한(1MB)을 넘어 오래된 줄을 버렸다(`dropped`) | 대기열(`EventQueue.kt`) |
+| `rules_write_error` · `rules_read_error` | 규칙 캐시 `rules.json` 쓰기 · 읽기 실패(`error` = 예외 이름) | 규칙 캐시(`RuleStore.kt`) |
 | `exit` | 지난번 프로세스 종료 이유(`reason` · `importance` · `description`) | `ApplicationExitInfo` |
 | `crash_native` · `crash_js` · `crash_js_fatal` | 미처리 예외 | 핸들러 |
 | `service_lost` | 켜진 실행 전 확인 규칙이 있는데 접근성 서비스가 꺼져 있다(하루 한 번 · `rules` = 켜진 규칙 수 · 2026-10-26 vc4) | 홈(`app/index.tsx`) |
@@ -51,8 +53,8 @@
 | | 하루 요약(자동 · 끌 수 있음) | 문의 첨부(항상 · 미리보기) |
 |---|---|---|
 | 신호 종류별 개수 · 기기 정보 | ✅ | ✅ |
-| 사용 통계(확인 · 취소 · 열기 · 닫힘 · 실행 확인 결과) | ✅ | ✅ |
-| 대상 앱 패키지 이름(별 통계) | ✅ | ✅ |
+| 사용 통계 | ✅ 그날 확인 결과별 횟수(`cancel` · `open` · `dismissed`) · 켜진 규칙 수(종류별) · 실행 확인 결과는 아직 없다(결정 #42) | ✅ 기기 14일 집계 · 규칙 수 |
+| 대상 앱 패키지 이름 | ✅ 패키지별 **켜진 규칙 수**만(`targets` · 패키지별 확인 횟수는 기기에 집계가 없어 안 싣는다 · 같은 값은 앱 서버 기록에 있다) | ✅ 규칙마다(`messages`) |
 | 진단 버퍼 원문(최근 줄) | — | ✅ |
 | 사용자가 쓴 확인 메시지 원문 | — | ✅(#24) |
 | 화면 내용 · 입력 | 🚫 읽지도 않는다(기둥 5) | 🚫 |
@@ -66,7 +68,7 @@
 ### 4.1 하루 요약 `POST /api/v1/diagnostics`
 
 - 헤더: `Authorization: Bearer <기기 토큰>` · `content-type: application/json`. 앱 코드는 토큰 클레임에서 읽는다(헤더 없음).
-- 본문: 이쪽 초안 그대로 `{ v, dayKey, tz, appVersion, device: { manufacturer, model, sdkInt, advProtection }, signals, usage, targets }`. **본문 전체를 payload 로 저장**하므로 칸을 늘려도 서버 배포가 필요 없다.
+- 본문: 이쪽 초안 그대로 `{ v, dayKey, tz, appVersion, device: { manufacturer, model, sdkInt, advProtection }, signals, usage, targets }`(계약 초안). 🔴 vc4 가 실제로 보내는 것: `device: { manufacturer, model, sdkInt, release }`(`advProtection` 없음 · 별도 작업) · `usage: { prompts, rules: { intercept, check } }` · `targets: { <패키지>: { rules } }`(`features/diagSummary.ts` `buildSummary`). **본문 전체를 payload 로 저장**하므로 칸을 늘려도 서버 배포가 필요 없다.
 - `dayKey` 필수(`YYYY-MM-DD` · 기기가 센 하루 · `lib/day.ts`). 아니면 400.
 - **같은 날 다시 보내면 덮어쓴다**(키 = 앱 + 주체 + 날). 기기는 그날 전체를 다시 세어 보낸다.
 
@@ -86,7 +88,7 @@
 
 ### 4.3 보관 · 삭제
 
-- 요약 90일 · 문의 첨부 1년 · 문의 본문 3년(첨부만 먼저 지워진다). 처리방침에 이 숫자를 그대로 쓴다(Phase 6).
+- 요약 90일 · 문의 첨부 1년 · 문의 본문 3년(첨부만 먼저 지워진다). 처리방침에 이 숫자를 그대로 썼다(✅ 2026-10-09 `docs/legal/PRIVACY.*.md`).
 - 탈퇴(기기 주체 삭제) 시 요약 행은 지운다(가명화가 아니라 삭제).
 
 ### 4.4 🔴 시험 주의
@@ -95,7 +97,7 @@
 
 ### 4.5 아직 없는 것
 
-- ~~디스코드 기준 알림: 어떤 신호가 하루 몇 건이면 알릴지 이쪽이 정해 보낸다(사용자 결정).~~ → 결정 #32: `crash_native` · `crash_js_fatal` · `service_lost` · `prompt_error` · `advanced_protection_on` 이 그날 첫 1건이면 알림(같은 날 · 신호 · 기종은 한 번). 나머지는 DB 로만.
+- ~~디스코드 기준 알림: 어떤 신호가 하루 몇 건이면 알릴지 이쪽이 정해 보낸다(사용자 결정).~~ → 결정 #32(알리는 신호 목록 · 기준의 정본). ⚠ `advanced_protection_on` 은 아직 어디서도 남기지 않는다(§2 «추가 예정»).
 - 관리자 화면: 지금은 DB 로만 본다.
 
 ## 5. 문의 화면 (2026-10-19 · vc2 · 결정 #35 프로덕션 조건)

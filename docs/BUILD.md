@@ -29,6 +29,7 @@ npx expo prebuild --platform android --no-install
 grep -q '^android.enableMinifyInReleaseBuilds=true' android/gradle.properties || echo "R8 꺼짐"
 grep -q 'signingConfigs.upload' android/app/build.gradle || echo "서명 블록 없음"
 grep -q 'versionCode 4' android/app/build.gradle       # app.json android.versionCode 와 같은가
+grep -q 'versionName "1.0.0"' android/app/build.gradle || echo "versionName 확인"  # 🔴 프로덕션은 1.x(common/PRE_LAUNCH_CHECK.md · 0.x 로 나가지 않는다)
 
 # ③ 굽기(🔴 gradlew clean 금지 · 필요하면 rm -rf android/app/build android/app/.cxx android/build android/.gradle)
 #    android/local.properties: sdk.dir=C:/Users/user/AppData/Local/Android/Sdk (🔴 역슬래시를 쓰면 \u 로 읽혀 깨진다)
@@ -64,7 +65,7 @@ npm run check:signing       # 업로드 키 지문과 같은가(디버그 키여
 | keep 규칙이 `expo.modules.intervention`(접근성 서비스 · 액티비티 · 서비스)을 덮는다 | `expo.modules.**` keep(app.json `extraProguardRules`) |
 | 금지 권한 · `AD_ID` 없음 · `canRetrieveWindowContent=false` · `isAccessibilityTool=false` | AAB 매니페스트(§4.1) |
 | targetSdk 36 · 64비트 .so 16KB 정렬 | §4.1 |
-| 🔴 릴리스 APK E2E(R8 은 조용한 기능 실종으로 깨진다 · 디버그 빌드로는 못 잰다) | ❌ 메인 세션이 실기기에 깔아 확인한다(감지 · 확인 화면 · 대기열 · 서버 동기화 · expo-updates `shared_prefs`) |
+| 🔴 릴리스 APK E2E(R8 은 조용한 기능 실종으로 깨진다 · 디버그 빌드로는 못 잰다) | ✅ vc1 ~ vc4 마다 S24 한 대에서 릴리스 APK 로 확인(아래 각 vc 기록) · ⚠ 삼성 외 기기 · expo-updates `shared_prefs` 는 기록 없음 |
 
 ### 4.1 실측 값
 
@@ -91,7 +92,7 @@ vc1 · 2026-10-09 15:36 · `BUILD SUCCESSFUL in 7m 28s`(R8 포함)
 | OTA | 매니페스트 `EXPO_UPDATE_URL` · `expo-channel-name: production` · `EXPO_RUNTIME_VERSION` 있음 |
 | 운영 주소 | `check:release-url` OK(운영 2 · 개발 0) |
 
-⚠ 이 vc1 의 JS 는 2026-10-09 15:29 작업 트리(메인 세션 UI 수정 진행 중)다. **업로드 직전에 다시 굽는다**(versionCode 는 1 그대로 · 아직 안 올렸다).
+⚠ 이 vc1 의 JS 는 2026-10-09 15:29 작업 트리(메인 세션 UI 수정 진행 중)다. **업로드 직전에 다시 굽는다**(versionCode 는 1 그대로 · 아직 안 올렸다). → 2026-10-12 다시 구워 올렸다(아래 «vc1 최종»).
 
 
 ## 5. 산출물
@@ -105,7 +106,7 @@ vc1 · 2026-10-09 15:36 · `BUILD SUCCESSFUL in 7m 28s`(R8 포함)
 | 3 | 0.1.0 | 2026-10-23 | 첫 저장 때 접근성 안내로 이어짐 · 나이 휠 «선택» 가운데 · `D:\builds\OneMoreThought\onemorethought-vc3.aab` · `.apk` | 45.7MB · 63.2MB |
 | 4 | 0.1.0 | 2026-10-28 | 홈 `service_lost` 진단 · 진단 하루 요약 보내기 · `D:\builds\OneMoreThought\onemorethought-vc4.aab` · `.apk` | 45.7MB · 63.2MB |
 
-버전: 비공개 테스트는 프로모션 코드 테스터뿐이라 `0.x` 를 유지한다. 낯선 사람이 돈을 낼 수 있는 프로덕션 전에 `1.0.0` 으로 올린다(`PRE_LAUNCH_CHECK.md` §4).
+버전: 비공개 테스트는 `0.x` 를 유지했다. 규칙은 «프로덕션은 `1.0.0`»(`common/PRE_LAUNCH_CHECK.md`)이지만 2026-10-28 사용자 결정 *"일단 0.1.0으로 올릴거고 나중에 업데이트 하는걸로 하자"* 로 프로덕션 vc4 는 0.1.0 · **다음 업데이트(vc5)에서 1.0.0**(`release/PLAY_CONSOLE.md` §7.2).
 
 ## 6. 아이콘
 
