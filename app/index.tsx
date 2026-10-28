@@ -10,9 +10,11 @@ import { Glyph } from '@/components/Glyph.tsx';
 import { EmptyHome, PermissionRow, RuleRow, ruleLine, SummaryRing } from '@/components/Home.tsx';
 import { GlowBackground, PrimaryButton, useStagger } from '@/components/ui.tsx';
 import { ageAnswer } from '@/features/age.ts';
+import { sendDailySummary } from '@/features/diagSummary.ts';
 import { CHECK_RULES_ENABLED, resetDraft, takeFlash } from '@/features/draft.ts';
 import { cachedRules, reportDevice, saveRule, syncNow } from '@/features/rules';
 import { todayKey } from '@/lib/day.ts';
+import { logDiag } from '@/lib/diag.ts';
 import type { Rule } from '@/lib/rules.ts';
 import { Intervention } from '@/modules/intervention';
 import { spacing } from '@/theme/tokens.ts';
@@ -37,6 +39,8 @@ function todayAsked(): number {
 }
 
 /** 나이 확인(결정 #41)을 아직 안 했으면 먼저 묻는다. 이미 쓰던 설치도 다음 실행에 한 번 묻는다 */
+const KEY_SERVICE_LOST_DAY = 'diag_service_lost_day';
+
 export default function Index() {
   return ageAnswer() ? <Home /> : <Redirect href={'/age' as Href} />;
 }
@@ -60,6 +64,7 @@ function Home() {
 
   useEffect(() => {
     reportDevice();
+    void sendDailySummary();
     const pull = () => void syncNow().then(reread);
     pull();
     const sub = AppState.addEventListener('change', (s) => {
@@ -93,6 +98,15 @@ function Home() {
   // 그 권한이 필요한 켜진 규칙이 있을 때만 알린다(권한은 규칙을 만들 때 묻는다 · 기획서 §21)
   const needService = !serviceOn && intercepts.some((r) => r.enabled);
   const needUsage = !usageOn && checks.some((r) => r.enabled);
+  // 켜진 규칙이 있는데 서비스가 꺼져 있다 → 하루 한 번 진단에 남긴다(service_lost · DIAGNOSTICS_SYSTEM §2 · 문의 첨부에 실린다)
+  useEffect(() => {
+    if (!needService) return;
+    const day = todayKey();
+    if (Intervention?.kvGet(KEY_SERVICE_LOST_DAY) === day) return;
+    Intervention?.kvSet(KEY_SERVICE_LOST_DAY, day);
+    logDiag('service_lost', { rules: intercepts.filter((r) => r.enabled).length });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needService]);
   const permText = needService && needUsage ? t('home.permBoth') : needService ? t('home.permOff') : t('home.usageOff');
   const enable = () => (needService ? router.push('/permission/accessibility') : Intervention?.openUsageAccessSettings());
 

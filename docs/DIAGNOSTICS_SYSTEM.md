@@ -14,10 +14,10 @@
 | 지난번 종료 이유(`ApplicationExitInfo` · API 30+) | ✅ 2026-10-08 | 서비스 연결 · 모듈 생성 때 읽고 새 것만 기록 · ⏳ 삼성 절전 종료 값 실측 전 |
 | JS 전역 크래시 핸들러(`lib/diag.ts`) | ✅ 2026-10-08 | 원래 핸들러 보존(배구명가 승계) · ⏳ 실기 미확인 |
 | 스파이크 기록 → 진단 신호 거울 | ✅ 2026-10-08 | `SpikeStore.appendLog` 가 신호 이름으로 같이 쓴다 |
-| 하루 요약 뼈대(`diagSummary` · 종류별 개수 + 기기) | 🔨 | 대상 앱별 통계 · 사용 통계는 Phase 5(결정 #21) |
-| 하루 1회 보내기 | ❌ | Phase 5 · ~~공용 서버 경로 합의 뒤~~ → 공용 서버 쪽 ✅ 2026-10-08 운영 배포(§4 계약) · 앱 쪽만 남았다 |
+| 하루 요약 본문(`features/diagSummary.ts` `buildSummary`) | 🔨 2026-10-28 vc4 | 그날 신호 종류별 개수(버퍼 줄의 `at` 으로 그날만) · 기기 · 그날 확인 결과(`promptStats`) · 켜진 규칙 수 · `targets` = 대상 앱 패키지별 **켜진 규칙 수**. ⚠ 패키지별 확인 · 취소 · 열기 횟수는 기기에 집계가 없어 싣지 않는다(같은 값이 앱 서버 기록에 패키지별로 있다 · 결정 #30) |
+| 하루 1회 보내기 | 🔨 2026-10-28 vc4 | 홈을 열 때 **어제** 하루치를 한 번(`sendDailySummary` · 보낸 날은 kv `diag_summary_sent_day`). 200 · 404 · 429 → 그날은 끝 · 401 → 토큰 다시 받아 한 번 · 413 → `targets` 를 비워 한 번 · 오프라인 → 다음에 다시. 서버가 준 `limit` 은 kv `diag_summary_limit` 에 기억한다. 처리방침 «하루 한 번 자동 전송»이 이걸로 실제와 맞는다(그 전 빌드 vc1 ~ vc3 은 보내지 않았다) |
 | 문의 화면 + 진단 첨부 + 미리보기 | 🔨 2026-10-19 vc2 | `app/contact.tsx` · `features/contact.ts` · §5 · 결정 #20 · #24 · #34 · #35 · 🔴 「이 기기에서만 지우기」 전 주체 번호(`previousSubjects()`)를 첨부에 붙이고 양식 안에서 보여 준다 |
-| 설정에서 자동 요약 끄기 | 🔨 | 2026-10-09 `app/settings.tsx` 스위치(기본 켬) · 값은 기기 kv `diag_summary_on`(`features/settings.ts`). 하루 1회 보내기(Phase 5)가 이 값을 읽어야 끝난다 · 결정 #20 |
+| 설정에서 자동 요약 끄기 | 🔨 | 2026-10-09 `app/settings.tsx` 스위치(기본 켬) · 값은 기기 kv `diag_summary_on`(`features/settings.ts`). 하루 1회 보내기가 이 값을 읽는다(2026-10-28 vc4) · 결정 #20 |
 
 ## 1. 버퍼
 
@@ -40,8 +40,9 @@
 | `settings_route` · `settings_details_denied` | 설정으로 데려간 길 · 상세 직행 거부(📱 갤럭시 S24 실측 `SecurityException`) | 모듈 |
 | `exit` | 지난번 프로세스 종료 이유(`reason` · `importance` · `description`) | `ApplicationExitInfo` |
 | `crash_native` · `crash_js` · `crash_js_fatal` | 미처리 예외 | 핸들러 |
+| `service_lost` | 켜진 실행 전 확인 규칙이 있는데 접근성 서비스가 꺼져 있다(하루 한 번 · `rules` = 켜진 규칙 수 · 2026-10-26 vc4) | 홈(`app/index.tsx`) |
 
-추가 예정(플랜 §2): `service_lost`(규칙이 있는데 서비스가 꺼짐) · `advanced_protection_on` · `alarm_late` · `usage_access_lost` · `notification_denied`.
+추가 예정(플랜 §2): ~~`service_lost`~~(→ 위 표 · vc4) · `advanced_protection_on` · `alarm_late` · `usage_access_lost` · `notification_denied`.
 
 ## 3. 무엇이 어디로 가나 (결정 #20 · #21 · #24)
 

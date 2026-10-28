@@ -19,7 +19,7 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.VIBRATE"
       ],
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/brand/adaptive-fg.png",
         "backgroundImage": "./assets/brand/adaptive-bg.png",
